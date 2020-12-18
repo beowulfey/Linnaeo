@@ -1,11 +1,13 @@
 #include "linnaeo.h"
 #include "./ui_linnaeo.h"
-#include "workspace.h"
 #include "preferences.h"
 #include <QProcess>
 #include <QDir>
 #include <spdlog/spdlog.h>
 #include <iostream>
+#include <QStandardItemModel>
+#include <QStandardItem>
+#include <QFileIconProvider>
 
 
 /// LINNAEO
@@ -17,6 +19,22 @@ Linnaeo::Linnaeo(QWidget *parent)
 {
     ui->setupUi(this);
     ui->optionsPanel->hide();
+
+    QStandardItemModel *seqModel = new QStandardItemModel(this);
+    QStandardItemModel *alignModel = new QStandardItemModel(this);
+    seqModel->setHorizontalHeaderLabels(QStringList("Sequences"));
+    alignModel->setHorizontalHeaderLabels(QStringList("Alignments"));
+    QStandardItem *seqRoot = seqModel->invisibleRootItem();
+    QStandardItem *alignRoot = alignModel->invisibleRootItem();
+    QStandardItem *seqStartFolderItem = new QStandardItem(QString("Uncategorized"));
+    seqStartFolderItem->setIcon(QFileIconProvider().icon(QFileIconProvider::Folder));
+    seqRoot->appendRow(seqStartFolderItem);
+    QStandardItem *alignStartFolderItem = new QStandardItem(QString("Uncategorized"));
+    alignStartFolderItem->setIcon(QFileIconProvider().icon(QFileIconProvider::Folder));
+    alignRoot->appendRow(alignStartFolderItem);
+
+    ui->seqTreeView->setModel(seqModel);
+    ui->alignTreeView->setModel(alignModel);
 
     //QVector<qint64> procIds;
 }

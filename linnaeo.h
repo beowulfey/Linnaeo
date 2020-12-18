@@ -2,6 +2,7 @@
 #define LINNAEO_H
 
 #include <QMainWindow>
+#include <QStandardItemModel>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Linnaeo; }

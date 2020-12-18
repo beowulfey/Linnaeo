@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/resources">
+        <file>icons/linnaeo.ico</file>
+    </qresource>
+</RCC>
