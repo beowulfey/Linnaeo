@@ -1,5 +1,16 @@
 <RCC>
-    <qresource prefix="/resources">
+    <qresource prefix="/">
         <file>icons/linnaeo.ico</file>
+        <file>icons/linnaeo.icns</file>
+        <file>icons/ui/plus-square.svg</file>
+        <file>icons/ui/plus-circle.svg</file>
+        <file>icons/ui/plus.svg</file>
+        <file>icons/ui/folder-plus.svg</file>
+        <file>icons/ui/folder-open.svg</file>
+        <file>icons/ui/folder-minus.svg</file>
+        <file>icons/ui/folder.svg</file>
+        <file>icons/ui/trash.svg</file>
+        <file>icons/ui/file-import.svg</file>
+        <file>icons/ui/file-export.svg</file>
     </qresource>
 </RCC>

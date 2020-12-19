@@ -20,18 +20,25 @@ Linnaeo::Linnaeo(QWidget *parent)
     ui->setupUi(this);
     ui->optionsPanel->hide();
 
-    QStandardItemModel *seqModel = new QStandardItemModel(this);
-    QStandardItemModel *alignModel = new QStandardItemModel(this);
-    seqModel->setHorizontalHeaderLabels(QStringList("Sequences"));
-    alignModel->setHorizontalHeaderLabels(QStringList("Alignments"));
+    // TreeViews setup
+    seqModel = new QStandardItemModel(this);
+    this->seqModel->setHorizontalHeaderLabels(QStringList("Sequences"));
     QStandardItem *seqRoot = seqModel->invisibleRootItem();
-    QStandardItem *alignRoot = alignModel->invisibleRootItem();
     QStandardItem *seqStartFolderItem = new QStandardItem(QString("Uncategorized"));
-    seqStartFolderItem->setIcon(QFileIconProvider().icon(QFileIconProvider::Folder));
+    seqStartFolderItem->setData(QIcon(":/icons/ui/folder.svg"),Qt::DecorationRole);
     seqRoot->appendRow(seqStartFolderItem);
+    seqStartFolderItem->appendRow(new QStandardItem(QString("Testing")));
+    connect(ui->seqTreeView, &QTreeView::expanded, this, &Linnaeo::expand_seqTreeView_item);
+    connect(ui->seqTreeView, &QTreeView::collapsed, this, &Linnaeo::collapse_seqTreeView_item);
+
+    alignModel = new QStandardItemModel(this);
+    alignModel->setHorizontalHeaderLabels(QStringList("Alignments"));
+    QStandardItem *alignRoot = alignModel->invisibleRootItem();
     QStandardItem *alignStartFolderItem = new QStandardItem(QString("Uncategorized"));
-    alignStartFolderItem->setIcon(QFileIconProvider().icon(QFileIconProvider::Folder));
+    alignStartFolderItem->setData(QIcon(":/icons/ui/folder.svg"),Qt::DecorationRole);
     alignRoot->appendRow(alignStartFolderItem);
+    connect(ui->alignTreeView, &QTreeView::expanded, this, &Linnaeo::expand_alignTreeView_item);
+    connect(ui->alignTreeView, &QTreeView::collapsed, this, &Linnaeo::collapse_alignTreeView_item);
 
     ui->seqTreeView->setModel(seqModel);
     ui->alignTreeView->setModel(alignModel);
@@ -82,4 +89,28 @@ void Linnaeo::on_actionQuit_triggered()
     //    for(iter=this->procIds.begin();iter != this->procIds.end(); iter++){
     //
     this->close();
+}
+
+// OTHER SLOTS
+void Linnaeo::expand_seqTreeView_item(const QModelIndex &index)
+{
+    spdlog::debug("Expanded SeqView tree at position {}", index.row());
+    this->seqModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder-open.svg"),Qt::DecorationRole);
+}
+
+void Linnaeo::collapse_seqTreeView_item(const QModelIndex &index)
+{
+    spdlog::debug("Expanded SeqView tree at position {}", index.row());
+    this->seqModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder.svg"),Qt::DecorationRole);
+}
+void Linnaeo::expand_alignTreeView_item(const QModelIndex &index)
+{
+    spdlog::debug("Expanded AlignView tree at position {}", index.row());
+    this->alignModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder-open.svg"),Qt::DecorationRole);
+}
+
+void Linnaeo::collapse_alignTreeView_item(const QModelIndex &index)
+{
+    spdlog::debug("Expanded AlignView tree at position {}", index.row());
+    this->alignModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder.svg"),Qt::DecorationRole);
 }

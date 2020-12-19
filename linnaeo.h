@@ -28,6 +28,10 @@ private slots:
     void on_actionShow_Viewer_Options_triggered(bool checked);
     void on_actionPreferences_triggered();
     void on_actionQuit_triggered();
+    void expand_seqTreeView_item(const QModelIndex &index);
+    void collapse_seqTreeView_item(const QModelIndex &index);
+    void expand_alignTreeView_item(const QModelIndex &index);
+    void collapse_alignTreeView_item(const QModelIndex &index);
 };
 
 #endif // LINNAEO_H
