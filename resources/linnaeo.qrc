@@ -12,5 +12,14 @@
         <file>icons/ui/trash.svg</file>
         <file>icons/ui/file-import.svg</file>
         <file>icons/ui/file-export.svg</file>
+        <file>icons/ui/edit.svg</file>
+        <file>icons/ui/sliders-h.svg</file>
+        <file>icons/ui/save.svg</file>
+        <file>icons/ui/folder-open-line.svg</file>
+        <file>icons/ui/file-medical.svg</file>
+        <file>icons/ui/copy.svg</file>
+        <file>icons/ui/paste.svg</file>
+        <file>icons/ui/indent.svg</file>
+        <file>icons/ui/file-alt-line.svg</file>
     </qresource>
 </RCC>

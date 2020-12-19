@@ -8,33 +8,45 @@
 #include <QStandardItemModel>
 #include <QStandardItem>
 #include <QFileIconProvider>
+#include "folderitem.h"
 
 
 /// LINNAEO
 /// Oh shit welcome to the bitchin' C++ version.
 
-Linnaeo::Linnaeo(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::Linnaeo)
+Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
 {
     ui->setupUi(this);
     ui->optionsPanel->hide();
+    QStandardItem *seqRoot;
+    QStandardItem *alignRoot;
 
-    // TreeViews setup
+    // Sequence TreeView setup
     seqModel = new QStandardItemModel(this);
     this->seqModel->setHorizontalHeaderLabels(QStringList("Sequences"));
-    QStandardItem *seqRoot = seqModel->invisibleRootItem();
-    QStandardItem *seqStartFolderItem = new QStandardItem(QString("Uncategorized"));
+    seqRoot = seqModel->invisibleRootItem();
+
+    seqStartFolderItem = new QStandardItem(QString("Uncategorized"));
     seqStartFolderItem->setData(QIcon(":/icons/ui/folder.svg"),Qt::DecorationRole);
     seqRoot->appendRow(seqStartFolderItem);
     seqStartFolderItem->appendRow(new QStandardItem(QString("Testing")));
     connect(ui->seqTreeView, &QTreeView::expanded, this, &Linnaeo::expand_seqTreeView_item);
     connect(ui->seqTreeView, &QTreeView::collapsed, this, &Linnaeo::collapse_seqTreeView_item);
 
+    // Connect tool buttons
+    //ui->quickAlign
+    ui->addSequenceButton->setDefaultAction(ui->actionAdd_Sequence);
+    ui->importSequenceButton->setDefaultAction(ui->actionSequence_from_file);
+    ui->addSequenceFolderButton->setDefaultAction(ui->actionAdd_Folder_to_Sequence_Panel);
+    //ui->editSequenceButton
+    ui->exportSequenceButton->setDefaultAction(ui->actionExportSequence);
+    ui->deleteSequenceButton->setDefaultAction(ui->actionDelete_Selected_Sequences);
+
+
     alignModel = new QStandardItemModel(this);
     alignModel->setHorizontalHeaderLabels(QStringList("Alignments"));
-    QStandardItem *alignRoot = alignModel->invisibleRootItem();
-    QStandardItem *alignStartFolderItem = new QStandardItem(QString("Uncategorized"));
+    alignRoot = alignModel->invisibleRootItem();
+    alignStartFolderItem = new QStandardItem(QString("Uncategorized"));
     alignStartFolderItem->setData(QIcon(":/icons/ui/folder.svg"),Qt::DecorationRole);
     alignRoot->appendRow(alignStartFolderItem);
     connect(ui->alignTreeView, &QTreeView::expanded, this, &Linnaeo::expand_alignTreeView_item);
@@ -100,7 +112,7 @@ void Linnaeo::expand_seqTreeView_item(const QModelIndex &index)
 
 void Linnaeo::collapse_seqTreeView_item(const QModelIndex &index)
 {
-    spdlog::debug("Expanded SeqView tree at position {}", index.row());
+    spdlog::debug("Collapsed SeqView tree at position {}", index.row());
     this->seqModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder.svg"),Qt::DecorationRole);
 }
 void Linnaeo::expand_alignTreeView_item(const QModelIndex &index)
@@ -111,6 +123,63 @@ void Linnaeo::expand_alignTreeView_item(const QModelIndex &index)
 
 void Linnaeo::collapse_alignTreeView_item(const QModelIndex &index)
 {
-    spdlog::debug("Expanded AlignView tree at position {}", index.row());
+    spdlog::debug("Collapsed AlignView tree at position {}", index.row());
     this->alignModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder.svg"),Qt::DecorationRole);
+}
+
+void Linnaeo::on_actionAdd_Sequence_triggered()
+/// Add a new sequence to the sequence tree. Opens up the "New Sequence" dialog.
+/// By default, adds to the permanent "uncategorized" folder (hidden if empty).
+/// Otherwise, it will add to whatever folder is selected.
+{
+    QList<QModelIndex>indexes = ui->seqTreeView->selectionModel()->selectedIndexes();
+    QStandardItem *newSeq = new QStandardItem(QString("Default"));
+    //TODO: Launch New Seq Panel
+    if (indexes.size() == 0) {
+        this->seqStartFolderItem->appendRow(newSeq);
+        ui->seqTreeView->expand(this->seqStartFolderItem->index());
+    }
+
+}
+
+void Linnaeo::on_actionDelete_Selected_Sequences_triggered()
+{
+    QList<QModelIndex> indexes = ui->seqTreeView->selectionModel()->selectedIndexes();
+    if(indexes.contains(this->seqStartFolderItem->index()))
+    {
+        spdlog::debug("Removing uncategorized folder from the selected indexes");
+        indexes.removeAt(indexes.indexOf(this->seqStartFolderItem->index()));
+    }
+
+    if (indexes.size() >= 1)
+    {
+        QStandardItem *item;
+        for(const QModelIndex& index : indexes)
+        {
+            item = this->seqModel->itemFromIndex(index);
+            this->seqModel->removeRow(item->row(),item->parent()->index());
+            spdlog::debug("Deleted sequence at index {}", index.row());
+
+        }
+    }
+}
+
+void Linnaeo::on_actionAdd_Folder_to_Sequence_Panel_triggered()
+{
+    QStandardItem *newFolder;
+    QList<QModelIndex> indexes = ui->seqTreeView->selectionModel()->selectedIndexes();
+    if(indexes.contains(this->seqStartFolderItem->index()))
+    {
+        // Add new top level directory
+        newFolder = new QStandardItem(QString(""))
+        this->seqModel->invisibleRootItem()->insertRow(new QStandardItem(QString("New Folder")))
+    }
+    else if(indexes.at(0).parent() == this->seqStartFolderItem->index())
+    {
+        // Add new top level directory
+    }
+    else
+    {
+        // Add directory within parent
+    }
 }

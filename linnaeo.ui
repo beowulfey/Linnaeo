@@ -122,21 +122,34 @@
                 <number>2</number>
                </property>
                <item>
-                <widget class="QToolButton" name="addSequenceFolder">
+                <widget class="QToolButton" name="quickAlignButton">
                  <property name="toolTip">
-                  <string>Add folder to sequence viewer</string>
+                  <string>Generate alignment from selected sequences</string>
                  </property>
                  <property name="text">
                   <string>...</string>
                  </property>
                  <property name="icon">
                   <iconset resource="resources/linnaeo.qrc">
-                   <normaloff>:/icons/ui/folder-plus.svg</normaloff>:/icons/ui/folder-plus.svg</iconset>
+                   <normaloff>:/icons/ui/indent.svg</normaloff>:/icons/ui/indent.svg</iconset>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QToolButton" name="addSequence">
+                <spacer name="horizontalSpacer_4">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QToolButton" name="addSequenceButton">
                  <property name="toolTip">
                   <string>Add new sequence (opens window)</string>
                  </property>
@@ -150,13 +163,62 @@
                 </widget>
                </item>
                <item>
-                <widget class="QToolButton" name="importSequence">
+                <widget class="QToolButton" name="importSequenceButton">
                  <property name="text">
                   <string>...</string>
                  </property>
                  <property name="icon">
                   <iconset resource="resources/linnaeo.qrc">
                    <normaloff>:/icons/ui/file-import.svg</normaloff>:/icons/ui/file-import.svg</iconset>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QToolButton" name="addSequenceFolderButton">
+                 <property name="toolTip">
+                  <string>Add folder to sequence viewer</string>
+                 </property>
+                 <property name="text">
+                  <string>...</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="resources/linnaeo.qrc">
+                   <normaloff>:/icons/ui/folder-plus.svg</normaloff>:/icons/ui/folder-plus.svg</iconset>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="Line" name="line_7">
+                 <property name="lineWidth">
+                  <number>0</number>
+                 </property>
+                 <property name="midLineWidth">
+                  <number>1</number>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QToolButton" name="editSequenceButton">
+                 <property name="text">
+                  <string>...</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="resources/linnaeo.qrc">
+                   <normaloff>:/icons/ui/edit.svg</normaloff>:/icons/ui/edit.svg</iconset>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QToolButton" name="exportSequenceButton">
+                 <property name="text">
+                  <string>...</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="resources/linnaeo.qrc">
+                   <normaloff>:/icons/ui/file-export.svg</normaloff>:/icons/ui/file-export.svg</iconset>
                  </property>
                 </widget>
                </item>
@@ -174,18 +236,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QToolButton" name="exportSequence">
-                 <property name="text">
-                  <string>...</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="resources/linnaeo.qrc">
-                   <normaloff>:/icons/ui/file-export.svg</normaloff>:/icons/ui/file-export.svg</iconset>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QToolButton" name="deleteSequence">
+                <widget class="QToolButton" name="deleteSequenceButton">
                  <property name="text">
                   <string>...</string>
                  </property>
@@ -194,19 +245,6 @@
                    <normaloff>:/icons/ui/trash.svg</normaloff>:/icons/ui/trash.svg</iconset>
                  </property>
                 </widget>
-               </item>
-               <item>
-                <spacer name="horizontalSpacer_2">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
                </item>
               </layout>
              </widget>
@@ -234,7 +272,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>297</width>
-                 <height>201</height>
+                 <height>198</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout">
@@ -263,6 +301,27 @@
                   </property>
                   <property name="toolTip">
                    <string>Export sequence to file</string>
+                  </property>
+                  <property name="editTriggers">
+                   <set>QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
+                  </property>
+                  <property name="dragEnabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="selectionMode">
+                   <enum>QAbstractItemView::ExtendedSelection</enum>
+                  </property>
+                  <property name="selectionBehavior">
+                   <enum>QAbstractItemView::SelectRows</enum>
+                  </property>
+                  <property name="indentation">
+                   <number>10</number>
+                  </property>
+                  <property name="animated">
+                   <bool>true</bool>
+                  </property>
+                  <property name="headerHidden">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -309,18 +368,20 @@
                 <number>2</number>
                </property>
                <item>
-                <widget class="QToolButton" name="addAlignmentFolder">
-                 <property name="text">
-                  <string>...</string>
+                <spacer name="horizontalSpacer_3">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
                  </property>
-                 <property name="icon">
-                  <iconset resource="resources/linnaeo.qrc">
-                   <normaloff>:/icons/ui/folder-plus.svg</normaloff>:/icons/ui/folder-plus.svg</iconset>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
                  </property>
-                </widget>
+                </spacer>
                </item>
                <item>
-                <widget class="QToolButton" name="addAlignment">
+                <widget class="QToolButton" name="addAlignmentButton">
                  <property name="text">
                   <string>...</string>
                  </property>
@@ -331,13 +392,59 @@
                 </widget>
                </item>
                <item>
-                <widget class="QToolButton" name="importAlignment">
+                <widget class="QToolButton" name="importAlignmentButton">
                  <property name="text">
                   <string>...</string>
                  </property>
                  <property name="icon">
                   <iconset resource="resources/linnaeo.qrc">
                    <normaloff>:/icons/ui/file-import.svg</normaloff>:/icons/ui/file-import.svg</iconset>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QToolButton" name="addAlignmentFolderButton">
+                 <property name="text">
+                  <string>...</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="resources/linnaeo.qrc">
+                   <normaloff>:/icons/ui/folder-plus.svg</normaloff>:/icons/ui/folder-plus.svg</iconset>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="Line" name="line_8">
+                 <property name="lineWidth">
+                  <number>0</number>
+                 </property>
+                 <property name="midLineWidth">
+                  <number>1</number>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QToolButton" name="editAlignmentButton">
+                 <property name="text">
+                  <string>...</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="resources/linnaeo.qrc">
+                   <normaloff>:/icons/ui/edit.svg</normaloff>:/icons/ui/edit.svg</iconset>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QToolButton" name="exportAlignmentButton">
+                 <property name="text">
+                  <string>...</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="resources/linnaeo.qrc">
+                   <normaloff>:/icons/ui/file-export.svg</normaloff>:/icons/ui/file-export.svg</iconset>
                  </property>
                 </widget>
                </item>
@@ -355,18 +462,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QToolButton" name="exportAlignment">
-                 <property name="text">
-                  <string>...</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="resources/linnaeo.qrc">
-                   <normaloff>:/icons/ui/file-export.svg</normaloff>:/icons/ui/file-export.svg</iconset>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QToolButton" name="deleteAlignment">
+                <widget class="QToolButton" name="deleteAlignmentButton">
                  <property name="text">
                   <string>...</string>
                  </property>
@@ -375,19 +471,6 @@
                    <normaloff>:/icons/ui/trash.svg</normaloff>:/icons/ui/trash.svg</iconset>
                  </property>
                 </widget>
-               </item>
-               <item>
-                <spacer name="horizontalSpacer_3">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
                </item>
               </layout>
              </widget>
@@ -415,7 +498,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>298</width>
-                 <height>200</height>
+                 <height>197</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -443,10 +526,10 @@
                    </sizepolicy>
                   </property>
                   <property name="headerHidden">
-                   <bool>false</bool>
+                   <bool>true</bool>
                   </property>
                   <attribute name="headerVisible">
-                   <bool>true</bool>
+                   <bool>false</bool>
                   </attribute>
                  </widget>
                 </item>
@@ -528,7 +611,7 @@
              <x>0</x>
              <y>0</y>
              <width>695</width>
-             <height>482</height>
+             <height>476</height>
             </rect>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -867,8 +950,13 @@
     </property>
     <addaction name="actionAdd_Sequence"/>
     <addaction name="actionGet_Online_Sequence"/>
+    <addaction name="actionQuick_Align"/>
+    <addaction name="actionAdd_Folder_to_Sequence_Panel"/>
+    <addaction name="actionDelete_Selected_Sequences"/>
     <addaction name="separator"/>
     <addaction name="actionMake_Alignment"/>
+    <addaction name="actionAdd_Alignment_Folder"/>
+    <addaction name="actionDelete_Selected_Alignments"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -885,13 +973,21 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionAdd_Sequence"/>
-   <addaction name="actionDelete"/>
-   <addaction name="actionGet_Online_Sequence"/>
-   <addaction name="actionMake_Alignment"/>
+   <addaction name="actionNew"/>
+   <addaction name="actionOpen"/>
+   <addaction name="actionSave_Workspace"/>
+   <addaction name="separator"/>
+   <addaction name="actionCopy"/>
+   <addaction name="actionPaste"/>
+   <addaction name="separator"/>
    <addaction name="actionShow_Viewer_Options"/>
+   <addaction name="separator"/>
   </widget>
   <action name="actionAdd_Sequence">
+   <property name="icon">
+    <iconset resource="resources/linnaeo.qrc">
+     <normaloff>:/icons/ui/plus.svg</normaloff>:/icons/ui/plus.svg</iconset>
+   </property>
    <property name="text">
     <string>Add Sequence</string>
    </property>
@@ -900,6 +996,10 @@
    </property>
   </action>
   <action name="actionSave_Workspace">
+   <property name="icon">
+    <iconset resource="resources/linnaeo.qrc">
+     <normaloff>:/icons/ui/save.svg</normaloff>:/icons/ui/save.svg</iconset>
+   </property>
    <property name="text">
     <string>Save</string>
    </property>
@@ -916,6 +1016,10 @@
    </property>
   </action>
   <action name="actionCopy">
+   <property name="icon">
+    <iconset resource="resources/linnaeo.qrc">
+     <normaloff>:/icons/ui/copy.svg</normaloff>:/icons/ui/copy.svg</iconset>
+   </property>
    <property name="text">
     <string>Copy</string>
    </property>
@@ -924,6 +1028,10 @@
    </property>
   </action>
   <action name="actionPaste">
+   <property name="icon">
+    <iconset resource="resources/linnaeo.qrc">
+     <normaloff>:/icons/ui/paste.svg</normaloff>:/icons/ui/paste.svg</iconset>
+   </property>
    <property name="text">
     <string>Paste</string>
    </property>
@@ -932,6 +1040,10 @@
    </property>
   </action>
   <action name="actionNew">
+   <property name="icon">
+    <iconset resource="resources/linnaeo.qrc">
+     <normaloff>:/icons/ui/file-medical.svg</normaloff>:/icons/ui/file-medical.svg</iconset>
+   </property>
    <property name="text">
     <string>New</string>
    </property>
@@ -943,26 +1055,46 @@
    </property>
   </action>
   <action name="actionSequence_from_file">
+   <property name="icon">
+    <iconset resource="resources/linnaeo.qrc">
+     <normaloff>:/icons/ui/file-import.svg</normaloff>:/icons/ui/file-import.svg</iconset>
+   </property>
    <property name="text">
     <string>Sequence from file</string>
    </property>
   </action>
   <action name="actionAlignment_from_file">
+   <property name="icon">
+    <iconset resource="resources/linnaeo.qrc">
+     <normaloff>:/icons/ui/file-import.svg</normaloff>:/icons/ui/file-import.svg</iconset>
+   </property>
    <property name="text">
     <string>Alignment from file</string>
    </property>
   </action>
   <action name="actionExportSequence">
+   <property name="icon">
+    <iconset resource="resources/linnaeo.qrc">
+     <normaloff>:/icons/ui/file-export.svg</normaloff>:/icons/ui/file-export.svg</iconset>
+   </property>
    <property name="text">
     <string>Sequence</string>
    </property>
   </action>
   <action name="actionExportAlignment">
+   <property name="icon">
+    <iconset resource="resources/linnaeo.qrc">
+     <normaloff>:/icons/ui/file-export.svg</normaloff>:/icons/ui/file-export.svg</iconset>
+   </property>
    <property name="text">
     <string>Alignment</string>
    </property>
   </action>
   <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="resources/linnaeo.qrc">
+     <normaloff>:/icons/ui/folder-open-line.svg</normaloff>:/icons/ui/folder-open-line.svg</iconset>
+   </property>
    <property name="text">
     <string>Open</string>
    </property>
@@ -992,6 +1124,10 @@
    </property>
   </action>
   <action name="actionMake_Alignment">
+   <property name="icon">
+    <iconset resource="resources/linnaeo.qrc">
+     <normaloff>:/icons/ui/plus.svg</normaloff>:/icons/ui/plus.svg</iconset>
+   </property>
    <property name="text">
     <string>Make Alignment</string>
    </property>
@@ -1008,8 +1144,60 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="resources/linnaeo.qrc">
+     <normaloff>:/icons/ui/sliders-h.svg</normaloff>:/icons/ui/sliders-h.svg</iconset>
+   </property>
    <property name="text">
     <string>Show Viewer Options</string>
+   </property>
+   <property name="toolTip">
+    <string>Open viewer options panel</string>
+   </property>
+  </action>
+  <action name="actionDelete_Selected_Sequences">
+   <property name="icon">
+    <iconset resource="resources/linnaeo.qrc">
+     <normaloff>:/icons/ui/trash.svg</normaloff>:/icons/ui/trash.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Delete Selected Sequences</string>
+   </property>
+  </action>
+  <action name="actionDelete_Selected_Alignments">
+   <property name="icon">
+    <iconset resource="resources/linnaeo.qrc">
+     <normaloff>:/icons/ui/trash.svg</normaloff>:/icons/ui/trash.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Delete Selected Alignments</string>
+   </property>
+  </action>
+  <action name="actionAdd_Folder_to_Sequence_Panel">
+   <property name="icon">
+    <iconset resource="resources/linnaeo.qrc">
+     <normaloff>:/icons/ui/folder-plus.svg</normaloff>:/icons/ui/folder-plus.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Add Sequence Folder</string>
+   </property>
+  </action>
+  <action name="actionAdd_Alignment_Folder">
+   <property name="icon">
+    <iconset resource="resources/linnaeo.qrc">
+     <normaloff>:/icons/ui/folder-plus.svg</normaloff>:/icons/ui/folder-plus.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Add Alignment Folder</string>
+   </property>
+  </action>
+  <action name="actionQuick_Align">
+   <property name="icon">
+    <iconset resource="resources/linnaeo.qrc">
+     <normaloff>:/icons/ui/indent.svg</normaloff>:/icons/ui/indent.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Quick Align</string>
    </property>
   </action>
  </widget>

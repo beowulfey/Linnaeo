@@ -21,7 +21,10 @@ private:
     Ui::Linnaeo *ui;
     //QVector<qint64> procIds;
     QStandardItemModel *seqModel = nullptr;
+    QStandardItem *seqStartFolderItem = nullptr;
     QStandardItemModel *alignModel = nullptr;
+    QStandardItem *alignStartFolderItem = nullptr;
+
 
 private slots:
     void on_actionNew_triggered();
@@ -32,6 +35,9 @@ private slots:
     void collapse_seqTreeView_item(const QModelIndex &index);
     void expand_alignTreeView_item(const QModelIndex &index);
     void collapse_alignTreeView_item(const QModelIndex &index);
+    void on_actionAdd_Sequence_triggered();
+    void on_actionDelete_Selected_Sequences_triggered();
+    void on_actionAdd_Folder_to_Sequence_Panel_triggered();
 };
 
 #endif // LINNAEO_H
