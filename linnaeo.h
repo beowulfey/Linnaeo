@@ -19,6 +19,12 @@ public:
 
 private:
     Ui::Linnaeo *ui;
+    enum ItemType
+    {
+        FOLDER=Qt::UserRole,
+        SEQUENCE=Qt::UserRole+1,
+        ALIGNMENT=Qt::UserRole+2
+    };
     //QVector<qint64> procIds;
     QStandardItemModel *seqModel = nullptr;
     QStandardItem *seqStartFolderItem = nullptr;

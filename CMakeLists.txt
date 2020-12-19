@@ -30,8 +30,8 @@ preferences.ui
 searchuniprot.h
 searchuniprot.cpp
 searchuniprot.ui
-folderitem.cpp
-folderitem.h
+#folderitem.cpp
+#folderitem.h
 resources/linnaeo.qrc
 #MACOSX_BUNDLE
 #${APP_ICON_RESOURCE_WINDOWS}

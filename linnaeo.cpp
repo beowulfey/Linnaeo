@@ -9,7 +9,7 @@
 #include <QStandardItem>
 #include <QFileIconProvider>
 #include "folderitem.h"
-
+#include <QPersistentModelIndex>
 
 /// LINNAEO
 /// Oh shit welcome to the bitchin' C++ version.
@@ -22,18 +22,14 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     QStandardItem *alignRoot;
 
     // Sequence TreeView setup
-    seqModel = new QStandardItemModel(this);
+    this->seqModel = new QStandardItemModel(this);
     this->seqModel->setHorizontalHeaderLabels(QStringList("Sequences"));
-    seqRoot = seqModel->invisibleRootItem();
-    seqStartFolderItem = new FolderItem(QString("Uncategorized"));
-
-    //seqStartFolderItem = new QStandardItem(QString("Uncategorized"));
-    //seqStartFolderItem->setData(QIcon(":/icons/ui/folder.svg"),Qt::DecorationRole);
+    seqRoot = this->seqModel->invisibleRootItem();
+    seqStartFolderItem = new QStandardItem(QIcon(":/icons/ui/folder.svg"),QString("Uncategorized"));
+    seqStartFolderItem->setData(true, FOLDER);
     seqRoot->appendRow(seqStartFolderItem);
-    seqStartFolderItem->appendRow(new QStandardItem(QString("Testing")));
     connect(ui->seqTreeView, &QTreeView::expanded, this, &Linnaeo::expand_seqTreeView_item);
     connect(ui->seqTreeView, &QTreeView::collapsed, this, &Linnaeo::collapse_seqTreeView_item);
-
     // Connect tool buttons
     //ui->quickAlign
     ui->addSequenceButton->setDefaultAction(ui->actionAdd_Sequence);
@@ -71,9 +67,7 @@ void Linnaeo::on_actionNew_triggered()
 {
     qint64* pid;
     QProcess::startDetached(QCoreApplication::applicationFilePath(),{},QDir::homePath(),pid);
-    spdlog::info("Started proc at {}", *pid);
-    //this->procIds.append(*pid);
-
+    spdlog::info("Started new window with procID {}", *pid);
 }
 
 // VIEW MENU SLOTS
@@ -135,74 +129,101 @@ void Linnaeo::on_actionAdd_Sequence_triggered()
 {
     QList<QModelIndex>indexes = ui->seqTreeView->selectionModel()->selectedIndexes();
     QStandardItem *newSeq = new QStandardItem(QString("Default"));
-    //TODO: Launch New Seq Panel
-
-    if (indexes.size() == 0)                                                                                    //|| this->seqModel->itemFromIndex(indexes.at(0))->parent() == NULL)
+    newSeq->setData(false,FOLDER);
+    newSeq->setDropEnabled(false);
+    QStandardItem *item;
+    bool found = false;
+    for(const QModelIndex& index : indexes)
     {
-        // If nothing is selected, add the new sequence to the "uncategorized" folder.
+        // Check each selected item (if any) to see if it is a folder. Add it to the first
+        // folder it finds, otherwise add it to the "uncategorized" folder.
+        item = this->seqModel->itemFromIndex(index);
+        if (item->data(FOLDER).toBool())
+        {
+            item->appendRow(newSeq);
+            ui->seqTreeView->expand(index);
+            found = true;
+            break;
+        }
+    }
+    if (!found)
+    {
         this->seqStartFolderItem->appendRow(newSeq);
         ui->seqTreeView->expand(this->seqStartFolderItem->index());
     }
-    else
-    {
-        QStandardItem *item;
-        for(const QModelIndex& index : indexes)
-        {
-            item = this->seqModel->itemFromIndex(index);
-            std::cout << item->type() << std::endl;
-        }
+    //TODO: Launch New Seq Panel here. Will override placement of new sequence anyway.
 
-    }
-
-
-
-
-        //if (this->seqModel->itemFromIndex(indexes.at(0))->type() == 1000)
-        // If this is a folder
-    //{
-      //  this->seqModel->itemFromIndex(indexes.at(0))->parent()->appendRow(newSeq);
-       // ui->seqTreeView->expand(this->seqStartFolderItem->index());
-    //}
 }
 
 void Linnaeo::on_actionDelete_Selected_Sequences_triggered()
 {
     QList<QModelIndex> indexes = ui->seqTreeView->selectionModel()->selectedIndexes();
-    if(indexes.contains(this->seqStartFolderItem->index()))
-    {
-        spdlog::debug("Removing uncategorized folder from the selected indexes");
-        indexes.removeAt(indexes.indexOf(this->seqStartFolderItem->index()));
-    }
+    QList<QPersistentModelIndex> pindexes;
 
-    if (indexes.size() >= 1)
+    if(indexes.size() >= 1)
     {
-        QStandardItem *item;
-        for(const QModelIndex& index : indexes)
+        foreach (const QModelIndex &index, indexes)
         {
-            item = this->seqModel->itemFromIndex(index);
-            this->seqModel->removeRow(item->row(),item->parent()->index());
-            spdlog::debug("Deleted sequence at index {}", index.row());
-
+            if(index != this->seqStartFolderItem->index())
+            {
+                pindexes << QPersistentModelIndex(index);
+            }
         }
+        foreach (const QPersistentModelIndex &i, pindexes)
+            this->seqModel->removeRow(i.row(), i.parent());
     }
 }
 
 void Linnaeo::on_actionAdd_Folder_to_Sequence_Panel_triggered()
+/// Adds a folder to the sequence panel. Without having anything selected, it will insert the
+/// new folder above the "Uncategorized" folder. If things are selected, it will add to the first folder
+/// it finds; otherwise, it will add to the parent of the selected object.
 {
-    FolderItem *newFolder = new FolderItem(QString("New Folder"));
+    QStandardItem *newFolder = new QStandardItem(QIcon(":/icons/ui/folder.svg"),QString("New Folder"));
+    newFolder->setData(true,FOLDER);
     QList<QModelIndex> indexes = ui->seqTreeView->selectionModel()->selectedIndexes();
-    if (indexes.size() == 0 || this->seqModel->itemFromIndex(indexes.at(0))->parent() == NULL)
+    if (indexes.size() == 0)// || this->seqModel->itemFromIndex(indexes.at(0))->parent() == NULL)
     {
-        // Add new top level directory
+        // Nothing selected: add new top level directory.
         this->seqModel->invisibleRootItem()->insertRow(0, newFolder);
         ui->seqTreeView->edit(newFolder->index());
     }
     else
     {
-        // Add directory within parent
-        this->seqModel->itemFromIndex(indexes.at(0).parent())->appendRow(newFolder);
-        ui->seqTreeView->edit(newFolder->index());
+        QStandardItem *item;
+        bool found = false;
+        for(const QModelIndex& index : indexes)
+        {
+            // Check each selected item (if any) to see if it is a folder. Add it to the first
+            // folder it finds, otherwise add it to the "uncategorized" folder.
+            item = this->seqModel->itemFromIndex(index);
+            if (item->data(FOLDER).toBool())
+            {
+                item->appendRow(newFolder);
+                ui->seqTreeView->expand(index);
+                found = true;
+                break;
+            }
+        }
+        if (!found)
+        {
+            if(this->seqModel->itemFromIndex(indexes.at(0).parent()) != NULL)
+            {
+                this->seqModel->itemFromIndex(indexes.at(0).parent())->appendRow(newFolder);
+            }
+            else
+            {
+                this->seqModel->invisibleRootItem()->insertRow(0,newFolder);
+            }
+        }
 
+
+
+        //{
+        // Add directory within parent
+        //if
+        //this->seqModel->itemFromIndex(indexes.at(0).parent())->appendRow(newFolder);
+        //ui->seqTreeView->edit(newFolder->index());
     }
 
 }
