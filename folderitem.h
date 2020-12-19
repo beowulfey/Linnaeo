@@ -5,9 +5,9 @@
 
 class FolderItem : public QStandardItem
 {
-    Q_OBJECT
 public:
     FolderItem();
+    FolderItem(const QString &text);
     int type();
 
 private:
