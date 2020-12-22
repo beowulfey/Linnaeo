@@ -28,12 +28,23 @@
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="seqNameEdit"/>
+    <widget class="QLineEdit" name="seqNameEdit">
+     <property name="placeholderText">
+      <string>Provide a name for your sequence</string>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QLabel" name="label_2">
      <property name="text">
       <string>Sequence</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="SeqEntryTextEdit" name="seqEntryEditor">
+     <property name="placeholderText">
+      <string>Paste sequence as FASTA or plain text here</string>
      </property>
     </widget>
    </item>
@@ -49,6 +60,16 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SeqEntryTextEdit</class>
+   <extends>QPlainTextEdit</extends>
+   <header>seqentrytextedit.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>seqNameEdit</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -58,8 +79,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>257</x>
+     <y>432</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -74,8 +95,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>325</x>
+     <y>432</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>

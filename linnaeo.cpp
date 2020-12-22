@@ -2,6 +2,7 @@
 #include "./ui_linnaeo.h"
 #include "seqeditor.h"
 #include "preferences.h"
+#include "searchuniprot.h"
 #include <QProcess>
 #include <QDir>
 #include <QStandardItemModel>
@@ -11,8 +12,6 @@
 #include <spdlog/spdlog.h>
 #include <iostream>
 
-/// LINNAEO
-/// Oh shit welcome to the bitchin' C++ version.
 
 Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
 {
@@ -117,29 +116,7 @@ void Linnaeo::on_actionQuit_triggered()
     this->close();
 }
 
-// OTHER SLOTS
-void Linnaeo::expand_seqTreeView_item(const QModelIndex &index)
-{
-    spdlog::debug("Expanded SeqView tree at position {}", index.row());
-    this->seqModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder-open.svg"),Qt::DecorationRole);
-}
 
-void Linnaeo::collapse_seqTreeView_item(const QModelIndex &index)
-{
-    spdlog::debug("Collapsed SeqView tree at position {}", index.row());
-    this->seqModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder.svg"),Qt::DecorationRole);
-}
-void Linnaeo::expand_alignTreeView_item(const QModelIndex &index)
-{
-    spdlog::debug("Expanded AlignView tree at position {}", index.row());
-    this->alignModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder-open.svg"),Qt::DecorationRole);
-}
-
-void Linnaeo::collapse_alignTreeView_item(const QModelIndex &index)
-{
-    spdlog::debug("Collapsed AlignView tree at position {}", index.row());
-    this->alignModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder.svg"),Qt::DecorationRole);
-}
 
 void Linnaeo::on_actionAdd_Sequence_triggered()
 /// Add a new sequence to the sequence tree. Opens up the "New Sequence" dialog.
@@ -152,34 +129,42 @@ void Linnaeo::on_actionAdd_Sequence_triggered()
         QString name, seq;
         name = seqEdit.submittedName();
         seq = seqEdit.submittedSequence();
-        QList<QModelIndex>indexes = ui->seqTreeView->selectionModel()->selectedIndexes();
-        QStandardItem *newSeq = new QStandardItem(name);
-        newSeq->setData(false,FOLDER);
-        newSeq->setData(seq,SEQUENCE);
-        newSeq->setDropEnabled(false);
-        QStandardItem *item;
-        bool found = false;
-        for(const QModelIndex& index : indexes)
+        if(name != "" && seq != "")
         {
-            // Check each selected item (if any) to see if it is a folder. Add it to the first
-            // folder it finds, otherwise add it to the "uncategorized" folder.
-            item = this->seqModel->itemFromIndex(index);
-            if (item->data(FOLDER).toBool())
+            QList<QModelIndex>indexes = ui->seqTreeView->selectionModel()->selectedIndexes();
+            QStandardItem *newSeq = new QStandardItem(name);
+            newSeq->setData(false,FOLDER);
+            newSeq->setData(seq,SEQUENCE);
+            newSeq->setDropEnabled(false);
+            QStandardItem *item;
+            bool found = false;
+            for(const QModelIndex& index : indexes)
             {
-                item->appendRow(newSeq);
-                ui->seqTreeView->expand(index);
-                found = true;
-                break;
+                // Check each selected item (if any) to see if it is a folder. Add it to the first
+                // folder it finds, otherwise add it to the "uncategorized" folder.
+                item = this->seqModel->itemFromIndex(index);
+                if (item->data(FOLDER).toBool())
+                {
+                    item->appendRow(newSeq);
+                    ui->seqTreeView->expand(index);
+                    found = true;
+                    break;
+                }
             }
+            if (!found)
+            {
+                this->seqStartFolderItem->appendRow(newSeq);
+                ui->seqTreeView->expand(this->seqStartFolderItem->index());
+            }
+            // TODO: Extract this step through a formatting function!
+            ui->seqBrowser->setText(newSeq->data(SEQUENCE).toString());
         }
-        if (!found)
+        else
         {
-            this->seqStartFolderItem->appendRow(newSeq);
-            ui->seqTreeView->expand(this->seqStartFolderItem->index());
+            spdlog::warn("At least one of Name or Sequence field was left empty; please try again!");
+            // TODO: Also give status alert here.
         }
     }
-    //TODO: Launch New Seq Panel here. Will override placement of new sequence anyway.
-
 }
 
 void Linnaeo::on_actionDelete_Selected_Sequences_triggered()
@@ -312,4 +297,41 @@ void Linnaeo::on_actionDelete_Selected_Alignments_triggered()
         foreach (const QPersistentModelIndex &i, pindexes)
             this->alignModel->removeRow(i.row(), i.parent());
     }
+}
+
+void Linnaeo::on_actionEdit_Sequence_triggered()
+{
+
+}
+
+// OTHER SLOTS
+void Linnaeo::expand_seqTreeView_item(const QModelIndex &index)
+{
+    //spdlog::debug("Expanded SeqView tree at position {}", index.row());
+    this->seqModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder-open.svg"),Qt::DecorationRole);
+}
+
+void Linnaeo::collapse_seqTreeView_item(const QModelIndex &index)
+{
+    //spdlog::debug("Collapsed SeqView tree at position {}", index.row());
+    this->seqModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder.svg"),Qt::DecorationRole);
+}
+void Linnaeo::expand_alignTreeView_item(const QModelIndex &index)
+{
+    //spdlog::debug("Expanded AlignView tree at position {}", index.row());
+    this->alignModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder-open.svg"),Qt::DecorationRole);
+}
+
+void Linnaeo::collapse_alignTreeView_item(const QModelIndex &index)
+{
+    //spdlog::debug("Collapsed AlignView tree at position {}", index.row());
+    this->alignModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder.svg"),Qt::DecorationRole);
+}
+
+void Linnaeo::on_actionGet_Online_Sequence_triggered()
+{
+    SearchUniprot search(this);
+    search.exec();
+    //if (search.exec() == QDialog::Accepted) {)
+
 }

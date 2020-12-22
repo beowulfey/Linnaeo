@@ -47,6 +47,8 @@ private slots:
     void on_actionMake_Alignment_triggered();
     void on_actionAdd_Alignment_Folder_triggered();
     void on_actionDelete_Selected_Alignments_triggered();
+    void on_actionEdit_Sequence_triggered();
+    void on_actionGet_Online_Sequence_triggered();
 };
 
 #endif // LINNAEO_H

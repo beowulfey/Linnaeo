@@ -2,7 +2,7 @@
 #define SEQEDITOR_H
 
 #include <QDialog>
-#include "seqentrytextedit.h"
+//#include "seqentrytextedit.h"
 
 namespace Ui {
 class SeqEditor;
@@ -20,7 +20,7 @@ public:
 
 private:
     Ui::SeqEditor *ui;
-    SeqEntryTextEdit *seqEntryEditor;
+    //SeqEntryTextEdit *seqEntryEditor;
     QString info;
     QString name;
     QString seq;

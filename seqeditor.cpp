@@ -4,6 +4,7 @@
 #include <iostream>
 #include <QRegularExpression>
 #include "spdlog/spdlog.h"
+#include "sequence.h"
 
 /// Opens up a window for creating and editing sequence information.
 
@@ -12,10 +13,10 @@ SeqEditor::SeqEditor(QWidget *parent) :
     ui(new Ui::SeqEditor)
 {
     ui->setupUi(this);
-    seqEntryEditor = new SeqEntryTextEdit(this);
-    ui->verticalLayout->insertWidget(3,seqEntryEditor);
-    connect(this->seqEntryEditor, &SeqEntryTextEdit::pastedSequence, this, &SeqEditor::receivedSequence);
-    connect(this->seqEntryEditor, &SeqEntryTextEdit::extractedSeqName, this, &SeqEditor::receivedSeqInfo);
+    //seqEntryEditor = new SeqEntryTextEdit(this);
+    //ui->verticalLayout->insertWidget(3,seqEntryEditor);
+    connect(ui->seqEntryEditor, &SeqEntryTextEdit::pastedSequence, this, &SeqEditor::receivedSequence);
+    connect(ui->seqEntryEditor, &SeqEntryTextEdit::extractedSeqName, this, &SeqEditor::receivedSeqInfo);
 }
 
 SeqEditor::~SeqEditor()
@@ -26,7 +27,7 @@ SeqEditor::~SeqEditor()
 QString SeqEditor::submittedSequence()
 {
     // TODO: VALIDATE THE SEQUENCE!!
-    this->seq = this->seqEntryEditor->toPlainText();
+    this->seq = ui->seqEntryEditor->toPlainText();
     return this->seq;
 }
 

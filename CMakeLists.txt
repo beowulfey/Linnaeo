@@ -13,6 +13,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Network REQUIRED)
 
 #set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/linnaeo_win.rc")
 #set(MACOSX_BUNDLE_ICON_FILE linnaeo_mac.icns)
@@ -32,10 +33,13 @@ seqeditor.h
 seqeditor.ui
 seqentrytextedit.cpp
 seqentrytextedit.h
+sequence.cpp
+sequence.h
 resources/linnaeo.qrc
-#searchuniprot.h
-#searchuniprot.cpp
-#searchuniprot.ui
+README.md
+searchuniprot.h
+searchuniprot.cpp
+searchuniprot.ui
 #newsequence.cpp
 #newsequence.h
 #newsequence.ui
@@ -47,6 +51,6 @@ resources/linnaeo.qrc
 )
 
 
-target_link_libraries(Linnaeo PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(Linnaeo PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt::Network)
 
 

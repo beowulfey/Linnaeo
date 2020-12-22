@@ -291,7 +291,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>297</width>
-                 <height>196</height>
+                 <height>197</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout">
@@ -520,7 +520,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>298</width>
-                 <height>197</height>
+                 <height>196</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -994,6 +994,7 @@
     </property>
     <addaction name="actionAdd_Sequence"/>
     <addaction name="actionGet_Online_Sequence"/>
+    <addaction name="actionEdit_Sequence"/>
     <addaction name="actionQuick_Align"/>
     <addaction name="actionAdd_Folder_to_Sequence_Panel"/>
     <addaction name="actionDelete_Selected_Sequences"/>
@@ -1242,6 +1243,15 @@
    </property>
    <property name="text">
     <string>Quick Align</string>
+   </property>
+  </action>
+  <action name="actionEdit_Sequence">
+   <property name="icon">
+    <iconset resource="resources/linnaeo.qrc">
+     <normaloff>:/icons/ui/edit.svg</normaloff>:/icons/ui/edit.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Edit Sequence</string>
    </property>
   </action>
  </widget>
