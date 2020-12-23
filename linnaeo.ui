@@ -136,6 +136,17 @@
                 </widget>
                </item>
                <item>
+                <widget class="QToolButton" name="downloadSeqButton">
+                 <property name="text">
+                  <string>...</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="resources/linnaeo.qrc">
+                   <normaloff>:/icons/ui/download.svg</normaloff>:/icons/ui/download.svg</iconset>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <widget class="QToolButton" name="importSequenceButton">
                  <property name="text">
                   <string>...</string>
@@ -291,7 +302,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>297</width>
-                 <height>197</height>
+                 <height>196</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout">
@@ -520,7 +531,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>298</width>
-                 <height>196</height>
+                 <height>197</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -1181,6 +1192,10 @@
    </property>
   </action>
   <action name="actionGet_Online_Sequence">
+   <property name="icon">
+    <iconset resource="resources/linnaeo.qrc">
+     <normaloff>:/icons/ui/download.svg</normaloff>:/icons/ui/download.svg</iconset>
+   </property>
    <property name="text">
     <string>Search for Sequence Online</string>
    </property>

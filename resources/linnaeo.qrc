@@ -21,5 +21,6 @@
         <file>icons/ui/paste.svg</file>
         <file>icons/ui/indent.svg</file>
         <file>icons/ui/file-alt-line.svg</file>
+        <file>icons/ui/download.svg</file>
     </qresource>
 </RCC>

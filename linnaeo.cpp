@@ -34,6 +34,7 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     ui->addSequenceButton->setDefaultAction(ui->actionAdd_Sequence);
     ui->importSequenceButton->setDefaultAction(ui->actionSequence_from_file);
     ui->addSequenceFolderButton->setDefaultAction(ui->actionAdd_Folder_to_Sequence_Panel);
+    ui->downloadSeqButton->setDefaultAction(ui->actionGet_Online_Sequence);
     //ui->editSequenceButton
     ui->exportSequenceButton->setDefaultAction(ui->actionExportSequence);
     ui->deleteSequenceButton->setDefaultAction(ui->actionDelete_Selected_Sequences);
@@ -331,7 +332,70 @@ void Linnaeo::collapse_alignTreeView_item(const QModelIndex &index)
 void Linnaeo::on_actionGet_Online_Sequence_triggered()
 {
     SearchUniprot search(this);
-    search.exec();
-    //if (search.exec() == QDialog::Accepted) {)
+    int nameSource;
+    QStringList ids;
+    QStringList names;
+    QStringList organisms;
+    QStringList genes;
+    QStringList descs;
+    QStringList seqs;
+    QStandardItem *item;
+    QStringList info;
+    QString infoStr;
+
+    if (search.exec() == QDialog::Accepted)
+    {
+        nameSource = search.chosenNameSource();
+        if(nameSource >= 0)
+        {
+            ids = search.chosenIds();
+            names = search.chosenNames();
+            organisms = search.chosenOrganisms();
+            genes = search.chosenGenes();
+            descs = search.chosenProteins();
+            seqs = search.chosenSequences();
+            for(int i = 0; i<seqs.length(); i++)
+            {
+                item = new QStandardItem();
+                item->setData(false, FOLDER);
+                item->setData(seqs.at(i),SEQUENCE);
+                info.append(ids.at(i));
+                info.append(names.at(i));
+                info.append(genes.at(i));
+                info.append(organisms.at(i));
+                info.append(descs.at(i));
+                infoStr = info.join("|");
+                qDebug() << infoStr << "\n";
+                item->setData(infoStr, SEQ_INFO);
+                if(nameSource == 0) {item->setText(ids.at(i));}
+                else if(nameSource == 1) {item->setText(names.at(i));}
+                else if(nameSource == 2) {item->setText(genes.at(i));}
+                else {item->setText("New Sequence");}
+                item->setDropEnabled(false);
+
+                QList<QModelIndex>indexes = ui->seqTreeView->selectionModel()->selectedIndexes();
+                QStandardItem *sourceItem;
+                bool found = false;
+                for(const QModelIndex& index : indexes)
+                {
+                    // Check each selected item (if any) to see if it is a folder. Add it to the first
+                    // folder it finds, otherwise add it to the "uncategorized" folder.
+                    sourceItem = seqModel->itemFromIndex(index);
+                    if (sourceItem->data(FOLDER).toBool())
+                    {
+                        sourceItem->appendRow(item);
+                        ui->seqTreeView->expand(index);
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    seqStartFolderItem->appendRow(item);
+                    ui->seqTreeView->expand(seqStartFolderItem->index());
+                }
+            }
+        }
+    }
 
 }

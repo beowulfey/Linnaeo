@@ -23,7 +23,8 @@ private:
     {
         FOLDER=Qt::UserRole,
         SEQUENCE=Qt::UserRole+1,
-        ALIGNMENT=Qt::UserRole+2
+        SEQ_INFO=Qt::UserRole+2,
+        ALIGNMENT=Qt::UserRole+3
     };
     //QVector<qint64> procIds;
     QStandardItemModel *seqModel = nullptr;
