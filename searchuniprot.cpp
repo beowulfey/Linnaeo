@@ -87,10 +87,8 @@ void SearchUniprot::httpFinished(QNetworkReply *reply)
     foreach(row, resultList)
     {
         rowItems.clear();
-        qDebug() << "ROW" << "\n" << row << "\n";
         foreach(column, row.split("\t"))
         {
-            qDebug() << "COLUMN" << "\n" << column << "\n";
             item = new QStandardItem(column);
             rowItems.append(item);
 

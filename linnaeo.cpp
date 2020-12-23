@@ -364,7 +364,7 @@ void Linnaeo::on_actionGet_Online_Sequence_triggered()
                 info.append(genes.at(i));
                 info.append(organisms.at(i));
                 info.append(descs.at(i));
-                infoStr = info.join("|");
+                infoStr = info.join("||");
                 qDebug() << infoStr << "\n";
                 item->setData(infoStr, SEQ_INFO);
                 if(nameSource == 0) {item->setText(ids.at(i));}
