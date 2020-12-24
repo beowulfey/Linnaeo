@@ -11,5 +11,6 @@ int main(int argc, char *argv[])
     a.setWindowIcon(QIcon(":/icons/linnaeo.ico")); // temporary fix for icon... not good
     spdlog::info("LINNAEO STARTUP COMPLETE");
     w.show();
+
     return a.exec();
 }

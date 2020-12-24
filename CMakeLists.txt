@@ -41,6 +41,8 @@ README.md
 searchuniprot.h
 searchuniprot.cpp
 searchuniprot.ui
+seqviewer.cpp
+seqviewer.h
 #newsequence.cpp
 #newsequence.h
 #newsequence.ui

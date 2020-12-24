@@ -17,8 +17,10 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
 {
     ui->setupUi(this);
     ui->optionsPanel->hide();
+    ui->line_4->hide();
     QStandardItem *seqRoot;
     QStandardItem *alignRoot;
+
 
     // Sequence TreeView setup
     this->seqModel = new QStandardItemModel(this);
@@ -96,10 +98,12 @@ void Linnaeo::on_actionShow_Viewer_Options_triggered(bool checked)
 {
     if(checked){
         ui->optionsPanel->show();
-        spdlog::debug("Showing options panel");
+        ui->line_4->show();
+        //spdlog::debug("Showing options panel");
     }else{
+        ui->line_4->hide();
         ui->optionsPanel->hide();
-        spdlog::debug("Hiding options panel");
+        //spdlog::debug("Hiding options panel");
     }
 }
 
@@ -159,7 +163,7 @@ void Linnaeo::on_actionAdd_Sequence_triggered()
                 ui->seqTreeView->expand(this->seqStartFolderItem->index());
             }
             // TODO: Extract this step through a formatting function!
-            ui->seqBrowser->setText(newSeq->data(SEQUENCE).toString());
+            ui->seqViewer->displaySequence(newSeq->data(SEQUENCE).toString());
         }
         else
         {
@@ -338,7 +342,7 @@ void Linnaeo::on_seqTreeView_doubleclicked(const QModelIndex &index)
     seq = seqModel->itemFromIndex(index)->data(SEQUENCE).toString();
     this->setWindowTitle(QString("Linnaeo [%1]").arg(name));
     // Call sequence formatter.
-    ui->seqBrowser->setText(seq);
+    ui->seqViewer->displaySequence(seq);
 
 }
 
@@ -416,6 +420,7 @@ void Linnaeo::on_actionGet_Online_Sequence_triggered()
 void Linnaeo::on_actionClose_triggered()
 {
     this->setWindowTitle(QString("Linnaeo"));
-    ui->seqBrowser->setText("");
+    ui->seqViewer->clearViewer();
 }
+
 

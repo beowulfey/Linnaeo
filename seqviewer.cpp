@@ -1,0 +1,115 @@
+#include "seqviewer.h"
+#include <math.h>
+#include <QRegularExpression>
+
+SeqViewer::SeqViewer(QWidget *parent): QTextEdit(parent)
+{
+    seqFont = QFont("monospace");
+    //seqFont.setStyleHint(QFont::Monospace);
+    seqFont.setPointSize(11);
+    this->setFont(seqFont);
+}
+
+
+void SeqViewer::clearViewer()
+{
+    displayedSeqs.clear();
+    this->setText("");
+}
+
+void SeqViewer::resizeEvent(QResizeEvent *event)
+{
+    QTextEdit::resizeEvent(event);
+    drawSequenceOrAlignment();
+}
+
+void SeqViewer::displaySequence(QString seq)
+/// Called upon double-clicking; initializes the viewer with the sequence of choice.
+/// Calls the sequence redraw function.
+{
+    this->displayedSeqs.clear();
+    this->displayedSeqs.append(seq);
+    drawSequenceOrAlignment();
+}
+
+
+
+
+void SeqViewer::drawSequenceOrAlignment()
+/// Gets the current width of the window and
+{
+    int width;
+    float charWidth;
+    int numChars;
+    int numBlocks;
+    //QTextCursor cursor;
+    QString formatted;
+    QStringList splitSeq;
+    QList<QList<QString>> seqBlocks;
+    QRegularExpression re;
+    QRegularExpressionMatchIterator matches;
+    QRegularExpressionMatch match;
+
+
+    if(!displayedSeqs.isEmpty())
+    {
+        this->clear();
+        //this->setTextCursor(cursor);
+        //this->insertHtml("<pre><span style=\"background-color:#56fc03\";>");
+
+        formatted = QString("<pre style=\"color:red;\">");
+        width = this->rect().width();
+        charWidth = QFontMetricsF(this->seqFont).averageCharWidth();
+        qDebug() << "Av. CharW =" <<charWidth<<"and window is" <<width;
+
+        numChars = trunc(width/charWidth)-1;
+        numBlocks = this->displayedSeqs.first().length()/numChars;
+        for(auto& tempSeq : displayedSeqs)
+        {
+            re.setPattern(QString("(.{%1})").arg(numChars));
+            matches = re.globalMatch(tempSeq);
+            int lastEnd = 0;
+            while(matches.hasNext())
+            {
+                match = matches.next();
+                splitSeq.append(match.capturedTexts().at(0));
+                lastEnd = match.capturedEnd();
+            }
+            if (lastEnd > 0) splitSeq.append(tempSeq.mid(lastEnd));
+
+            seqBlocks.append(splitSeq);
+        }
+        qDebug() << "All SeqS:" << seqBlocks;
+
+        for(int i = 0; i<=numBlocks; i++)
+            // for each text block...
+        {
+            qDebug() << "Block:" << i;
+            for(int j=0; j<this->displayedSeqs.length();j++)
+                // for each sequence in the list...
+            {
+                qDebug()<<"Seq"<<j<<" extracts"<<seqBlocks.at(j).at(i);
+                //cursor.movePosition(QTextCursor::End);
+
+                //this->insertHtml(QString(seqBlocks.at(j).at(i)).append("\n"));
+                formatted.append(QString(seqBlocks.at(j).at(i)).append("\n"));
+                //this->setText(seqBlocks.at(j).at(i));
+            }
+            QString blank = QString("");
+            blank.resize(numChars);
+            blank.fill(' ');
+            blank.append("\n");
+            formatted.append(blank);
+
+            qDebug() << blank;
+            //this->insertHtml(blank);
+        }
+        formatted.append("</pre>");
+        this->textCursor().insertHtml(formatted);
+        //this->insertHtml("</span></pre>");
+
+    }
+
+
+}
+
