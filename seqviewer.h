@@ -10,7 +10,7 @@ public:
     explicit SeqViewer(QWidget *parent);
 
     void clearViewer();
-    void displaySequence(QString seq);
+    void displaySequence(QString seq, QString name);
     void displayAlignment(QList<QString> alignment);
 
 protected:
@@ -19,6 +19,7 @@ protected:
 private:
     QFont seqFont;
     QList<QString> displayedSeqs; //can this be on the stack?
+    QList<QString> displayedNames;
 
     void drawSequenceOrAlignment();
 

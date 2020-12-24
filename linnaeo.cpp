@@ -163,7 +163,8 @@ void Linnaeo::on_actionAdd_Sequence_triggered()
                 ui->seqTreeView->expand(this->seqStartFolderItem->index());
             }
             // TODO: Extract this step through a formatting function!
-            ui->seqViewer->displaySequence(newSeq->data(SEQUENCE).toString());
+            this->setWindowTitle(QString("Linnaeo [%1]").arg(newSeq->data(Qt::DisplayRole).toString()));
+            ui->seqViewer->displaySequence(newSeq->data(SEQUENCE).toString(),newSeq->data(Qt::DisplayRole).toString());
         }
         else
         {
@@ -342,7 +343,7 @@ void Linnaeo::on_seqTreeView_doubleclicked(const QModelIndex &index)
     seq = seqModel->itemFromIndex(index)->data(SEQUENCE).toString();
     this->setWindowTitle(QString("Linnaeo [%1]").arg(name));
     // Call sequence formatter.
-    ui->seqViewer->displaySequence(seq);
+    ui->seqViewer->displaySequence(seq, name);
 
 }
 
