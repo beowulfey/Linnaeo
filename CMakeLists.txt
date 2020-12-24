@@ -14,6 +14,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Network REQUIRED)
+find_package(spdlog CONFIG REQUIRED)
 
 #set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/linnaeo_win.rc")
 #set(MACOSX_BUNDLE_ICON_FILE linnaeo_mac.icns)
@@ -51,6 +52,6 @@ searchuniprot.ui
 )
 
 
-target_link_libraries(Linnaeo PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt::Network)
+target_link_libraries(Linnaeo PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt::Network spdlog::spdlog spdlog::spdlog_header_only)
 
 

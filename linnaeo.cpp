@@ -29,6 +29,7 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     seqRoot->appendRow(seqStartFolderItem);
     connect(ui->seqTreeView, &QTreeView::expanded, this, &Linnaeo::expand_seqTreeView_item);
     connect(ui->seqTreeView, &QTreeView::collapsed, this, &Linnaeo::collapse_seqTreeView_item);
+    connect(ui->seqTreeView, &QTreeView::doubleClicked, this, &Linnaeo::on_seqTreeView_doubleclicked);
     // Connect tool buttons
     //ui->quickAlign
     ui->addSequenceButton->setDefaultAction(ui->actionAdd_Sequence);
@@ -309,24 +310,36 @@ void Linnaeo::on_actionEdit_Sequence_triggered()
 void Linnaeo::expand_seqTreeView_item(const QModelIndex &index)
 {
     //spdlog::debug("Expanded SeqView tree at position {}", index.row());
-    this->seqModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder-open.svg"),Qt::DecorationRole);
+    seqModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder-open.svg"),Qt::DecorationRole);
 }
 
 void Linnaeo::collapse_seqTreeView_item(const QModelIndex &index)
 {
     //spdlog::debug("Collapsed SeqView tree at position {}", index.row());
-    this->seqModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder.svg"),Qt::DecorationRole);
+    seqModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder.svg"),Qt::DecorationRole);
 }
 void Linnaeo::expand_alignTreeView_item(const QModelIndex &index)
 {
     //spdlog::debug("Expanded AlignView tree at position {}", index.row());
-    this->alignModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder-open.svg"),Qt::DecorationRole);
+    alignModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder-open.svg"),Qt::DecorationRole);
 }
 
 void Linnaeo::collapse_alignTreeView_item(const QModelIndex &index)
 {
     //spdlog::debug("Collapsed AlignView tree at position {}", index.row());
-    this->alignModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder.svg"),Qt::DecorationRole);
+    alignModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder.svg"),Qt::DecorationRole);
+}
+
+void Linnaeo::on_seqTreeView_doubleclicked(const QModelIndex &index)
+{
+    QString name;
+    QString seq;
+    name = seqModel->itemFromIndex(index)->data(Qt::DisplayRole).toString();
+    seq = seqModel->itemFromIndex(index)->data(SEQUENCE).toString();
+    this->setWindowTitle(QString("Linnaeo [%1]").arg(name));
+    // Call sequence formatter.
+    ui->seqBrowser->setText(seq);
+
 }
 
 void Linnaeo::on_actionGet_Online_Sequence_triggered()
@@ -399,3 +412,10 @@ void Linnaeo::on_actionGet_Online_Sequence_triggered()
     }
 
 }
+
+void Linnaeo::on_actionClose_triggered()
+{
+    this->setWindowTitle(QString("Linnaeo"));
+    ui->seqBrowser->setText("");
+}
+

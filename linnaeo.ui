@@ -302,7 +302,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>297</width>
-                 <height>196</height>
+                 <height>197</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout">
@@ -400,17 +400,6 @@
                <property name="bottomMargin">
                 <number>2</number>
                </property>
-               <item>
-                <widget class="QToolButton" name="addAlignmentButton">
-                 <property name="text">
-                  <string>...</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="resources/linnaeo.qrc">
-                   <normaloff>:/icons/ui/plus.svg</normaloff>:/icons/ui/plus.svg</iconset>
-                 </property>
-                </widget>
-               </item>
                <item>
                 <widget class="QToolButton" name="importAlignmentButton">
                  <property name="text">
@@ -531,7 +520,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>298</width>
-                 <height>197</height>
+                 <height>196</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -1013,10 +1002,30 @@
     <addaction name="actionMake_Alignment"/>
     <addaction name="actionAdd_Alignment_Folder"/>
     <addaction name="actionDelete_Selected_Alignments"/>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menuWindow">
+    <property name="title">
+     <string>Window</string>
+    </property>
+    <addaction name="actionMinimize"/>
+    <addaction name="actionMaximize"/>
+    <addaction name="separator"/>
+    <addaction name="actionClose"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+    <addaction name="actionOnline_Manual"/>
+    <addaction name="actionOn_Themes"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menuManage"/>
+   <addaction name="menuWindow"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
@@ -1267,6 +1276,36 @@
    </property>
    <property name="text">
     <string>Edit Sequence</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionOnline_Manual">
+   <property name="text">
+    <string>Online Manual</string>
+   </property>
+  </action>
+  <action name="actionOn_Themes">
+   <property name="text">
+    <string>On Themes...</string>
+   </property>
+  </action>
+  <action name="actionMinimize">
+   <property name="text">
+    <string>Minimize</string>
+   </property>
+  </action>
+  <action name="actionMaximize">
+   <property name="text">
+    <string>Maximize</string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="text">
+    <string>Close</string>
    </property>
   </action>
  </widget>

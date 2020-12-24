@@ -50,6 +50,8 @@ private slots:
     void on_actionDelete_Selected_Alignments_triggered();
     void on_actionEdit_Sequence_triggered();
     void on_actionGet_Online_Sequence_triggered();
+    void on_seqTreeView_doubleclicked(const QModelIndex &index);
+    void on_actionClose_triggered();
 };
 
 #endif // LINNAEO_H

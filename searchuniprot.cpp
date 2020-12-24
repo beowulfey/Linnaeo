@@ -9,6 +9,7 @@ SearchUniprot::SearchUniprot(QWidget *parent) :
     ui(new Ui::SearchUniprot)
 {
     QStringList comboLabels = LABELS;
+    this->setWindowTitle("Sequence Browser");
     comboLabels.remove(3,3);
     ui->setupUi(this);
     ui->nameCombo->addItems(comboLabels);
