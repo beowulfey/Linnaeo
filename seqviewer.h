@@ -13,14 +13,17 @@ public:
     void displaySequence(QString seq, QString name);
     void displayAlignment(QList<QString> alignment);
     void startDisplayThread();
+    QList<QString> getSeqList();
+
 protected:
     void resizeEvent(QResizeEvent *event) override;
 
 private:
 
-    QFont seqFont;
-    QList<QString> displayedSeqs; //can this be on the stack?
+    //QFont seqFont;
+     //can this be on the stack?
     QList<QString> displayedNames;
+    QList<QString> displayedSeqs;
 
 
     void drawSequenceOrAlignment();

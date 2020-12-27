@@ -7,8 +7,8 @@
 SeqViewer::SeqViewer(QWidget *parent): QTextEdit(parent)
 {
     QFontDatabase::addApplicationFont(":/fonts/Noto-Custom.ttf");
-    seqFont = QFont("Noto Custom", 10, 1);
-    this->setFont(seqFont);
+    //seqFont = QFont("Noto Custom", 10, 1);
+    this->setFont(QFont("Noto Custom", 10, 1));
 }
 
 
@@ -16,6 +16,11 @@ void SeqViewer::clearViewer()
 {
     displayedSeqs.clear();
     this->setText("");
+}
+
+QStringList SeqViewer::getSeqList()
+{
+    return displayedSeqs;
 }
 
 void SeqViewer::resizeEvent(QResizeEvent *event)
