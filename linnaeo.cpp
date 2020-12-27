@@ -9,7 +9,7 @@
 #include <QStandardItem>
 #include <QFileIconProvider>
 #include <QPersistentModelIndex>
-#include <spdlog/spdlog.h>
+//#include <spdlog/spdlog.h>
 #include <iostream>
 
 
@@ -188,7 +188,7 @@ void Linnaeo::on_actionAdd_Sequence_triggered()
         }
         else
         {
-            spdlog::warn("At least one of Name or Sequence field was left empty; please try again!");
+            //spdlog::warn("At least one of Name or Sequence field was left empty; please try again!");
             // TODO: Also give status alert here.
         }
     }

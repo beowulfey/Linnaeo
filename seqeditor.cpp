@@ -3,7 +3,7 @@
 #include "seqentrytextedit.h"
 #include <iostream>
 #include <QRegularExpression>
-#include "spdlog/spdlog.h"
+//#include "spdlog/spdlog.h"
 #include "sequence.h"
 
 /// Opens up a window for creating and editing sequence information.
@@ -40,7 +40,7 @@ QString SeqEditor::submittedName()
 void SeqEditor::receivedSequence(QString seq)
 {
     this->seq = seq;
-    spdlog::debug("Sequence imported:\n{}", seq.toStdString());
+    //spdlog::debug("Sequence imported:\n{}", seq.toStdString());
 
 }
 

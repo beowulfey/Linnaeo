@@ -57,7 +57,7 @@ void SeqViewer::drawSequenceOrAlignment()
 
     if(!displayedSeqs.isEmpty())
     {
-        this->clear();
+        this->setText("");
 
         formatted = QString("<pre style=\"font-family:%1;\">").arg(font().family());
         width = this->rect().width();

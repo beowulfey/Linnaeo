@@ -11,18 +11,18 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if (WIN32)
-    if(NOT TARGET spdlog)
-        set(spdlog_DIR "C:\\Users\\wolfe\\local\\dev\\lib\\cmake\\spdlog")
-    endif()
-endif (WIN32)
+#if (WIN32)
+#    if(NOT TARGET spdlog)
+#        set(spdlog_DIR "C:\\Users\\wolfe\\local\\dev\\lib\\cmake\\spdlog")
+#    endif()
+#endif (WIN32)
 
 
 
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Network REQUIRED)
-find_package(spdlog CONFIG REQUIRED)
+#find_package(spdlog CONFIG REQUIRED)
 
 #set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/linnaeo_win.rc")
 #set(MACOSX_BUNDLE_ICON_FILE linnaeo_mac.icns)
@@ -63,7 +63,7 @@ seqworker.h
 #${APP_ICON_MACOSX}
 )
 
-
-target_link_libraries(Linnaeo PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt::Network spdlog::spdlog spdlog::spdlog_header_only)
+target_link_libraries(Linnaeo PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt::Network)
+#target_link_libraries(Linnaeo PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt::Network spdlog::spdlog spdlog::spdlog_header_only)
 
 

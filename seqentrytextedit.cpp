@@ -2,7 +2,7 @@
 #include <QMimeData>
 #include <QRegularExpression>
 #include <iostream>
-#include "spdlog/spdlog.h"
+//#include "spdlog/spdlog.h"
 
 void SeqEntryTextEdit::insertFromMimeData(const QMimeData * source)
 /// SeqEntryTextEdit
@@ -17,7 +17,7 @@ void SeqEntryTextEdit::insertFromMimeData(const QMimeData * source)
         QString seq;
         if (QString(text.at(0)) == QString(">"))
         {
-            spdlog::debug("Detected FASTA format. Trimming title of sequence.");
+            //spdlog::debug("Detected FASTA format. Trimming title of sequence.");
             info = list.takeFirst();
             emit extractedSeqName(info);
             seq = list.join("");

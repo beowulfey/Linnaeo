@@ -1,6 +1,6 @@
 #include "searchuniprot.h"
 #include "ui_searchuniprot.h"
-#include "spdlog/spdlog.h"
+//#include "spdlog/spdlog.h"
 #include <QNetworkReply>
 
 SearchUniprot::SearchUniprot(QWidget *parent) :
@@ -57,7 +57,7 @@ void SearchUniprot::on_searchButton_clicked()
         }
 
         request.setUrl(url);
-        spdlog::info("Searching with URL {}", url.toDisplayString().toStdString());
+        //spdlog::info("Searching with URL {}", url.toDisplayString().toStdString());
         manager->get(request);
     }
 
@@ -80,7 +80,7 @@ void SearchUniprot::httpFinished(QNetworkReply *reply)
     QList<QString> resultList = answer.split("\n", Qt::SkipEmptyParts);
     // First row is the header (already known) so just drop it
     resultList.takeFirst();
-    spdlog::info("Search returned {} items", resultList.size());
+    //spdlog::info("Search returned {} items", resultList.size());
     QString row;
     QString column;
     QStandardItem *item;
