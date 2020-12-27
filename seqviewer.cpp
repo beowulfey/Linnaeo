@@ -1,12 +1,13 @@
 #include "seqviewer.h"
 #include <math.h>
 #include <QRegularExpression>
+#include <QFontDatabase>
+#include <QFontDialog>
 
 SeqViewer::SeqViewer(QWidget *parent): QTextEdit(parent)
 {
-    seqFont = QFont("monospace");
-    //seqFont.setStyleHint(QFont::Monospace);
-    seqFont.setPointSize(10);
+    QFontDatabase::addApplicationFont(":/fonts/Noto-Custom.ttf");
+    seqFont = QFont("Noto Custom", 10, 1);
     this->setFont(seqFont);
 }
 
@@ -57,10 +58,8 @@ void SeqViewer::drawSequenceOrAlignment()
     if(!displayedSeqs.isEmpty())
     {
         this->clear();
-        //this->setTextCursor(cursor);
-        //this->insertHtml("<pre><span style=\"background-color:#56fc03\";>");
 
-        formatted = QString("<pre style=\"color:red;\">");
+        formatted = QString("<pre style=\"font-family:%1;\">").arg(font().family());
         width = this->rect().width();
         charWidth = QFontMetricsF(this->seqFont).averageCharWidth();
         qDebug() << "Av. CharW =" <<charWidth<<"and window is" <<width;

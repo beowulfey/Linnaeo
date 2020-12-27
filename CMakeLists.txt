@@ -11,6 +11,14 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if (WIN32)
+    if(NOT TARGET spdlog)
+        set(spdlog_DIR "C:\\Users\\wolfe\\local\\dev\\lib\\cmake\\spdlog")
+    endif()
+endif (WIN32)
+
+
+
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Network REQUIRED)
@@ -43,6 +51,8 @@ searchuniprot.cpp
 searchuniprot.ui
 seqviewer.cpp
 seqviewer.h
+seqworker.cpp
+seqworker.h
 #newsequence.cpp
 #newsequence.h
 #newsequence.ui

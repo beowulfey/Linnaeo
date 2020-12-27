@@ -12,21 +12,23 @@ public:
     void clearViewer();
     void displaySequence(QString seq, QString name);
     void displayAlignment(QList<QString> alignment);
-
+    void startDisplayThread();
 protected:
     void resizeEvent(QResizeEvent *event) override;
 
 private:
+
     QFont seqFont;
     QList<QString> displayedSeqs; //can this be on the stack?
     QList<QString> displayedNames;
+
 
     void drawSequenceOrAlignment();
 
 signals:
 
-
-
 };
+
+
 
 #endif // SEQVIEWER_H
