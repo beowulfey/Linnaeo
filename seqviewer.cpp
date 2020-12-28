@@ -2,20 +2,20 @@
 #include <math.h>
 #include <QRegularExpression>
 #include <QFontDatabase>
-#include <QFontDialog>
+#include <QElapsedTimer>
 
 SeqViewer::SeqViewer(QWidget *parent): QTextEdit(parent)
 {
     QFontDatabase::addApplicationFont(":/fonts/Noto-Custom.ttf");
-    //seqFont = QFont("Noto Custom", 10, 1);
     this->setFont(QFont("Noto Custom", 10, 1));
+    colorOn = false;
 }
 
 
 void SeqViewer::clearViewer()
 {
     displayedSeqs.clear();
-    this->setText("");
+    this->document()->setHtml("");
 }
 
 QStringList SeqViewer::getSeqList()
@@ -37,78 +37,58 @@ void SeqViewer::displaySequence(QString seq, QString name)
     this->displayedSeqs.append(seq);
     this->displayedNames.clear();
     this->displayedNames.append(name);
+    calculateColor();
     drawSequenceOrAlignment();
 }
 
 
+void SeqViewer::calculateColor()
+{
+    for(auto&& seq: displayedSeqs)
+    {
 
+    }
+}
 
 void SeqViewer::drawSequenceOrAlignment()
 /// Gets the current width of the window and
 {
-    int width;
+
     float charWidth;
     int numChars;
     int numBlocks;
-    //QTextCursor cursor;
-    QString blank;
     QString formatted;
-    QStringList splitSeq;
-    QList<QList<QString>> seqBlocks;
-    QRegularExpression re;
-    QRegularExpressionMatchIterator matches;
-    QRegularExpressionMatch match;
 
 
     if(!displayedSeqs.isEmpty())
     {
-        this->setText("");
-
+        QElapsedTimer timer;
+        timer.start();
         formatted = QString("<pre style=\"font-family:%1;\">").arg(font().family());
-        width = this->rect().width();
-        charWidth = QFontMetricsF(this->seqFont).averageCharWidth();
-        qDebug() << "Av. CharW =" <<charWidth<<"and window is" <<width;
+        charWidth = QFontMetricsF(font()).averageCharWidth();
+        numChars = trunc((QRectF(rect()).width()-3)/charWidth)-1;
+        numBlocks = displayedSeqs.first().length()/numChars;
 
-        numChars = trunc(width/charWidth)-1;
-        numBlocks = this->displayedSeqs.first().length()/numChars;
-        blank = QString("");
-        blank.resize(numChars);
-        blank.fill(' ').append("\n");
-        for(auto& tempSeq : displayedSeqs)
+        for(int i = 0; i<=numBlocks; i++) // for each text block...
         {
-            re.setPattern(QString("(.{%1})").arg(numChars));
-            matches = re.globalMatch(tempSeq);
-            int lastEnd = 0;
-            while(matches.hasNext())
+            for(int j=0; j<displayedSeqs.length();j++) // for each sequence in the list...
             {
-                match = matches.next();
-                splitSeq.append(match.capturedTexts().at(0));
-                lastEnd = match.capturedEnd();
+                QString seg;
+                if(!colorOn) // Black and white only uses the displayedSeqs parameter
+                {
+                    if(!(i==numBlocks))seg = QString(displayedSeqs.at(j).sliced(i*numChars, numChars)).append("\n");
+                    else seg = QString(displayedSeqs.at(j).last(displayedSeqs.at(j).length()-i*numChars)).append("\n");
+                } else // Color uses the displayedSeqsColor List<List<String>> of the sequence expanded with color data
+                {}
+                //qDebug()<< "Block:"<< i <<"Seq"<<j<<"extracts"<<seg;
+                formatted.append(seg);
             }
-            if (lastEnd > 0) splitSeq.append(tempSeq.mid(lastEnd));
-
-            seqBlocks.append(splitSeq);
-        }
-
-        for(int i = 0; i<=numBlocks; i++)
-            // for each text block...
-        {
-            for(int j=0; j<this->displayedSeqs.length();j++)
-                // for each sequence in the list...
-            {
-                qDebug()<< "Block:"<< i <<"Seq"<<j<<"extracts"<<seqBlocks.at(j).at(i);
-                //cursor.movePosition(QTextCursor::End);
-
-                //this->insertHtml(QString(seqBlocks.at(j).at(i)).append("\n"));
-                formatted.append(QString(seqBlocks.at(j).at(i)).append("\n"));
-                //this->setText(seqBlocks.at(j).at(i));
-            }
-            formatted.append(blank);
-            //this->insertHtml(blank);
+            formatted.append("\n");
         }
         formatted.append("</pre>");
-        this->textCursor().insertHtml(formatted);
-        //this->insertHtml("</span></pre>");
+        this->document()->clear();
+        this->document()->setHtml(QString(formatted));
+        qDebug() << "The slow operation took" << timer.elapsed() << "milliseconds";
 
     }
 

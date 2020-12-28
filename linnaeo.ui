@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1200</width>
-    <height>600</height>
+    <width>991</width>
+    <height>563</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,6 +29,9 @@
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="handleWidth">
+       <number>3</number>
       </property>
       <widget class="QFrame" name="frame">
        <property name="sizePolicy">
@@ -55,7 +58,7 @@
        <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_5">
+       <layout class="QVBoxLayout" name="verticalLayout_3">
         <property name="spacing">
          <number>0</number>
         </property>
@@ -77,18 +80,30 @@
            <enum>QFrame::NoFrame</enum>
           </property>
           <property name="frameShadow">
-           <enum>QFrame::Plain</enum>
+           <enum>QFrame::Raised</enum>
+          </property>
+          <property name="lineWidth">
+           <number>0</number>
+          </property>
+          <property name="midLineWidth">
+           <number>1</number>
           </property>
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
-          <widget class="QWidget" name="layoutWidget">
-           <layout class="QVBoxLayout" name="verticalLayout_2">
+          <property name="handleWidth">
+           <number>3</number>
+          </property>
+          <widget class="QWidget" name="">
+           <layout class="QVBoxLayout" name="verticalLayout">
             <property name="spacing">
-             <number>0</number>
+             <number>3</number>
             </property>
             <property name="leftMargin">
-             <number>2</number>
+             <number>6</number>
+            </property>
+            <property name="rightMargin">
+             <number>6</number>
             </property>
             <item>
              <widget class="QLabel" name="sequenceLabel">
@@ -98,279 +113,216 @@
              </widget>
             </item>
             <item>
-             <widget class="QFrame" name="frame_3">
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <property name="spacing">
+               <number>2</number>
               </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_4">
-               <property name="spacing">
-                <number>2</number>
-               </property>
-               <property name="leftMargin">
-                <number>2</number>
-               </property>
-               <property name="topMargin">
-                <number>2</number>
-               </property>
-               <property name="rightMargin">
-                <number>2</number>
-               </property>
-               <property name="bottomMargin">
-                <number>2</number>
-               </property>
-               <item>
-                <widget class="QToolButton" name="addSequenceButton">
-                 <property name="toolTip">
-                  <string>Add new sequence (opens window)</string>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="resources/linnaeo.qrc">
-                   <normaloff>:/icons/ui/plus.svg</normaloff>:/icons/ui/plus.svg</iconset>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QToolButton" name="downloadSeqButton">
-                 <property name="text">
-                  <string>...</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="resources/linnaeo.qrc">
-                   <normaloff>:/icons/ui/download.svg</normaloff>:/icons/ui/download.svg</iconset>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QToolButton" name="importSequenceButton">
-                 <property name="text">
-                  <string>...</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="resources/linnaeo.qrc">
-                   <normaloff>:/icons/ui/file-import.svg</normaloff>:/icons/ui/file-import.svg</iconset>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QToolButton" name="addSequenceFolderButton">
-                 <property name="toolTip">
-                  <string>Add folder to sequence viewer</string>
-                 </property>
-                 <property name="text">
-                  <string>...</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="resources/linnaeo.qrc">
-                   <normaloff>:/icons/ui/folder-plus.svg</normaloff>:/icons/ui/folder-plus.svg</iconset>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="Line" name="line_7">
-                 <property name="lineWidth">
-                  <number>0</number>
-                 </property>
-                 <property name="midLineWidth">
-                  <number>1</number>
-                 </property>
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QToolButton" name="editSequenceButton">
-                 <property name="text">
-                  <string>...</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="resources/linnaeo.qrc">
-                   <normaloff>:/icons/ui/edit.svg</normaloff>:/icons/ui/edit.svg</iconset>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QToolButton" name="exportSequenceButton">
-                 <property name="text">
-                  <string>...</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="resources/linnaeo.qrc">
-                   <normaloff>:/icons/ui/file-export.svg</normaloff>:/icons/ui/file-export.svg</iconset>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="Line" name="line_5">
-                 <property name="lineWidth">
-                  <number>0</number>
-                 </property>
-                 <property name="midLineWidth">
-                  <number>1</number>
-                 </property>
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QToolButton" name="deleteSequenceButton">
-                 <property name="text">
-                  <string>...</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="resources/linnaeo.qrc">
-                   <normaloff>:/icons/ui/trash.svg</normaloff>:/icons/ui/trash.svg</iconset>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer name="horizontalSpacer_4">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item>
-                <widget class="QToolButton" name="quickAlignButton">
-                 <property name="minimumSize">
-                  <size>
-                   <width>60</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <weight>75</weight>
-                   <bold>true</bold>
-                   <stylestrategy>PreferDefault</stylestrategy>
-                  </font>
-                 </property>
-                 <property name="toolTip">
-                  <string>Generate alignment from selected sequences</string>
-                 </property>
-                 <property name="text">
-                  <string>Align</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="resources/linnaeo.qrc">
-                   <normaloff>:/icons/ui/indent.svg</normaloff>:/icons/ui/indent.svg</iconset>
-                 </property>
-                 <property name="toolButtonStyle">
-                  <enum>Qt::ToolButtonTextOnly</enum>
-                 </property>
-                 <property name="arrowType">
-                  <enum>Qt::NoArrow</enum>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
+              <item>
+               <widget class="QToolButton" name="addSequenceButton">
+                <property name="toolTip">
+                 <string>Add new sequence (opens window)</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="resources/linnaeo.qrc">
+                  <normaloff>:/icons/ui/plus.svg</normaloff>:/icons/ui/plus.svg</iconset>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QToolButton" name="downloadSeqButton">
+                <property name="text">
+                 <string>...</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="resources/linnaeo.qrc">
+                  <normaloff>:/icons/ui/download.svg</normaloff>:/icons/ui/download.svg</iconset>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QToolButton" name="importSequenceButton">
+                <property name="text">
+                 <string>...</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="resources/linnaeo.qrc">
+                  <normaloff>:/icons/ui/file-import.svg</normaloff>:/icons/ui/file-import.svg</iconset>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QToolButton" name="addSequenceFolderButton">
+                <property name="toolTip">
+                 <string>Add folder to sequence viewer</string>
+                </property>
+                <property name="text">
+                 <string>...</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="resources/linnaeo.qrc">
+                  <normaloff>:/icons/ui/folder-plus.svg</normaloff>:/icons/ui/folder-plus.svg</iconset>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="Line" name="line_7">
+                <property name="lineWidth">
+                 <number>0</number>
+                </property>
+                <property name="midLineWidth">
+                 <number>1</number>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QToolButton" name="editSequenceButton">
+                <property name="text">
+                 <string>...</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="resources/linnaeo.qrc">
+                  <normaloff>:/icons/ui/edit.svg</normaloff>:/icons/ui/edit.svg</iconset>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QToolButton" name="exportSequenceButton">
+                <property name="text">
+                 <string>...</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="resources/linnaeo.qrc">
+                  <normaloff>:/icons/ui/file-export.svg</normaloff>:/icons/ui/file-export.svg</iconset>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="Line" name="line_5">
+                <property name="lineWidth">
+                 <number>0</number>
+                </property>
+                <property name="midLineWidth">
+                 <number>1</number>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QToolButton" name="deleteSequenceButton">
+                <property name="text">
+                 <string>...</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="resources/linnaeo.qrc">
+                  <normaloff>:/icons/ui/trash.svg</normaloff>:/icons/ui/trash.svg</iconset>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_4">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QToolButton" name="quickAlignButton">
+                <property name="minimumSize">
+                 <size>
+                  <width>60</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                  <stylestrategy>PreferDefault</stylestrategy>
+                 </font>
+                </property>
+                <property name="toolTip">
+                 <string>Generate alignment from selected sequences</string>
+                </property>
+                <property name="text">
+                 <string>Align</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="resources/linnaeo.qrc">
+                  <normaloff>:/icons/ui/indent.svg</normaloff>:/icons/ui/indent.svg</iconset>
+                </property>
+                <property name="toolButtonStyle">
+                 <enum>Qt::ToolButtonTextOnly</enum>
+                </property>
+                <property name="arrowType">
+                 <enum>Qt::NoArrow</enum>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
-             <widget class="QScrollArea" name="scrollArea">
+             <widget class="QTreeView" name="seqTreeView">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="frameShape">
-               <enum>QFrame::NoFrame</enum>
+              <property name="toolTip">
+               <string/>
               </property>
-              <property name="lineWidth">
-               <number>0</number>
+              <property name="editTriggers">
+               <set>QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
               </property>
-              <property name="widgetResizable">
+              <property name="dragEnabled">
                <bool>true</bool>
               </property>
-              <widget class="QWidget" name="scrollAreaWidgetContents">
-               <property name="geometry">
-                <rect>
-                 <x>0</x>
-                 <y>0</y>
-                 <width>297</width>
-                 <height>209</height>
-                </rect>
-               </property>
-               <layout class="QVBoxLayout" name="verticalLayout">
-                <property name="spacing">
-                 <number>0</number>
-                </property>
-                <property name="leftMargin">
-                 <number>0</number>
-                </property>
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="rightMargin">
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="QTreeView" name="seqTreeView">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="toolTip">
-                   <string/>
-                  </property>
-                  <property name="editTriggers">
-                   <set>QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
-                  </property>
-                  <property name="dragEnabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="dragDropMode">
-                   <enum>QAbstractItemView::InternalMove</enum>
-                  </property>
-                  <property name="selectionMode">
-                   <enum>QAbstractItemView::ExtendedSelection</enum>
-                  </property>
-                  <property name="selectionBehavior">
-                   <enum>QAbstractItemView::SelectRows</enum>
-                  </property>
-                  <property name="indentation">
-                   <number>10</number>
-                  </property>
-                  <property name="animated">
-                   <bool>false</bool>
-                  </property>
-                  <property name="headerHidden">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
+              <property name="dragDropMode">
+               <enum>QAbstractItemView::InternalMove</enum>
+              </property>
+              <property name="selectionMode">
+               <enum>QAbstractItemView::ExtendedSelection</enum>
+              </property>
+              <property name="selectionBehavior">
+               <enum>QAbstractItemView::SelectRows</enum>
+              </property>
+              <property name="indentation">
+               <number>10</number>
+              </property>
+              <property name="animated">
+               <bool>false</bool>
+              </property>
+              <property name="headerHidden">
+               <bool>true</bool>
+              </property>
              </widget>
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="layoutWidget_2">
-           <layout class="QVBoxLayout" name="verticalLayout_3">
+          <widget class="QWidget" name="">
+           <layout class="QVBoxLayout" name="verticalLayout_2">
             <property name="spacing">
-             <number>0</number>
+             <number>3</number>
             </property>
             <property name="leftMargin">
-             <number>2</number>
+             <number>6</number>
+            </property>
+            <property name="rightMargin">
+             <number>6</number>
             </property>
             <item>
              <widget class="QLabel" name="alignLabel">
@@ -380,201 +332,135 @@
              </widget>
             </item>
             <item>
-             <widget class="QFrame" name="frame_4">
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
+             <layout class="QHBoxLayout" name="horizontalLayout_5">
+              <property name="spacing">
+               <number>2</number>
               </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_5">
-               <property name="spacing">
-                <number>2</number>
-               </property>
-               <property name="leftMargin">
-                <number>2</number>
-               </property>
-               <property name="topMargin">
-                <number>2</number>
-               </property>
-               <property name="rightMargin">
-                <number>2</number>
-               </property>
-               <property name="bottomMargin">
-                <number>2</number>
-               </property>
-               <item>
-                <widget class="QToolButton" name="importAlignmentButton">
-                 <property name="text">
-                  <string>...</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="resources/linnaeo.qrc">
-                   <normaloff>:/icons/ui/file-import.svg</normaloff>:/icons/ui/file-import.svg</iconset>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QToolButton" name="addAlignmentFolderButton">
-                 <property name="text">
-                  <string>...</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="resources/linnaeo.qrc">
-                   <normaloff>:/icons/ui/folder-plus.svg</normaloff>:/icons/ui/folder-plus.svg</iconset>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="Line" name="line_8">
-                 <property name="lineWidth">
-                  <number>0</number>
-                 </property>
-                 <property name="midLineWidth">
-                  <number>1</number>
-                 </property>
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QToolButton" name="editAlignmentButton">
-                 <property name="text">
-                  <string>...</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="resources/linnaeo.qrc">
-                   <normaloff>:/icons/ui/edit.svg</normaloff>:/icons/ui/edit.svg</iconset>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QToolButton" name="exportAlignmentButton">
-                 <property name="text">
-                  <string>...</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="resources/linnaeo.qrc">
-                   <normaloff>:/icons/ui/file-export.svg</normaloff>:/icons/ui/file-export.svg</iconset>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="Line" name="line_6">
-                 <property name="lineWidth">
-                  <number>0</number>
-                 </property>
-                 <property name="midLineWidth">
-                  <number>1</number>
-                 </property>
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QToolButton" name="deleteAlignmentButton">
-                 <property name="text">
-                  <string>...</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="resources/linnaeo.qrc">
-                   <normaloff>:/icons/ui/trash.svg</normaloff>:/icons/ui/trash.svg</iconset>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer name="horizontalSpacer_3">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </widget>
+              <item>
+               <widget class="QToolButton" name="importAlignmentButton">
+                <property name="text">
+                 <string>...</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="resources/linnaeo.qrc">
+                  <normaloff>:/icons/ui/file-import.svg</normaloff>:/icons/ui/file-import.svg</iconset>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QToolButton" name="addAlignmentFolderButton">
+                <property name="text">
+                 <string>...</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="resources/linnaeo.qrc">
+                  <normaloff>:/icons/ui/folder-plus.svg</normaloff>:/icons/ui/folder-plus.svg</iconset>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="Line" name="line_8">
+                <property name="lineWidth">
+                 <number>0</number>
+                </property>
+                <property name="midLineWidth">
+                 <number>1</number>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QToolButton" name="editAlignmentButton">
+                <property name="text">
+                 <string>...</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="resources/linnaeo.qrc">
+                  <normaloff>:/icons/ui/edit.svg</normaloff>:/icons/ui/edit.svg</iconset>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QToolButton" name="exportAlignmentButton">
+                <property name="text">
+                 <string>...</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="resources/linnaeo.qrc">
+                  <normaloff>:/icons/ui/file-export.svg</normaloff>:/icons/ui/file-export.svg</iconset>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="Line" name="line_6">
+                <property name="lineWidth">
+                 <number>0</number>
+                </property>
+                <property name="midLineWidth">
+                 <number>1</number>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QToolButton" name="deleteAlignmentButton">
+                <property name="text">
+                 <string>...</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="resources/linnaeo.qrc">
+                  <normaloff>:/icons/ui/trash.svg</normaloff>:/icons/ui/trash.svg</iconset>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_3">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
             </item>
             <item>
-             <widget class="QScrollArea" name="scrollArea_2">
+             <widget class="QTreeView" name="alignTreeView">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="frameShape">
-               <enum>QFrame::NoFrame</enum>
+              <property name="editTriggers">
+               <set>QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
               </property>
-              <property name="lineWidth">
-               <number>0</number>
-              </property>
-              <property name="widgetResizable">
+              <property name="dragEnabled">
                <bool>true</bool>
               </property>
-              <widget class="QWidget" name="scrollAreaWidgetContents_2">
-               <property name="geometry">
-                <rect>
-                 <x>0</x>
-                 <y>0</y>
-                 <width>297</width>
-                 <height>207</height>
-                </rect>
-               </property>
-               <layout class="QVBoxLayout" name="verticalLayout_4">
-                <property name="spacing">
-                 <number>0</number>
-                </property>
-                <property name="leftMargin">
-                 <number>0</number>
-                </property>
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="rightMargin">
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="QTreeView" name="alignTreeView">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="editTriggers">
-                   <set>QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
-                  </property>
-                  <property name="dragEnabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="dragDropMode">
-                   <enum>QAbstractItemView::InternalMove</enum>
-                  </property>
-                  <property name="selectionMode">
-                   <enum>QAbstractItemView::ExtendedSelection</enum>
-                  </property>
-                  <property name="indentation">
-                   <number>10</number>
-                  </property>
-                  <property name="headerHidden">
-                   <bool>true</bool>
-                  </property>
-                  <attribute name="headerVisible">
-                   <bool>false</bool>
-                  </attribute>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
+              <property name="dragDropMode">
+               <enum>QAbstractItemView::InternalMove</enum>
+              </property>
+              <property name="selectionMode">
+               <enum>QAbstractItemView::ExtendedSelection</enum>
+              </property>
+              <property name="indentation">
+               <number>10</number>
+              </property>
+              <property name="headerHidden">
+               <bool>true</bool>
+              </property>
+              <attribute name="headerVisible">
+               <bool>false</bool>
+              </attribute>
              </widget>
             </item>
            </layout>
@@ -597,15 +483,18 @@
         </size>
        </property>
        <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
+        <enum>QFrame::Box</enum>
        </property>
        <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
+        <enum>QFrame::Raised</enum>
        </property>
        <property name="lineWidth">
         <number>0</number>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_6">
+       <property name="midLineWidth">
+        <number>1</number>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
         <property name="spacing">
          <number>0</number>
         </property>
@@ -613,7 +502,7 @@
          <number>0</number>
         </property>
         <property name="topMargin">
-         <number>1</number>
+         <number>0</number>
         </property>
         <property name="rightMargin">
          <number>0</number>
@@ -622,169 +511,103 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QLabel" name="seqLabel_2">
-          <property name="text">
-           <string>Viewer</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QScrollArea" name="scrollArea_3">
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
-          </property>
-          <property name="lineWidth">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="spacing">
            <number>0</number>
           </property>
-          <property name="midLineWidth">
-           <number>1</number>
-          </property>
-          <property name="widgetResizable">
-           <bool>true</bool>
-          </property>
-          <widget class="QWidget" name="scrollAreaWidgetContents_3">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>725</width>
-             <height>491</height>
-            </rect>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
-            <property name="spacing">
-             <number>0</number>
+          <item>
+           <widget class="QPlainTextEdit" name="namesEdit">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-            <property name="leftMargin">
-             <number>0</number>
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>16777215</height>
+             </size>
             </property>
-            <property name="topMargin">
-             <number>0</number>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(235,235,235);</string>
             </property>
-            <property name="rightMargin">
-             <number>0</number>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
             </property>
-            <property name="bottomMargin">
-             <number>0</number>
+            <property name="frameShadow">
+             <enum>QFrame::Plain</enum>
             </property>
-            <item>
-             <widget class="QPlainTextEdit" name="namesEdit">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: rgb(239, 239, 239);</string>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::NoFrame</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Plain</enum>
-              </property>
-              <property name="lineWidth">
-               <number>1</number>
-              </property>
-              <property name="midLineWidth">
-               <number>0</number>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="Line" name="line">
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="SeqViewer" name="seqViewer">
-              <property name="cursor" stdset="0">
-               <cursorShape>IBeamCursor</cursorShape>
-              </property>
-              <property name="acceptDrops">
-               <bool>false</bool>
-              </property>
-              <property name="verticalScrollBarPolicy">
-               <enum>Qt::ScrollBarAlwaysOff</enum>
-              </property>
-              <property name="html">
-               <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+            <property name="lineWidth">
+             <number>1</number>
+            </property>
+            <property name="midLineWidth">
+             <number>1</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="SeqViewer" name="seqViewer">
+            <property name="cursor" stdset="0">
+             <cursorShape>IBeamCursor</cursorShape>
+            </property>
+            <property name="acceptDrops">
+             <bool>false</bool>
+            </property>
+            <property name="verticalScrollBarPolicy">
+             <enum>Qt::ScrollBarAlwaysOff</enum>
+            </property>
+            <property name="html">
+             <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::NoTextInteraction</set>
-              </property>
-              <property name="placeholderText">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="Line" name="line_2">
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPlainTextEdit" name="numbersEdit">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: rgb(239, 239, 239);</string>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::NoFrame</enum>
-              </property>
-              <property name="lineWidth">
-               <number>0</number>
-              </property>
-              <property name="midLineWidth">
-               <number>1</number>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </widget>
+            </property>
+            <property name="textInteractionFlags">
+             <set>Qt::NoTextInteraction</set>
+            </property>
+            <property name="placeholderText">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPlainTextEdit" name="numbersEdit">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(220,220,220);</string>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="lineWidth">
+             <number>0</number>
+            </property>
+            <property name="midLineWidth">
+             <number>1</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
      </widget>
     </item>
     <item>
-     <widget class="Line" name="line_4">
+     <widget class="Line" name="optLine">
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
@@ -813,15 +636,21 @@ p, li { white-space: pre-wrap; }
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
+      <property name="lineWidth">
+       <number>0</number>
+      </property>
+      <property name="midLineWidth">
+       <number>1</number>
+      </property>
       <layout class="QVBoxLayout" name="verticalLayout_7">
        <property name="leftMargin">
-        <number>9</number>
+        <number>10</number>
        </property>
        <property name="topMargin">
         <number>0</number>
        </property>
        <property name="rightMargin">
-        <number>9</number>
+        <number>10</number>
        </property>
        <property name="bottomMargin">
         <number>0</number>
@@ -959,7 +788,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1200</width>
+     <width>991</width>
      <height>21</height>
     </rect>
    </property>

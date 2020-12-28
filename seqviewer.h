@@ -19,13 +19,12 @@ protected:
     void resizeEvent(QResizeEvent *event) override;
 
 private:
-
-    //QFont seqFont;
-     //can this be on the stack?
+    bool colorOn;
     QList<QString> displayedNames;
     QList<QString> displayedSeqs;
+    QList<QList<QString>> displayedSeqsColor;
 
-
+    void calculateColor();
     void drawSequenceOrAlignment();
 
 signals:

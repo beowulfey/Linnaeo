@@ -17,7 +17,7 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
 {
     ui->setupUi(this);
     ui->optionsPanel->hide();
-    ui->line_4->hide();
+    ui->optLine->hide();
     QStandardItem *seqRoot;
     QStandardItem *alignRoot;
 
@@ -118,10 +118,10 @@ void Linnaeo::on_actionShow_Viewer_Options_triggered(bool checked)
 {
     if(checked){
         ui->optionsPanel->show();
-        ui->line_4->show();
+        ui->optLine->show();
         //spdlog::debug("Showing options panel");
     }else{
-        ui->line_4->hide();
+        ui->optLine->hide();
         ui->optionsPanel->hide();
         //spdlog::debug("Hiding options panel");
     }
