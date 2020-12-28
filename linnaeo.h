@@ -26,6 +26,11 @@ private:
         SEQ_INFO=Qt::UserRole+2,
         ALIGNMENT=Qt::UserRole+3
     };
+    enum seqTheme
+    {
+        DEFAULT = 0,
+    };
+
     //QVector<qint64> procIds;
     QStandardItemModel *seqModel = nullptr;
     QStandardItem *seqStartFolderItem = nullptr;
@@ -52,6 +57,9 @@ private slots:
     void on_actionGet_Online_Sequence_triggered();
     void on_seqTreeView_doubleclicked(const QModelIndex &index);
     void on_actionClose_triggered();
+    void on_themeCombo_currentIndexChanged(int index);
+    void on_colorsEnabled_toggled(bool checked);
 };
+
 
 #endif // LINNAEO_H

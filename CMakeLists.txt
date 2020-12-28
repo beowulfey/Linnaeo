@@ -51,7 +51,8 @@ searchuniprot.cpp
 searchuniprot.ui
 seqviewer.cpp
 seqviewer.h
-
+themes.cpp
+themes.h
 #newsequence.cpp
 #newsequence.h
 #newsequence.ui

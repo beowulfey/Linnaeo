@@ -10,16 +10,19 @@ public:
     explicit SeqViewer(QWidget *parent);
 
     void clearViewer();
-    void displaySequence(QString seq, QString name);
-    void displayAlignment(QList<QString> alignment);
-    void startDisplayThread();
+    void setDisplaySequence(QString seq, QString name);
+    void setDisplayAlignment(QList<QString> alignment);
+    void setTheme(int index);
+    void setColors(bool colors);
+    //void startDisplayThread();
     QList<QString> getSeqList();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
 
 private:
-    bool colorOn;
+    bool colorOn = true;
+    QHash<QChar, QString> lookup;
     QList<QString> displayedNames;
     QList<QString> displayedSeqs;
     QList<QList<QString>> displayedSeqsColor;

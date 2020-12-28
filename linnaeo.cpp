@@ -14,12 +14,17 @@
 
 
 Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
+/// The main Linnaeo constructor. Setups the UI using default settings. Builds
+/// the initial treeViews. Connects all slots.
 {
     ui->setupUi(this);
-    ui->optionsPanel->hide();
-    ui->optLine->hide();
     QStandardItem *seqRoot;
     QStandardItem *alignRoot;
+
+    // Options Panel setup
+    ui->optionsPanel->hide();
+    ui->optLine->hide();
+    ui->themeCombo->addItems(QStringList()= {"Default","Annotations"});
 
 
     // Sequence TreeView setup
@@ -42,6 +47,7 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     ui->exportSequenceButton->setDefaultAction(ui->actionExportSequence);
     ui->deleteSequenceButton->setDefaultAction(ui->actionDelete_Selected_Sequences);
 
+    // Alignment tree setup
     this->alignModel = new QStandardItemModel(this);
     //this->alignModel->setHorizontalHeaderLabels(QStringList("Alignments"));
     alignRoot = this->alignModel->invisibleRootItem();
@@ -184,7 +190,7 @@ void Linnaeo::on_actionAdd_Sequence_triggered()
             }
             // TODO: Extract this step through a formatting function!
             this->setWindowTitle(QString("Linnaeo [%1]").arg(newSeq->data(Qt::DisplayRole).toString()));
-            ui->seqViewer->displaySequence(newSeq->data(SEQUENCE).toString(),newSeq->data(Qt::DisplayRole).toString());
+            ui->seqViewer->setDisplaySequence(newSeq->data(SEQUENCE).toString(),newSeq->data(Qt::DisplayRole).toString());
         }
         else
         {
@@ -363,7 +369,7 @@ void Linnaeo::on_seqTreeView_doubleclicked(const QModelIndex &index)
     seq = seqModel->itemFromIndex(index)->data(SEQUENCE).toString();
     this->setWindowTitle(QString("Linnaeo [%1]").arg(name));
     // Call sequence formatter.
-    ui->seqViewer->displaySequence(seq, name);
+    ui->seqViewer->setDisplaySequence(seq, name);
 
 }
 
@@ -445,3 +451,13 @@ void Linnaeo::on_actionClose_triggered()
 }
 
 
+
+void Linnaeo::on_themeCombo_currentIndexChanged(int index)
+{
+    ui->seqViewer->setTheme(index);
+}
+
+void Linnaeo::on_colorsEnabled_toggled(bool checked)
+{
+    ui->seqViewer->setColors(checked);
+}
