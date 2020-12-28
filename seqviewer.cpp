@@ -3,6 +3,7 @@
 #include <QRegularExpression>
 #include <QFontDatabase>
 #include <QFontDialog>
+#include <QElapsedTimer>
 
 SeqViewer::SeqViewer(QWidget *parent): QTextEdit(parent)
 {
@@ -62,11 +63,12 @@ void SeqViewer::drawSequenceOrAlignment()
 
     if(!displayedSeqs.isEmpty())
     {
-        this->setText("");
+        QElapsedTimer timer;
+        timer.start();
 
         formatted = QString("<pre style=\"font-family:%1;\">").arg(font().family());
         width = this->rect().width();
-        charWidth = QFontMetricsF(this->seqFont).averageCharWidth();
+        charWidth = QFontMetricsF(this->font()).averageCharWidth();
         qDebug() << "Av. CharW =" <<charWidth<<"and window is" <<width;
 
         numChars = trunc(width/charWidth)-1;
@@ -107,7 +109,9 @@ void SeqViewer::drawSequenceOrAlignment()
             //this->insertHtml(blank);
         }
         formatted.append("</pre>");
-        this->textCursor().insertHtml(formatted);
+        this->document()->setHtml("");
+        this->document()->setHtml(formatted);
+        qDebug() << "The slow operation took" << timer.elapsed() << "milliseconds";
         //this->insertHtml("</span></pre>");
 
     }
