@@ -9,7 +9,8 @@ int main(int argc, char *argv[])
     //spdlog::set_pattern("[%H:%M:%S] %^[%l] [thread %t] %v%$");
     QApplication a(argc, argv);
     Linnaeo w{};
-    a.setWindowIcon(QIcon(":/icons/linnaeo.ico")); // temporary fix for icon... not good
+    a.setWindowIcon(QIcon(":/icons/linnaeo.ico"));
+    w.setWindowIcon(QIcon(":/icons/linnaeo.ico"));
     //spdlog::info("LINNAEO STARTUP COMPLETE");
     w.show();
 

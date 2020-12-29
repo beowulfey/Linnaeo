@@ -6,6 +6,7 @@
 ///     * Default save location
 ///     * Default alignment algo
 ///     * Default export/save/paste format for sequences/alignments
+///     * Turn on whether to use debug, information, or no terminal output.
 
 Preferences::Preferences(QWidget *parent) :
     QDialog(parent),

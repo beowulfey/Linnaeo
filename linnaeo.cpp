@@ -36,7 +36,7 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     seqRoot->appendRow(seqStartFolderItem);
     connect(ui->seqTreeView, &QTreeView::expanded, this, &Linnaeo::expand_seqTreeView_item);
     connect(ui->seqTreeView, &QTreeView::collapsed, this, &Linnaeo::collapse_seqTreeView_item);
-    connect(ui->seqTreeView, &QTreeView::doubleClicked, this, &Linnaeo::on_seqTreeView_doubleclicked);
+    connect(ui->seqTreeView, &QTreeView::doubleClicked, this, &Linnaeo::on_seqTreeView_doubleClicked);
     // Connect tool buttons
     //ui->quickAlign
     ui->addSequenceButton->setDefaultAction(ui->actionAdd_Sequence);
@@ -111,6 +111,7 @@ void Linnaeo::on_actionNew_triggered()
 /// Almost perfect, except closing the first instance will close the connection to stdout.
 {
     Linnaeo *newLinnaeo = new Linnaeo();
+    newLinnaeo->setWindowIcon(QIcon(":/icons/linnaeo.ico"));
     newLinnaeo->show();
 
     //qint64* pid;
@@ -361,18 +362,6 @@ void Linnaeo::collapse_alignTreeView_item(const QModelIndex &index)
     alignModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder.svg"),Qt::DecorationRole);
 }
 
-void Linnaeo::on_seqTreeView_doubleclicked(const QModelIndex &index)
-{
-    QString name;
-    QString seq;
-    name = seqModel->itemFromIndex(index)->data(Qt::DisplayRole).toString();
-    seq = seqModel->itemFromIndex(index)->data(SEQUENCE).toString();
-    this->setWindowTitle(QString("Linnaeo [%1]").arg(name));
-    // Call sequence formatter.
-    ui->seqViewer->setDisplaySequence(seq, name);
-
-}
-
 void Linnaeo::on_actionGet_Online_Sequence_triggered()
 {
     SearchUniprot search(this);
@@ -460,4 +449,15 @@ void Linnaeo::on_themeCombo_currentIndexChanged(int index)
 void Linnaeo::on_colorsEnabled_toggled(bool checked)
 {
     ui->seqViewer->setColors(checked);
+}
+
+void Linnaeo::on_seqTreeView_doubleClicked(const QModelIndex &index)
+{
+    QString name;
+    QString seq;
+    name = seqModel->itemFromIndex(index)->data(Qt::DisplayRole).toString();
+    seq = seqModel->itemFromIndex(index)->data(SEQUENCE).toString();
+    this->setWindowTitle(QString("Linnaeo [%1]").arg(name));
+    // Call sequence formatter.
+    ui->seqViewer->setDisplaySequence(seq, name);
 }

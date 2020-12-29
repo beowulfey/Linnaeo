@@ -17,14 +17,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #    endif()
 #endif (WIN32)
 
-
+link_directories("${CMAKE_CURRENT_SOURCE_DIR}/external/clustalo")
 
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Network REQUIRED)
 #find_package(spdlog CONFIG REQUIRED)
 
-#set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/linnaeo_win.rc")
+set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/linnaeo.rc")
 #set(MACOSX_BUNDLE_ICON_FILE linnaeo_mac.icns)
 #set(APP_ICON_MACOSX ${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/linnaeo_mac.icns)
 #set_source_files_properties(${APP_ICON_MACOSX} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
@@ -53,17 +53,12 @@ seqviewer.cpp
 seqviewer.h
 themes.cpp
 themes.h
-#newsequence.cpp
-#newsequence.h
-#newsequence.ui
-#folderitem.cpp
-#folderitem.h
+${APP_ICON_RESOURCE_WINDOWS}
 #MACOSX_BUNDLE
-#${APP_ICON_RESOURCE_WINDOWS}
 #${APP_ICON_MACOSX}
 )
 
-target_link_libraries(Linnaeo PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt::Network)
+target_link_libraries(Linnaeo PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt::Network clustalo)
 #target_link_libraries(Linnaeo PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt::Network spdlog::spdlog spdlog::spdlog_header_only)
 
 

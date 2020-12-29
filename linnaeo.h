@@ -55,10 +55,10 @@ private slots:
     void on_actionDelete_Selected_Alignments_triggered();
     void on_actionEdit_Sequence_triggered();
     void on_actionGet_Online_Sequence_triggered();
-    void on_seqTreeView_doubleclicked(const QModelIndex &index);
     void on_actionClose_triggered();
     void on_themeCombo_currentIndexChanged(int index);
     void on_colorsEnabled_toggled(bool checked);
+    void on_seqTreeView_doubleClicked(const QModelIndex &index);
 };
 
 
