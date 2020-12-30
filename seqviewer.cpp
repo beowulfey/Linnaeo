@@ -23,8 +23,12 @@ void SeqViewer::setTheme(int index)
         qDebug() << "Chose default theme";
         break;
     case 1:
-        lookup = Themes::debugTheme();
-        qDebug() << "Chose debug theme";
+        lookup = Themes::neonTheme();
+        qDebug() << "Chose neon theme";
+        break;
+    case 2:
+        lookup = Themes::gradientTheme();
+        qDebug() << "Chose neon theme";
         break;
     }
     if(!displayedSeqs.isEmpty()){

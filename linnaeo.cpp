@@ -34,7 +34,7 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     // Options Panel setup
     ui->optionsPanel->hide();
     ui->optLine->hide();
-    ui->themeCombo->addItems(QStringList()= {"Default","Annotations"});
+    ui->themeCombo->addItems(QStringList()= {"Default","Neon","Gradient","Annotations"});
 
     // Sequence TreeView setup
     this->seqModel = new QStandardItemModel(this);
