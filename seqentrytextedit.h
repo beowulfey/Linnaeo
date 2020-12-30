@@ -5,6 +5,7 @@
 
 class SeqEntryTextEdit : public QPlainTextEdit
 {
+    /// This exists solely so I can capture the pasted input into the text box.
     Q_OBJECT
 public:
     SeqEntryTextEdit(QWidget *parent) : QPlainTextEdit(parent) {}

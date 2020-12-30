@@ -3,7 +3,7 @@
 #include "seqeditor.h"
 #include "preferences.h"
 #include "searchuniprot.h"
-#include <QProcess>
+#include "alignworker.h"
 #include <QDir>
 #include <QStandardItemModel>
 #include <QStandardItem>
@@ -14,10 +14,9 @@
 
 
 Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
-/// The main Linnaeo constructor. Setups the UI using default settings. Builds
-/// the initial treeViews. Connects all slots.
-{
-    ui->setupUi(this);
+    /// The main Linnaeo constructor. Setups the UI using default settings. Builds
+    /// the initial treeViews. Connects all slots.
+{   ui->setupUi(this);
     QStandardItem *seqRoot;
     QStandardItem *alignRoot;
 
@@ -26,19 +25,20 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     ui->optLine->hide();
     ui->themeCombo->addItems(QStringList()= {"Default","Annotations"});
 
-
     // Sequence TreeView setup
     this->seqModel = new QStandardItemModel(this);
     //this->seqModel->setHorizontalHeaderLabels(QStringList("Sequences"));
     seqRoot = this->seqModel->invisibleRootItem();
     seqStartFolderItem = new QStandardItem(QIcon(":/icons/ui/folder.svg"),QString("Uncategorized"));
-    seqStartFolderItem->setData(true, FOLDER);
+    seqStartFolderItem->setData(true, FolderRole);
     seqRoot->appendRow(seqStartFolderItem);
     connect(ui->seqTreeView, &QTreeView::expanded, this, &Linnaeo::expand_seqTreeView_item);
     connect(ui->seqTreeView, &QTreeView::collapsed, this, &Linnaeo::collapse_seqTreeView_item);
     connect(ui->seqTreeView, &QTreeView::doubleClicked, this, &Linnaeo::on_seqTreeView_doubleClicked);
+
     // Connect tool buttons
-    //ui->quickAlign
+    ui->quickAlignButton->setDefaultAction(ui->actionMake_Alignment);
+    ui->quickAlignButton->setText("Align");
     ui->addSequenceButton->setDefaultAction(ui->actionAdd_Sequence);
     ui->importSequenceButton->setDefaultAction(ui->actionSequence_from_file);
     ui->addSequenceFolderButton->setDefaultAction(ui->actionAdd_Folder_to_Sequence_Panel);
@@ -46,13 +46,16 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     //ui->editSequenceButton
     ui->exportSequenceButton->setDefaultAction(ui->actionExportSequence);
     ui->deleteSequenceButton->setDefaultAction(ui->actionDelete_Selected_Sequences);
+    ui->editSequenceButton->setDisabled(true);
+    ui->exportSequenceButton->setDisabled(true);
+    ui->quickAlignButton->setDisabled(true);
 
     // Alignment tree setup
     this->alignModel = new QStandardItemModel(this);
     //this->alignModel->setHorizontalHeaderLabels(QStringList("Alignments"));
     alignRoot = this->alignModel->invisibleRootItem();
     alignStartFolderItem = new QStandardItem(QIcon(":/icons/ui/folder.svg"),QString("Uncategorized"));
-    alignStartFolderItem->setData(true, FOLDER);
+    alignStartFolderItem->setData(true, FolderRole);
     alignRoot->appendRow(alignStartFolderItem);
     connect(ui->alignTreeView, &QTreeView::expanded, this, &Linnaeo::expand_alignTreeView_item);
     connect(ui->alignTreeView, &QTreeView::collapsed, this, &Linnaeo::collapse_alignTreeView_item);
@@ -77,6 +80,10 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
 
     ui->seqTreeView->setModel(seqModel);
     ui->alignTreeView->setModel(alignModel);
+    connect(ui->seqTreeView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &Linnaeo::modifySeqActions);
+
+    ui->seqTreeView->installEventFilter(this);
+    ui->alignTreeView->installEventFilter(this);
 
 
     // DEBUGGING!
@@ -94,67 +101,87 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
                         "RVFIVETMGGYCGYLATLSALSSGADNAYIFEEPFTVQDLSDDVDVILSKMEVGAKRYLV"
                         "VRNEWADKNLTTDFVQNLFDSEGKKNFTTRVNVLGHVQQGGSPTPFDRNMGTKLAARALE"
                         "FLLIQLKENLTADNKVIAKSAHTATLLGLKGRKVVFTPVQDLKKETDFEHRLPSEQWWMA"
-                        "LRPLLRVLARHRSTVESSAILESVEEESADSHMF", SEQUENCE);
+                        "LRPLLRVLARHRSTVESSAILESVEEESADSHMF", SequenceRole);
     seqStartFolderItem->appendRow(debugItem);
     ui->seqTreeView->setExpanded(seqModel->indexFromItem(seqStartFolderItem),true);
 
 }
 Linnaeo::~Linnaeo()
+{   delete ui;}
+
+bool Linnaeo::eventFilter(QObject *object, QEvent *event)
+/// Event filter for turning on certain buttons etc, depending on events that are detected
+
 {
-    delete ui;
+    return QMainWindow::eventFilter(object, event);
+    /*if (object == ui->seqTreeView) {
+        if (event->type() == QEvent::FocusIn) {
+            qDebug() << "SeqTree received focus";
+            return true;
+        } else if (event->type() == QEvent::FocusOut)
+        {
+            qDebug() << "SeqTree lost foucs";
+            return true;
+        }
+        else {
+            return false;
+        }
+    } else {
+        // pass the event on to the parent class
+        return QMainWindow::eventFilter(object, event);
+    }*/
 }
 
-// Slot connections for the main menu.
+
 // FILE MENU SLOTS
 void Linnaeo::on_actionNew_triggered()
-/// New: Starts a new detached Linnaeo instance.
-/// Almost perfect, except closing the first instance will close the connection to stdout.
-{
-    Linnaeo *newLinnaeo = new Linnaeo();
-    newLinnaeo->setWindowIcon(QIcon(":/icons/linnaeo.ico"));
-    newLinnaeo->show();
-
+    /// Starts a new detached Linnaeo instance.
+{   // Almost perfect, except closing the first instance will close the connection to stdout.
     //qint64* pid;
     //QProcess::startDetached(QCoreApplication::applicationFilePath(),{},QDir::homePath(),pid);
     //spdlog::info("Started new window with procID {}", *pid);
+    Linnaeo *newLinnaeo = new Linnaeo();
+    newLinnaeo->setWindowIcon(QIcon(":/icons/linnaeo.ico"));
+    newLinnaeo->show();}
+void Linnaeo::on_actionQuit_triggered()
+    /// Quits Linnaeo. Does not close other detached instances.
+{   //QVector<qint64>::const_iterator iter;
+    //if(this->procIds.length()>0){
+    //    for(iter=this->procIds.begin();iter != this->procIds.end(); iter++){
+    //
+    this->close(); }
+// EDIT MENU SLOTS
+void Linnaeo::on_actionPreferences_triggered()
+    /// Opens preference panel.
+{   Preferences *pref = new Preferences(this);
+    pref->show(); }
+void Linnaeo::on_actionCopy_triggered()
+    /// Copies either the first sequence or first alignment, depending on what is highlighted.
+{
+    qDebug() << "CTRL-C!";
+    if(ui->seqTreeView->hasFocus() && ui->seqTreeView->selectionModel()->selectedIndexes().length() > 0)
+    { qDebug()<<"seqTree clicked"; }
+    else if (ui->alignTreeView->hasFocus() && ui->alignTreeView->selectionModel()->selectedIndexes().length() > 0)
+    { qDebug()<<"alignTree clicked"; }
+    else qDebug()<<"not selected!";
 }
 
-// VIEW MENU SLOTS
+// MANAGE MENU SLOTS
 void Linnaeo::on_actionShow_Viewer_Options_triggered(bool checked)
-/// Show side panel of viewer.
-{
-    if(checked){
+    /// Show side panel of viewer.
+{   if(checked){
         ui->optionsPanel->show();
         ui->optLine->show();
         //spdlog::debug("Showing options panel");
     }else{
         ui->optLine->hide();
-        ui->optionsPanel->hide();
         //spdlog::debug("Hiding options panel");
-    }
-}
-
-void Linnaeo::on_actionPreferences_triggered()
-{
-    Preferences *pref = new Preferences(this);
-    pref->show();
-}
-
-void Linnaeo::on_actionQuit_triggered()
-{
-    //QVector<qint64>::const_iterator iter;
-    //if(this->procIds.length()>0){
-    //    for(iter=this->procIds.begin();iter != this->procIds.end(); iter++){
-    //
-    this->close();
-}
-
-
+        ui->optionsPanel->hide(); }}
 
 void Linnaeo::on_actionAdd_Sequence_triggered()
-/// Add a new sequence to the sequence tree. Opens up the "New Sequence" dialog.
-/// By default, adds to the permanent "uncategorized" folder (hidden if empty).
-/// Otherwise, it will add to whatever folder is selected.
+    /// Add a new sequence to the sequence tree. Opens up the "New Sequence" dialog.
+    /// By default, adds to the permanent "uncategorized" folder (hidden if empty).
+    /// Otherwise, it will add to whatever folder is selected.
 {
     SeqEditor seqEdit(this);
 
@@ -166,8 +193,8 @@ void Linnaeo::on_actionAdd_Sequence_triggered()
         {
             QList<QModelIndex>indexes = ui->seqTreeView->selectionModel()->selectedIndexes();
             QStandardItem *newSeq = new QStandardItem(name);
-            newSeq->setData(false,FOLDER);
-            newSeq->setData(seq,SEQUENCE);
+            newSeq->setData(false,FolderRole);
+            newSeq->setData(seq,SequenceRole);
             newSeq->setDropEnabled(false);
             QStandardItem *item;
             bool found = false;
@@ -176,7 +203,7 @@ void Linnaeo::on_actionAdd_Sequence_triggered()
                 // Check each selected item (if any) to see if it is a folder. Add it to the first
                 // folder it finds, otherwise add it to the "uncategorized" folder.
                 item = this->seqModel->itemFromIndex(index);
-                if (item->data(FOLDER).toBool())
+                if (item->data(FolderRole).toBool())
                 {
                     item->appendRow(newSeq);
                     ui->seqTreeView->expand(index);
@@ -191,7 +218,7 @@ void Linnaeo::on_actionAdd_Sequence_triggered()
             }
             // TODO: Extract this step through a formatting function!
             this->setWindowTitle(QString("Linnaeo [%1]").arg(newSeq->data(Qt::DisplayRole).toString()));
-            ui->seqViewer->setDisplaySequence(newSeq->data(SEQUENCE).toString(),newSeq->data(Qt::DisplayRole).toString());
+            ui->seqViewer->setDisplaySequence(newSeq->data(SequenceRole).toString(),newSeq->data(Qt::DisplayRole).toString());
         }
         else
         {
@@ -200,7 +227,6 @@ void Linnaeo::on_actionAdd_Sequence_triggered()
         }
     }
 }
-
 void Linnaeo::on_actionDelete_Selected_Sequences_triggered()
 {
     QList<QModelIndex> indexes = ui->seqTreeView->selectionModel()->selectedIndexes();
@@ -219,14 +245,13 @@ void Linnaeo::on_actionDelete_Selected_Sequences_triggered()
             this->seqModel->removeRow(i.row(), i.parent());
     }
 }
-
 void Linnaeo::on_actionAdd_Folder_to_Sequence_Panel_triggered()
-/// Adds a folder to the sequence panel. Without having anything selected, it will insert the
-/// new folder above the "Uncategorized" folder. If things are selected, it will add to the first folder
-/// it finds; otherwise, it will add to the parent of the selected object.
+    /// Adds a folder to the sequence panel. Without having anything selected, it will insert the
+    /// new folder above the "Uncategorized" folder. If things are selected, it will add to the first folder
+    /// it finds; otherwise, it will add to the parent of the selected object.
 {
     QStandardItem *newFolder = new QStandardItem(QIcon(":/icons/ui/folder.svg"),QString("New Folder"));
-    newFolder->setData(true,FOLDER);
+    newFolder->setData(true,FolderRole);
     QList<QModelIndex> indexes = ui->seqTreeView->selectionModel()->selectedIndexes();
     if (indexes.size() == 0)// || this->seqModel->itemFromIndex(indexes.at(0))->parent() == NULL)
     {
@@ -243,7 +268,7 @@ void Linnaeo::on_actionAdd_Folder_to_Sequence_Panel_triggered()
             // Check each selected item (if any) to see if it is a folder. Add it to the first
             // folder it finds, otherwise add it to the "uncategorized" folder.
             item = this->seqModel->itemFromIndex(index);
-            if (item->data(FOLDER).toBool())
+            if (item->data(FolderRole).toBool())
             {
                 item->appendRow(newFolder);
                 ui->seqTreeView->expand(index);
@@ -265,17 +290,32 @@ void Linnaeo::on_actionAdd_Folder_to_Sequence_Panel_triggered()
     }
 
 }
-
 void Linnaeo::on_actionMake_Alignment_triggered()
+{
+    QString unaligned;
+    QStandardItem *item;
+    QList<QModelIndex> indexes = ui->seqTreeView->selectionModel()->selectedIndexes();
+    for(auto&& index: indexes)
+    {
+        item = seqModel->itemFromIndex(index);
+        unaligned.append(">").append(item->data(Qt::DisplayRole).toString())
+                 .append("\n").append(item->data(SequenceRole).toString())
+                 .append("\n");
+    }
+    AlignWorker *worker = new AlignWorker(unaligned);
+    connect(worker, &AlignWorker::resultReady, this, &Linnaeo::addAlignmentToTree);
+    connect(worker, &AlignWorker::finished, worker, &AlignWorker::deleteLater);
+    worker->run();
+}
+void Linnaeo::addAlignmentToTree(const QHash<QString,QString> &seqDict)
 {
 
 }
-
 void Linnaeo::on_actionAdd_Alignment_Folder_triggered()
-/// Identical behavior as for the Sequence equivalent.
+    /// Identical behavior as for the Sequence equivalent.
 {
     QStandardItem *newFolder = new QStandardItem(QIcon(":/icons/ui/folder.svg"),QString("New Folder"));
-    newFolder->setData(true,FOLDER);
+    newFolder->setData(true,FolderRole);
     QList<QModelIndex> indexes = ui->alignTreeView->selectionModel()->selectedIndexes();
     if (indexes.size() == 0)
     {
@@ -292,7 +332,7 @@ void Linnaeo::on_actionAdd_Alignment_Folder_triggered()
             // Check each selected item (if any) to see if it is a folder. Add it to the first
             // folder it finds, otherwise add it to the "uncategorized" folder.
             item = this->alignModel->itemFromIndex(index);
-            if (item->data(FOLDER).toBool())
+            if (item->data(FolderRole).toBool())
             {
                 item->appendRow(newFolder);
                 ui->alignTreeView->expand(index);
@@ -313,7 +353,6 @@ void Linnaeo::on_actionAdd_Alignment_Folder_triggered()
         }
     }
 }
-
 void Linnaeo::on_actionDelete_Selected_Alignments_triggered()
 {
     QList<QModelIndex> indexes = ui->alignTreeView->selectionModel()->selectedIndexes();
@@ -332,19 +371,17 @@ void Linnaeo::on_actionDelete_Selected_Alignments_triggered()
             this->alignModel->removeRow(i.row(), i.parent());
     }
 }
-
 void Linnaeo::on_actionEdit_Sequence_triggered()
 {
 
 }
-
 // OTHER SLOTS
 void Linnaeo::expand_seqTreeView_item(const QModelIndex &index)
+    /// Expand/collapse slots are for animating the icon in the tree view!
 {
     //spdlog::debug("Expanded SeqView tree at position {}", index.row());
     seqModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder-open.svg"),Qt::DecorationRole);
 }
-
 void Linnaeo::collapse_seqTreeView_item(const QModelIndex &index)
 {
     //spdlog::debug("Collapsed SeqView tree at position {}", index.row());
@@ -355,13 +392,11 @@ void Linnaeo::expand_alignTreeView_item(const QModelIndex &index)
     //spdlog::debug("Expanded AlignView tree at position {}", index.row());
     alignModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder-open.svg"),Qt::DecorationRole);
 }
-
 void Linnaeo::collapse_alignTreeView_item(const QModelIndex &index)
 {
     //spdlog::debug("Collapsed AlignView tree at position {}", index.row());
     alignModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder.svg"),Qt::DecorationRole);
 }
-
 void Linnaeo::on_actionGet_Online_Sequence_triggered()
 {
     SearchUniprot search(this);
@@ -390,8 +425,8 @@ void Linnaeo::on_actionGet_Online_Sequence_triggered()
             for(int i = 0; i<seqs.length(); i++)
             {
                 item = new QStandardItem();
-                item->setData(false, FOLDER);
-                item->setData(seqs.at(i),SEQUENCE);
+                item->setData(false, FolderRole);
+                item->setData(seqs.at(i),SequenceRole);
                 info.append(ids.at(i));
                 info.append(names.at(i));
                 info.append(genes.at(i));
@@ -399,7 +434,7 @@ void Linnaeo::on_actionGet_Online_Sequence_triggered()
                 info.append(descs.at(i));
                 infoStr = info.join("||");
                 qDebug() << infoStr << "\n";
-                item->setData(infoStr, SEQ_INFO);
+                item->setData(infoStr, InfoRole);
                 if(nameSource == 0) {item->setText(ids.at(i));}
                 else if(nameSource == 1) {item->setText(names.at(i));}
                 else if(nameSource == 2) {item->setText(genes.at(i));}
@@ -414,7 +449,7 @@ void Linnaeo::on_actionGet_Online_Sequence_triggered()
                     // Check each selected item (if any) to see if it is a folder. Add it to the first
                     // folder it finds, otherwise add it to the "uncategorized" folder.
                     sourceItem = seqModel->itemFromIndex(index);
-                    if (sourceItem->data(FOLDER).toBool())
+                    if (sourceItem->data(FolderRole).toBool())
                     {
                         sourceItem->appendRow(item);
                         ui->seqTreeView->expand(index);
@@ -432,32 +467,87 @@ void Linnaeo::on_actionGet_Online_Sequence_triggered()
     }
 
 }
-
 void Linnaeo::on_actionClose_triggered()
 {
     this->setWindowTitle(QString("Linnaeo"));
     ui->seqViewer->clearViewer();
 }
-
-
-
 void Linnaeo::on_themeCombo_currentIndexChanged(int index)
 {
     ui->seqViewer->setTheme(index);
 }
-
 void Linnaeo::on_colorsEnabled_toggled(bool checked)
 {
     ui->seqViewer->setColors(checked);
 }
-
 void Linnaeo::on_seqTreeView_doubleClicked(const QModelIndex &index)
 {
     QString name;
     QString seq;
-    name = seqModel->itemFromIndex(index)->data(Qt::DisplayRole).toString();
-    seq = seqModel->itemFromIndex(index)->data(SEQUENCE).toString();
+    name = index.data(Qt::DisplayRole).toString();
+    seq = index.data(SequenceRole).toString();
     this->setWindowTitle(QString("Linnaeo [%1]").arg(name));
     // Call sequence formatter.
     ui->seqViewer->setDisplaySequence(seq, name);
 }
+
+void Linnaeo::modifySeqActions(const QItemSelection &sele, const QItemSelection &desel)
+{
+    if(ui->seqTreeView->selectionModel()->selectedIndexes().size() > 0)
+    {
+        if(ui->seqTreeView->selectionModel()->selectedIndexes().size() == 1) // if one item selected...
+        {
+            if(ui->seqTreeView->selectionModel()->selectedIndexes().first().data(FolderRole).toBool()) // if it's a folder...
+            {
+                ui->editSequenceButton->setDisabled(true);
+                ui->exportSequenceButton->setDisabled(true);
+                ui->quickAlignButton->setDisabled(true);
+            }
+            else
+            {
+                ui->editSequenceButton->setDisabled(false);
+                ui->exportSequenceButton->setDisabled(false);
+                ui->quickAlignButton->setDisabled(true);
+            }
+        }
+        else
+        {
+            int count = 0;
+            for(auto&& index: ui->seqTreeView->selectionModel()->selectedIndexes())
+            {
+                if(index.data(SequenceRole).isValid())
+                {
+                    count += 1;
+                }
+            }
+            if (count > 1) ui->quickAlignButton->setDisabled(false);
+            else ui->quickAlignButton->setDisabled(true);
+        }
+
+    }
+
+    else
+    {
+        qDebug() <<"nothing selected";
+        ui->editSequenceButton->setDisabled(true);
+        ui->exportSequenceButton->setDisabled(true);
+        ui->quickAlignButton->setDisabled(true);
+    }
+}
+/*
+void Linnaeo::on_seqTreeView_clicked(const QModelIndex &index)
+{
+    qDebug() <<"SeqTreeView Clicked";
+    if(ui->seqTreeView->selectionModel()->selectedIndexes().length() == 1 && index.data(FolderRole).toBool())
+    {
+
+        ui->editSequenceButton->setDisabled(true);
+        ui->exportSequenceButton->setDisabled(true);
+    }
+    else
+    {
+        ui->editSequenceButton->setDisabled(false);
+        ui->exportSequenceButton->setDisabled(false);
+    }
+}*/
+

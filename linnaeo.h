@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QStandardItemModel>
+#include <QItemSelection>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Linnaeo; }
@@ -21,10 +22,10 @@ private:
     Ui::Linnaeo *ui;
     enum ItemType
     {
-        FOLDER=Qt::UserRole,
-        SEQUENCE=Qt::UserRole+1,
-        SEQ_INFO=Qt::UserRole+2,
-        ALIGNMENT=Qt::UserRole+3
+        FolderRole=Qt::UserRole,
+        SequenceRole=Qt::UserRole+1,
+        InfoRole=Qt::UserRole+2,
+        AlignmentRole=Qt::UserRole+3
     };
     enum seqTheme
     {
@@ -36,7 +37,8 @@ private:
     QStandardItem *seqStartFolderItem = nullptr;
     QStandardItemModel *alignModel = nullptr;
     QStandardItem *alignStartFolderItem = nullptr;
-
+protected:
+    bool eventFilter(QObject *obj, QEvent *ev) override;
 
 private slots:
     void on_actionNew_triggered();
@@ -59,6 +61,10 @@ private slots:
     void on_themeCombo_currentIndexChanged(int index);
     void on_colorsEnabled_toggled(bool checked);
     void on_seqTreeView_doubleClicked(const QModelIndex &index);
+    void addAlignmentToTree(const QHash<QString, QString> &seqDict);
+    void on_actionCopy_triggered();
+    //void on_seqTreeView_clicked(const QModelIndex &index);
+    void modifySeqActions(const QItemSelection &sel, const QItemSelection &desel);
 };
 
 

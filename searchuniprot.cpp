@@ -3,6 +3,9 @@
 //#include "spdlog/spdlog.h"
 #include <QNetworkReply>
 
+
+// TODO: MOVE THE SEARCH INTO A NEW THREAD! Otherwise it crashes if I try and close early!
+
 SearchUniprot::SearchUniprot(QWidget *parent) :
     QDialog(parent),
     LABELS({"Entry", "Name", "Gene Name", "Organism", "Description", "Sequence"}),

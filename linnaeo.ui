@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>991</width>
+    <width>996</width>
     <height>563</height>
    </rect>
   </property>
@@ -795,7 +795,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>991</width>
+     <width>996</width>
      <height>21</height>
     </rect>
    </property>
@@ -937,6 +937,9 @@ p, li { white-space: pre-wrap; }
    <property name="text">
     <string>Copy</string>
    </property>
+   <property name="toolTip">
+    <string>Copy highlighted sequences or alignment</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+C</string>
    </property>
@@ -1043,7 +1046,7 @@ p, li { white-space: pre-wrap; }
      <normaloff>:/icons/ui/plus.svg</normaloff>:/icons/ui/plus.svg</iconset>
    </property>
    <property name="text">
-    <string>Make Alignment</string>
+    <string>Align Selected Sequences</string>
    </property>
    <property name="toolTip">
     <string>Makes a new alignment from the selected sequences</string>
