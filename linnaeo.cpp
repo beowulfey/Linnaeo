@@ -29,7 +29,7 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     ui->numbersEdit->setFont(defaultFont);
     connect(ui->seqViewer, &SeqViewer::updatedNamesAndRuler, this, &Linnaeo::updateNamesAndRuler);
     connect(ui->seqViewer->verticalScrollBar(), &QScrollBar::valueChanged, ui->namesEdit->verticalScrollBar(), &QScrollBar::setValue);
-    connect(ui->namesEdit->verticalScrollBar(), &QScrollBar::valueChanged, ui->seqViewer->verticalScrollBar(), &QScrollBar::setValue);
+    //connect(ui->namesEdit->verticalScrollBar(), &QScrollBar::valueChanged, ui->seqViewer->verticalScrollBar(), &QScrollBar::setValue);
 
     // Options Panel setup
     ui->optionsPanel->hide();
