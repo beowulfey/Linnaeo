@@ -5,20 +5,33 @@
 #include <QFontDatabase>
 #include <QElapsedTimer>
 
+
 SeqViewer::SeqViewer(QWidget *parent): QTextEdit(parent)
 {
-    QFontDatabase::addApplicationFont(":/fonts/Noto-Custom.ttf");
-    this->setFont(QFont("Noto Custom", 10, 1));
-    setTheme(0);
+
+    resizeTimer = new QTimer(this);
+    resizeTimer->setSingleShot(true);
+    connect(resizeTimer, &QTimer::timeout, this, &SeqViewer::resizeTimeout);
 }
 
 void SeqViewer::setTheme(int index)
 {
+    qDebug() << "Chosen index:"<< index;
     switch(index) {
-    case 0: lookup = Themes::defaultTheme();
-    default: lookup = Themes::defaultTheme();
+    case 0:
+        lookup = Themes::defaultTheme();
+        qDebug() << "Chose default theme";
+        break;
+    case 1:
+        lookup = Themes::debugTheme();
+        qDebug() << "Chose debug theme";
+        break;
     }
-    if(!displayedSeqs.isEmpty()) drawSequenceOrAlignment();
+    if(!displayedSeqs.isEmpty()){
+        qDebug() << "Redrawing with new colors";
+        calculateColor();
+        drawSequenceOrAlignment();
+    }
 }
 
 void SeqViewer::setColors(bool colors)
@@ -42,6 +55,15 @@ QStringList SeqViewer::getSeqList()
 void SeqViewer::resizeEvent(QResizeEvent *event)
 {
     QTextEdit::resizeEvent(event);
+    resizing = true;
+    resizeTimer->start(100);
+
+    drawSequenceOrAlignment();
+}
+
+void SeqViewer::resizeTimeout()
+{
+    resizing = false;
     drawSequenceOrAlignment();
 }
 
@@ -50,7 +72,6 @@ void SeqViewer::setDisplaySequence(QString seq, QString name)
 /// Calls the sequence redraw function.
 {
     this->displayedSeqs.clear();
-    this->displayedSeqsColor.clear();
     this->displayedSeqs.append(seq);
     this->displayedNames.clear();
     this->displayedNames.append(name);
@@ -58,12 +79,24 @@ void SeqViewer::setDisplaySequence(QString seq, QString name)
     drawSequenceOrAlignment();
 }
 
+void SeqViewer::setDisplayAlignment(QList<QString> seqs, QList<QString> names)
+{
+    displayedSeqs.clear();
+    displayedNames.clear();
+    displayedSeqsColor.clear();
+    displayedSeqs = seqs;
+    displayedNames = names;
+    qDebug() << "NAMES!!!" << names;
+    calculateColor();
+    drawSequenceOrAlignment();
+}
 
 void SeqViewer::calculateColor()
 {
-    //QElapsedTimer timer;
+    displayedSeqsColor.clear();
+    QElapsedTimer timer;
 
-    //timer.start();
+    timer.start();
     // Define themes:
 
     QList<QString> colorSeq;
@@ -73,9 +106,9 @@ void SeqViewer::calculateColor()
         colorSeq.clear();
         for(auto&& resi: seq)
         {
-            QString colorRes = "<span style=\"background-color:";
-            colorRes.append(lookup[resi]);
-            colorSeq.append(colorRes);
+            //QString colorRes = "<span style=\"background-color:";
+            //colorRes.append(lookup[resi]);
+            colorSeq.append(lookup[resi]);
             //qDebug() << "appended" <<colorRes;
         }
         displayedSeqsColor.append(colorSeq);
@@ -83,7 +116,7 @@ void SeqViewer::calculateColor()
 
     }
     //qDebug()  << displayedSeqsColor.at(0).length() << "vs" << displayedSeqs.at(0).length();
-    //qDebug() << "Creating color version took" << timer.elapsed() << "milliseconds";
+    qDebug() << "Creating color version took" << timer.elapsed() << "milliseconds";
 }
 
 void SeqViewer::drawSequenceOrAlignment()
@@ -96,15 +129,16 @@ void SeqViewer::drawSequenceOrAlignment()
 
     float charWidth;
     int numChars;
-    int numBlocks;
     QString formatted;
+    QString namesFormatted;
 
 
     if(!displayedSeqs.isEmpty())
     {
-        //QElapsedTimer timer;
-        //timer.start();
+        QElapsedTimer timer;
+        timer.start();
         formatted = QString("<pre style=\"font-family:%1;\">").arg(font().family());
+        namesFormatted = QString("<pre style=\"text-align:center;font-family:%1;\">").arg(font().family());
         charWidth = QFontMetricsF(font()).averageCharWidth();
         numChars = trunc((QRectF(rect()).width()-3)/charWidth)-1;
         numBlocks = displayedSeqs.first().length()/numChars;
@@ -113,27 +147,36 @@ void SeqViewer::drawSequenceOrAlignment()
         {
             for(int j=0; j<displayedSeqs.length();j++) // for each sequence in the list...
             {
+                // Name stuff
+                namesFormatted.append(displayedNames.at(j)).append("\n");
+
+                // Sequence stuff
                 QString seg;
-                if(!colorOn) // Black and white only uses the displayedSeqs parameter
+                if(colorOn && !resizing)  // Color uses the displayedSeqsColor List<List<String>> of the sequence expanded with color data
                 {
-                    if(!(i==numBlocks))seg = displayedSeqs.at(j).sliced(i*numChars, numChars).append("\n");
-                    else seg = displayedSeqs.at(j).last(displayedSeqs.at(j).length()-i*numChars).append("\n");
-                    //qDebug()<< "Block:"<< i <<"Seq"<<j<<"extracts"<<seg;
-                } else // Color uses the displayedSeqsColor List<List<String>> of the sequence expanded with color data
-                {
-                    if(!(i==numBlocks))seg = QList<QString>(displayedSeqsColor.at(j).sliced(i*numChars, numChars)).join("").append("\n");
+                    if(!(i==numBlocks)) seg = QList<QString>(displayedSeqsColor.at(j).sliced(i*numChars, numChars)).join("").append("\n");
                     else seg = QList<QString>(displayedSeqsColor.at(j).last(displayedSeqsColor.at(j).length()-i*numChars)).join("").append("\n");
-                    //qDebug() << seg;
+                } else // Black and white only uses the displayedSeqs parameter
+                {
+                    if(!(i==numBlocks)) seg = displayedSeqs.at(j).sliced(i*numChars, numChars).append("\n");
+                    else seg = displayedSeqs.at(j).last(displayedSeqs.at(j).length()-i*numChars).append("\n");
+
                 }
-                //
                 formatted.append(seg);
             }
             formatted.append("\n");
+            namesFormatted.append("\n");
         }
+        formatted.remove(formatted.length()-2,2);
         formatted.append("</pre>");
+        namesFormatted.remove(namesFormatted.length()-2,2);
+        namesFormatted.append("</pre>");
+        //qDebug() << formatted << namesFormatted;
         this->document()->clear();
         this->document()->setHtml(formatted);
+        emit updatedNamesAndRuler(namesFormatted);
         //qDebug() << "The drawing operation took" << timer.elapsed() << "milliseconds";
+
 
     }
 

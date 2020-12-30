@@ -37,6 +37,7 @@ private:
     QStandardItem *seqStartFolderItem = nullptr;
     QStandardItemModel *alignModel = nullptr;
     QStandardItem *alignStartFolderItem = nullptr;
+    QFont defaultFont;
 protected:
     bool eventFilter(QObject *obj, QEvent *ev) override;
 
@@ -65,6 +66,7 @@ private slots:
     void on_actionCopy_triggered();
     //void on_seqTreeView_clicked(const QModelIndex &index);
     void modifySeqActions(const QItemSelection &sel, const QItemSelection &desel);
+    void updateNamesAndRuler(const QString);
 };
 
 

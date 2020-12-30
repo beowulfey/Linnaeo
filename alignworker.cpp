@@ -47,7 +47,7 @@ void AlignWorker::run()
            aligned.close();
         }
         tempDir.remove();
-
+        qDebug() <<result;
         emit resultReady(Sequence::parseFastaString(result));
 
 

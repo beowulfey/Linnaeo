@@ -2,6 +2,7 @@
 #define SEQVIEWER_H
 
 #include <QTextEdit>
+#include <QTimer>
 
 class SeqViewer : public QTextEdit
 {
@@ -11,7 +12,7 @@ public:
 
     void clearViewer();
     void setDisplaySequence(QString seq, QString name);
-    void setDisplayAlignment(QList<QString> alignment);
+    void setDisplayAlignment(QList<QString> seqs, QList<QString> names);
     void setTheme(int index);
     void setColors(bool colors);
     //void startDisplayThread();
@@ -22,6 +23,9 @@ protected:
 
 private:
     bool colorOn = true;
+    bool resizing = false;
+    int numBlocks;
+    QTimer *resizeTimer;
     QHash<QChar, QString> lookup;
     QList<QString> displayedNames;
     QList<QString> displayedSeqs;
@@ -29,9 +33,10 @@ private:
 
     void calculateColor();
     void drawSequenceOrAlignment();
+    void resizeTimeout();
 
 signals:
-
+    void updatedNamesAndRuler(const QString names);
 };
 
 

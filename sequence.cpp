@@ -24,7 +24,7 @@ namespace Sequence
             else if (seg.peekNext()[0] == '>' && !seg.hasPrevious())
             {
                 qDebug() << "Looking at"<<seg.peekNext() << "Found first name!";
-                curName = seg.next();
+                curName = QString(seg.next()).remove(0,1);
             }
             else
             {

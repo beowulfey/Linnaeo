@@ -9,6 +9,7 @@
 #include <QStandardItem>
 #include <QFileIconProvider>
 #include <QPersistentModelIndex>
+#include <QScrollBar>
 //#include <spdlog/spdlog.h>
 #include <iostream>
 
@@ -19,6 +20,16 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
 {   ui->setupUi(this);
     QStandardItem *seqRoot;
     QStandardItem *alignRoot;
+
+    // Set up Viewer panel
+    QFontDatabase::addApplicationFont(":/fonts/Noto-Custom.ttf");
+    defaultFont = QFont("Noto Custom", 10, 1);
+    ui->namesEdit->setFont(defaultFont);
+    ui->seqViewer->setFont(defaultFont);
+    ui->numbersEdit->setFont(defaultFont);
+    connect(ui->seqViewer, &SeqViewer::updatedNamesAndRuler, this, &Linnaeo::updateNamesAndRuler);
+    connect(ui->seqViewer->verticalScrollBar(), &QScrollBar::valueChanged, ui->namesEdit->verticalScrollBar(), &QScrollBar::setValue);
+    connect(ui->namesEdit->verticalScrollBar(), &QScrollBar::valueChanged, ui->seqViewer->verticalScrollBar(), &QScrollBar::setValue);
 
     // Options Panel setup
     ui->optionsPanel->hide();
@@ -309,7 +320,16 @@ void Linnaeo::on_actionMake_Alignment_triggered()
 }
 void Linnaeo::addAlignmentToTree(const QHash<QString,QString> &seqDict)
 {
+    QList<QString> names;
 
+    QList<QString> seqs;
+    for(auto&& seq: seqDict.keys())
+    {
+        seqs.append(seq);
+        names.append(seqDict[seq]);
+    }
+    qDebug() <<names;
+    ui->seqViewer->setDisplayAlignment(seqs, names);
 }
 void Linnaeo::on_actionAdd_Alignment_Folder_triggered()
     /// Identical behavior as for the Sequence equivalent.
@@ -492,6 +512,7 @@ void Linnaeo::on_seqTreeView_doubleClicked(const QModelIndex &index)
 }
 
 void Linnaeo::modifySeqActions(const QItemSelection &sele, const QItemSelection &desel)
+/// This code is here to specifically turn on the different SeqTreeView buttons on and off depending on selection.
 {
     if(ui->seqTreeView->selectionModel()->selectedIndexes().size() > 0)
     {
@@ -528,26 +549,13 @@ void Linnaeo::modifySeqActions(const QItemSelection &sele, const QItemSelection 
 
     else
     {
-        qDebug() <<"nothing selected";
         ui->editSequenceButton->setDisabled(true);
         ui->exportSequenceButton->setDisabled(true);
         ui->quickAlignButton->setDisabled(true);
     }
 }
-/*
-void Linnaeo::on_seqTreeView_clicked(const QModelIndex &index)
+
+void Linnaeo::updateNamesAndRuler(QString names)
 {
-    qDebug() <<"SeqTreeView Clicked";
-    if(ui->seqTreeView->selectionModel()->selectedIndexes().length() == 1 && index.data(FolderRole).toBool())
-    {
-
-        ui->editSequenceButton->setDisabled(true);
-        ui->exportSequenceButton->setDisabled(true);
-    }
-    else
-    {
-        ui->editSequenceButton->setDisabled(false);
-        ui->exportSequenceButton->setDisabled(false);
-    }
-}*/
-
+    ui->namesEdit->document()->setHtml(names);
+}
