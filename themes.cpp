@@ -174,28 +174,28 @@ QHash<QChar, QString> Themes::clustalXTheme()
 {
     QHash<QChar, QString> lookup;
     // Hydrophobic
-    lookup['A'] = QString("<span style=\"background-color:#197FE5;color:#DAEBFB;\">A</span>");
-    lookup['I'] = QString("<span style=\"background-color:#197FE5;color:#DAEBFB;\">I</span>");
-    lookup['L'] = QString("<span style=\"background-color:#197FE5;color:#DAEBFB;\">L</span>");
-    lookup['M'] = QString("<span style=\"background-color:#197FE5;color:#DAEBFB;\">M</span>");
-    lookup['F'] = QString("<span style=\"background-color:#197FE5;color:#DAEBFB;\">F</span>");
-    lookup['W'] = QString("<span style=\"background-color:#197FE5;color:#DAEBFB;\">W</span>");
-    lookup['V'] = QString("<span style=\"background-color:#197FE5;color:#DAEBFB;\">V</span>");
-    lookup['C'] = QString("<span style=\"background-color:#E57F7F;color:#F8DDDD;\">C</span>");
+    lookup['A'] = QString("<span style=\"background-color:#197FE5\">A</span>");
+    lookup['I'] = QString("<span style=\"background-color:#197FE5\">I</span>");
+    lookup['L'] = QString("<span style=\"background-color:#197FE5\">L</span>");
+    lookup['M'] = QString("<span style=\"background-color:#197FE5\">M</span>");
+    lookup['F'] = QString("<span style=\"background-color:#197FE5\">F</span>");
+    lookup['W'] = QString("<span style=\"background-color:#197FE5\">W</span>");
+    lookup['V'] = QString("<span style=\"background-color:#197FE5\">V</span>");
+    lookup['C'] = QString("<span style=\"background-color:#E57F7F\">C</span>");
     // Polar
-    lookup['N'] = QString("<span style=\"background-color:#19CC19;color:#DBFBDB;\">N</span>");
-    lookup['Q'] = QString("<span style=\"background-color:#19CC19;color:#DBFBDB;\">Q</span>");
-    lookup['S'] = QString("<span style=\"background-color:#19CC19;color:#DBFBDB;\">S</span>");
-    lookup['T'] = QString("<span style=\"background-color:#19CC19;color:#DBFBDB;\">T</span>");
+    lookup['N'] = QString("<span style=\"background-color:#19CC19\">N</span>");
+    lookup['Q'] = QString("<span style=\"background-color:#19CC19\">Q</span>");
+    lookup['S'] = QString("<span style=\"background-color:#19CC19\">S</span>");
+    lookup['T'] = QString("<span style=\"background-color:#19CC19\">T</span>");
     // Positive
-    lookup['K'] = QString("<span style=\"background-color:#E53319;color:#FBDFDA;\">K</span>");
-    lookup['R'] = QString("<span style=\"background-color:#E53319;color:#FBDFDA;\">R</span>");
+    lookup['K'] = QString("<span style=\"background-color:#E53319\">K</span>");
+    lookup['R'] = QString("<span style=\"background-color:#E53319\">R</span>");
     // Negative
-    lookup['D'] = QString("<span style=\"background-color:#CC4CCC;color:#F6DFF6;\">D</span>");
-    lookup['E'] = QString("<span style=\"background-color:#CC4CCC;color:#F6DFF6;\">E</span>");
+    lookup['D'] = QString("<span style=\"background-color:#CC4CCC\">D</span>");
+    lookup['E'] = QString("<span style=\"background-color:#CC4CCC\">E</span>");
     // Aromatic
-    lookup['H'] = QString("<span style=\"background-color:#19B2B2;color:#DBFAFA;\">H</span>");
-    lookup['Y'] = QString("<span style=\"background-color:#19B2B2;color:#DBFAFA;\">Y</span>");
+    lookup['H'] = QString("<span style=\"background-color:#19B2B2\">H</span>");
+    lookup['Y'] = QString("<span style=\"background-color:#19B2B2\">Y</span>");
     // Misc
     lookup['G'] = QString("<span style=\"background-color:#E5994C\">G</span>");
     lookup['P'] = QString("<span style=\"background-color:#CCCC00\">P</span>");

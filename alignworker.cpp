@@ -24,7 +24,7 @@ void AlignWorker::run()
     {
         QProcess proc = QProcess(this);
         proc.setWorkingDirectory(tempDir.path());
-        args <<"-i"<<tempDir.path()+"/input.fasta"<<"--output-order=tree-order"<<"--threads=8"<<"--force"<<"-o"<<tempDir.path()+"/output.fasta";
+        args <<"-i"<<tempDir.path()+"/input.fasta"<<"--output-order=tree-order"<<"--threads=8"<<"--verbose"<<"--force"<<"-o"<<tempDir.path()+"/output.fasta";
         QFile input(tempDir.path()+"/input.fasta");
         if (input.open(QIODevice::WriteOnly | QIODevice::Text))
         {

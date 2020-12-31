@@ -1,5 +1,7 @@
 QT       += core gui network
 
+CONFIG += console
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 # You can make your code fail to compile if it uses deprecated APIs.
@@ -54,6 +56,8 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RC_ICONS = resources/icons/linnaeo.ico
 
 RESOURCES += \
     resources/linnaeo.qrc

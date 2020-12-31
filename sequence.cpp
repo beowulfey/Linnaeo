@@ -1,12 +1,12 @@
 #include "sequence.h"
 
-#include <QDebug>
+//#include <QDebug>
 
 namespace Sequence
 {
     QHash<QString, QString> parseFastaString(QString input)
     {
-        qDebug()<<input.trimmed();
+        //qDebug()<<input.trimmed();
         QHash <QString, QString> result;
         QString curName;
         QString curSeq;
@@ -16,25 +16,25 @@ namespace Sequence
 
             if(seg.peekNext()[0] == '>' && seg.hasPrevious())
             {
-                qDebug() << "Looking at"<<seg.peekNext() << "Found new seq! Saved previous.";
+                //qDebug() << "Looking at"<<seg.peekNext() << "Found new seq! Saved previous.";
                 result[curSeq]=curName;
                 curSeq.clear();
                 curName = QString(seg.next()).remove(0,1);
             }
             else if (seg.peekNext()[0] == '>' && !seg.hasPrevious())
             {
-                qDebug() << "Looking at"<<seg.peekNext() << "Found first name!";
+                //qDebug() << "Looking at"<<seg.peekNext() << "Found first name!";
                 curName = QString(seg.next()).remove(0,1);
             }
             else
             {
-                qDebug() << "Looking at"<<seg.peekNext() << "appending to seq!";
+                //qDebug() << "Looking at"<<seg.peekNext() << "appending to seq!";
                 curSeq.append(seg.next());
             }
         }
-        qDebug() << "Saved final seq!";
+       // qDebug() << "Saved final seq!";
         result[curSeq]=curName;
-        qDebug() << result;
+        //qDebug() << result;
 
         return result;
 
