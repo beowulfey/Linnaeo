@@ -6,6 +6,18 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+#Application version
+VERSION_MAJOR = 0
+VERSION_MINOR = 5
+VERSION_BUILD = 0
+
+DEFINES += "VERSION_MAJOR=$$VERSION_MAJOR"\
+       "VERSION_MINOR=$$VERSION_MINOR"\
+       "VERSION_BUILD=$$VERSION_BUILD"
+
+#Target version
+VERSION = $${VERSION_MAJOR}.$${VERSION_MINOR}.$${VERSION_BUILD}
+
 
 SOURCES += \
     alignworker.cpp \
@@ -36,6 +48,7 @@ FORMS += \
     preferences.ui \
     searchuniprot.ui \
     seqeditor.ui
+
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
