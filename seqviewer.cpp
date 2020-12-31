@@ -30,6 +30,14 @@ void SeqViewer::setTheme(int index)
         lookup = Themes::gradientTheme();
         qDebug() << "Chose neon theme";
         break;
+    case 3:
+        lookup = Themes::newTheme();
+        qDebug() << "Chose neon theme";
+        break;
+    case 4:
+        lookup = Themes::clustalXTheme();
+        qDebug() << "Chose neon theme";
+        break;
     }
     if(!displayedSeqs.isEmpty()){
         qDebug() << "Redrawing with new colors";
