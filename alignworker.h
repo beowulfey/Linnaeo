@@ -10,7 +10,7 @@ public:
     AlignWorker(QString input);
     void run() override;
 signals:
-    void resultReady(const QHash<QString,QString> &s);
+    void resultReady(const QList<QStringList> s);
 private:
     QString seqs;
 };

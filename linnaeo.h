@@ -25,7 +25,8 @@ private:
         FolderRole=Qt::UserRole,
         SequenceRole=Qt::UserRole+1,
         InfoRole=Qt::UserRole+2,
-        AlignmentRole=Qt::UserRole+3
+        AlignmentRole=Qt::UserRole+3,
+        NamesRole=Qt::UserRole+4
     };
     enum seqTheme
     {
@@ -62,11 +63,13 @@ private slots:
     void on_themeCombo_currentIndexChanged(int index);
     void on_colorsEnabled_toggled(bool checked);
     void on_seqTreeView_doubleClicked(const QModelIndex &index);
-    void addAlignmentToTree(const QHash<QString, QString> &seqDict);
+    void addAlignmentToTree(const QList<QStringList> result);
     void on_actionCopy_triggered();
     //void on_seqTreeView_clicked(const QModelIndex &index);
     void modifySeqActions(const QItemSelection &sel, const QItemSelection &desel);
     void updateNamesAndRuler(const QString);
+    void on_wrapEnabled_toggled(bool checked);
+    void on_alignTreeView_doubleClicked(const QModelIndex &index);
 };
 
 

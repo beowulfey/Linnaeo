@@ -15,6 +15,7 @@ public:
     void setDisplayAlignment(QList<QString> seqs, QList<QString> names);
     void setTheme(int index);
     void setColors(bool colors);
+    void setWrapSeqs(bool wrap);
     //void startDisplayThread();
     QList<QString> getSeqList();
 
@@ -22,8 +23,9 @@ protected:
     void resizeEvent(QResizeEvent *event) override;
 
 private:
-    bool colorOn = true;
+    bool wrapSeqs = true;
     bool resizing = false;
+    bool colorOn = true;
     int numBlocks;
     QTimer *resizeTimer;
     QHash<QChar, QString> lookup;
@@ -34,6 +36,7 @@ private:
     void calculateColor();
     void drawSequenceOrAlignment();
     void resizeTimeout();
+
 
 signals:
     void updatedNamesAndRuler(const QString names);

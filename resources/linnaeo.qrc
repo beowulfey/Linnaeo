@@ -23,5 +23,6 @@
         <file>icons/ui/file-alt-line.svg</file>
         <file>icons/ui/download.svg</file>
         <file>fonts/Noto-Custom.ttf</file>
+        <file>icons/ui/display-settings.svg</file>
     </qresource>
 </RCC>

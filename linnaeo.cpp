@@ -10,6 +10,7 @@
 #include <QFileIconProvider>
 #include <QPersistentModelIndex>
 #include <QScrollBar>
+#include <QFontDatabase>
 //#include <spdlog/spdlog.h>
 #include <iostream>
 
@@ -29,7 +30,7 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     ui->numbersEdit->setFont(defaultFont);
     connect(ui->seqViewer, &SeqViewer::updatedNamesAndRuler, this, &Linnaeo::updateNamesAndRuler);
     connect(ui->seqViewer->verticalScrollBar(), &QScrollBar::valueChanged, ui->namesEdit->verticalScrollBar(), &QScrollBar::setValue);
-    //connect(ui->namesEdit->verticalScrollBar(), &QScrollBar::valueChanged, ui->seqViewer->verticalScrollBar(), &QScrollBar::setValue);
+    connect(ui->namesEdit->verticalScrollBar(), &QScrollBar::valueChanged, ui->seqViewer->verticalScrollBar(), &QScrollBar::setValue);
 
     // Options Panel setup
     ui->optionsPanel->hide();
@@ -63,22 +64,20 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     ui->quickAlignButton->setDisabled(true);
 
     // Alignment tree setup
-    this->alignModel = new QStandardItemModel(this);
-    //this->alignModel->setHorizontalHeaderLabels(QStringList("Alignments"));
-    alignRoot = this->alignModel->invisibleRootItem();
+    alignModel = new QStandardItemModel(this);
+    alignRoot = alignModel->invisibleRootItem();
     alignStartFolderItem = new QStandardItem(QIcon(":/icons/ui/folder.svg"),QString("Uncategorized"));
     alignStartFolderItem->setData(true, FolderRole);
     alignRoot->appendRow(alignStartFolderItem);
-    connect(ui->alignTreeView, &QTreeView::expanded, this, &Linnaeo::expand_alignTreeView_item);
-    connect(ui->alignTreeView, &QTreeView::collapsed, this, &Linnaeo::collapse_alignTreeView_item);
     // Connect tool buttons
-    //ui->quickAlign
-    //ui->addAlignmentButton->setDefaultAction(ui->actionAdd_Alignment);
     ui->importAlignmentButton->setDefaultAction(ui->actionAlignment_from_file);
     ui->addAlignmentFolderButton->setDefaultAction(ui->actionAdd_Alignment_Folder);
     //ui->editAlignmentButton
     ui->exportAlignmentButton->setDefaultAction(ui->actionExportAlignment);
     ui->deleteAlignmentButton->setDefaultAction(ui->actionDelete_Selected_Alignments);
+    connect(ui->alignTreeView, &QTreeView::expanded, this, &Linnaeo::expand_alignTreeView_item);
+    connect(ui->alignTreeView, &QTreeView::collapsed, this, &Linnaeo::collapse_alignTreeView_item);
+    connect(ui->alignTreeView, &QTreeView::doubleClicked, this, &Linnaeo::on_alignTreeView_doubleClicked);
 
     /*alignModel = new QStandardItemModel(this);
     alignModel->setHorizontalHeaderLabels(QStringList("Alignments"));
@@ -228,7 +227,6 @@ void Linnaeo::on_actionAdd_Sequence_triggered()
                 this->seqStartFolderItem->appendRow(newSeq);
                 ui->seqTreeView->expand(this->seqStartFolderItem->index());
             }
-            // TODO: Extract this step through a formatting function!
             this->setWindowTitle(QString("Linnaeo [%1]").arg(newSeq->data(Qt::DisplayRole).toString()));
             ui->seqViewer->setDisplaySequence(newSeq->data(SequenceRole).toString(),newSeq->data(Qt::DisplayRole).toString());
         }
@@ -319,17 +317,21 @@ void Linnaeo::on_actionMake_Alignment_triggered()
     connect(worker, &AlignWorker::finished, worker, &AlignWorker::deleteLater);
     worker->run();
 }
-void Linnaeo::addAlignmentToTree(const QHash<QString,QString> &seqDict)
+void Linnaeo::addAlignmentToTree(const QList<QStringList> result)
 {
-    QList<QString> names;
-
-    QList<QString> seqs;
-    for(auto&& seq: seqDict.keys())
-    {
-        seqs.append(seq);
-        names.append(seqDict[seq]);
-    }
-    qDebug() <<names;
+    QList<QString> names = result.at(0);
+    QList<QString> seqs = result.at(1);
+    //for(auto&& seq: seqDict.keys())
+    //{
+    //    seqs.append(seq);
+    //    names.append(seqDict[seq]);
+    //}
+    //qDebug() <<names;
+    QStandardItem *item = new QStandardItem(QString("New Alignment (%1)").arg(names.join(", ")));
+    item->setData(seqs, AlignmentRole);
+    item->setData(names,NamesRole);
+    alignStartFolderItem->appendRow(item);
+    ui->alignTreeView->expand(alignStartFolderItem->index());
     ui->seqViewer->setDisplayAlignment(seqs, names);
 }
 void Linnaeo::on_actionAdd_Alignment_Folder_triggered()
@@ -503,13 +505,15 @@ void Linnaeo::on_colorsEnabled_toggled(bool checked)
 }
 void Linnaeo::on_seqTreeView_doubleClicked(const QModelIndex &index)
 {
-    QString name;
-    QString seq;
-    name = index.data(Qt::DisplayRole).toString();
-    seq = index.data(SequenceRole).toString();
-    this->setWindowTitle(QString("Linnaeo [%1]").arg(name));
-    // Call sequence formatter.
-    ui->seqViewer->setDisplaySequence(seq, name);
+    if(!index.data(FolderRole).toBool()){
+        QString name;
+        QString seq;
+        name = index.data(Qt::DisplayRole).toString();
+        seq = index.data(SequenceRole).toString();
+        this->setWindowTitle(QString("Linnaeo [%1]").arg(name));
+        // Call sequence formatter.
+        ui->seqViewer->setDisplaySequence(seq, name);
+    }
 }
 
 void Linnaeo::modifySeqActions(const QItemSelection &sele, const QItemSelection &desel)
@@ -558,5 +562,22 @@ void Linnaeo::modifySeqActions(const QItemSelection &sele, const QItemSelection 
 
 void Linnaeo::updateNamesAndRuler(QString names)
 {
+    ui->namesEdit->document()->clear();
     ui->namesEdit->document()->setHtml(names);
+}
+
+
+
+void Linnaeo::on_wrapEnabled_toggled(bool checked)
+{
+    ui->seqViewer->setWrapSeqs(checked);
+}
+
+void Linnaeo::on_alignTreeView_doubleClicked(const QModelIndex &index)
+{
+    if(!index.data(FolderRole).toBool()){
+        this->setWindowTitle(QString("Linnaeo [%1]").arg(index.data(Qt::DisplayRole).toString()));
+        ui->seqViewer->setDisplayAlignment(index.data(AlignmentRole).toStringList(), index.data(NamesRole).toStringList());
+    }
+
 }

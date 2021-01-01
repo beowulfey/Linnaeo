@@ -4,10 +4,12 @@
 
 namespace Sequence
 {
-    QHash<QString, QString> parseFastaString(QString input)
+    QList<QStringList> parseFastaString(QString input)
     {
         //qDebug()<<input.trimmed();
-        QHash <QString, QString> result;
+        QList<QStringList> result;
+        QStringList names;
+        QStringList seqs;
         QString curName;
         QString curSeq;
         QListIterator<QString> seg(input.trimmed().split("\n"));
@@ -17,7 +19,9 @@ namespace Sequence
             if(seg.peekNext()[0] == '>' && seg.hasPrevious())
             {
                 //qDebug() << "Looking at"<<seg.peekNext() << "Found new seq! Saved previous.";
-                result[curSeq]=curName;
+                names.append(curName);
+                seqs.append(curSeq);
+                //[curSeq]=curName;
                 curSeq.clear();
                 curName = QString(seg.next()).remove(0,1);
             }
@@ -33,8 +37,12 @@ namespace Sequence
             }
         }
        // qDebug() << "Saved final seq!";
-        result[curSeq]=curName;
+        names.append(curName);
+        seqs.append(curSeq);
+        //result[curSeq]=curName;
         //qDebug() << result;
+        result.append(names);
+        result.append(seqs);
 
         return result;
 

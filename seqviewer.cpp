@@ -52,6 +52,12 @@ void SeqViewer::setColors(bool colors)
     if(!displayedSeqs.isEmpty()) drawSequenceOrAlignment();
 
 }
+void SeqViewer::setWrapSeqs(bool wrap)
+{
+    wrapSeqs = wrap;
+    if(!displayedSeqs.isEmpty()) drawSequenceOrAlignment();
+
+}
 
 void SeqViewer::clearViewer()
 {
@@ -67,6 +73,7 @@ QStringList SeqViewer::getSeqList()
 void SeqViewer::resizeEvent(QResizeEvent *event)
 {
     QTextEdit::resizeEvent(event);
+    qDebug() <<" Begin resize";
     resizing = true;
     resizeTimer->start(100);
 
@@ -76,6 +83,7 @@ void SeqViewer::resizeEvent(QResizeEvent *event)
 void SeqViewer::resizeTimeout()
 {
     resizing = false;
+    qDebug() << "DONE RESIZING";
     drawSequenceOrAlignment();
 }
 
@@ -98,7 +106,6 @@ void SeqViewer::setDisplayAlignment(QList<QString> seqs, QList<QString> names)
     displayedSeqsColor.clear();
     displayedSeqs = seqs;
     displayedNames = names;
-    qDebug() << "NAMES!!!" << names;
     calculateColor();
     drawSequenceOrAlignment();
 }
@@ -147,13 +154,23 @@ void SeqViewer::drawSequenceOrAlignment()
 
     if(!displayedSeqs.isEmpty())
     {
+        qDebug()<<"DRAWING";
         QElapsedTimer timer;
         timer.start();
         formatted = QString("<pre style=\"font-family:%1;\">").arg(font().family());
-        namesFormatted = QString("<pre style=\"text-align:center;font-family:%1;\">").arg(font().family());
-        charWidth = QFontMetricsF(font()).averageCharWidth();
-        numChars = trunc((QRectF(rect()).width()-3)/charWidth)-1;
-        numBlocks = displayedSeqs.first().length()/numChars;
+        namesFormatted = QString("<pre style=\"font-family:%1;text-align:right;\">").arg(font().family());
+        if(wrapSeqs){
+            qDebug() << "Setting wrap settings";
+            charWidth = QFontMetricsF(font()).averageCharWidth();
+            numChars = trunc((QRectF(rect()).width()-3)/charWidth)-1;
+            numBlocks = displayedSeqs.first().length()/numChars;
+        }
+        else
+        {
+            qDebug() << "No wrap today.";
+            numChars = displayedSeqs.first().length(); // all sequences should have same length at this point! may need to validate.
+            numBlocks = 0;
+        }
 
         for(int i = 0; i<=numBlocks; i++) // for each text block...
         {
@@ -183,11 +200,11 @@ void SeqViewer::drawSequenceOrAlignment()
         formatted.append("</pre>");
         namesFormatted.remove(namesFormatted.length()-2,2);
         namesFormatted.append("</pre>");
-        //qDebug() << formatted << namesFormatted;
+        qDebug() << formatted << namesFormatted;
         this->document()->clear();
         this->document()->setHtml(formatted);
-        emit updatedNamesAndRuler(namesFormatted);
-        //qDebug() << "The drawing operation took" << timer.elapsed() << "milliseconds";
+        emit updatedNamesAndRuler(namesFormatted); // Send it back to Linnaeo to add to names panel.
+        qDebug() << "The drawing operation took" << timer.elapsed() << "milliseconds";
 
 
     }
