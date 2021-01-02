@@ -72,12 +72,15 @@ QStringList SeqViewer::getSeqList()
 
 void SeqViewer::resizeEvent(QResizeEvent *event)
 {
-    QTextEdit::resizeEvent(event);
-    qDebug() <<" Begin resize";
-    resizing = true;
-    resizeTimer->start(100);
+    if(wrapSeqs)
+    {
+        QTextEdit::resizeEvent(event);
+        qDebug() <<" Begin resize";
+        resizing = true;
+        resizeTimer->start(100);
 
-    drawSequenceOrAlignment();
+        drawSequenceOrAlignment();
+    }
 }
 
 void SeqViewer::resizeTimeout()

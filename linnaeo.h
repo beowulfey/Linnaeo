@@ -70,6 +70,8 @@ private slots:
     void updateNamesAndRuler(const QString);
     void on_wrapEnabled_toggled(bool checked);
     void on_alignTreeView_doubleClicked(const QModelIndex &index);
+    void on_actionExportAlignment_triggered();
+    void on_actionAlignment_from_file_triggered();
 };
 
 

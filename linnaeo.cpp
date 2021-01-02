@@ -4,7 +4,10 @@
 #include "preferences.h"
 #include "searchuniprot.h"
 #include "alignworker.h"
+#include "sequence.h"
 #include <QDir>
+#include <QStandardPaths>
+#include <QFileDialog>
 #include <QStandardItemModel>
 #include <QStandardItem>
 #include <QFileIconProvider>
@@ -321,12 +324,6 @@ void Linnaeo::addAlignmentToTree(const QList<QStringList> result)
 {
     QList<QString> names = result.at(0);
     QList<QString> seqs = result.at(1);
-    //for(auto&& seq: seqDict.keys())
-    //{
-    //    seqs.append(seq);
-    //    names.append(seqDict[seq]);
-    //}
-    //qDebug() <<names;
     QStandardItem *item = new QStandardItem(QString("New Alignment (%1)").arg(names.join(", ")));
     item->setData(seqs, AlignmentRole);
     item->setData(names,NamesRole);
@@ -551,7 +548,6 @@ void Linnaeo::modifySeqActions(const QItemSelection &sele, const QItemSelection 
         }
 
     }
-
     else
     {
         ui->editSequenceButton->setDisabled(true);
@@ -580,4 +576,37 @@ void Linnaeo::on_alignTreeView_doubleClicked(const QModelIndex &index)
         ui->seqViewer->setDisplayAlignment(index.data(AlignmentRole).toStringList(), index.data(NamesRole).toStringList());
     }
 
+}
+
+void Linnaeo::on_actionExportAlignment_triggered()
+{
+
+}
+
+void Linnaeo::on_actionAlignment_from_file_triggered()
+{
+    QString result;
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Alignment"),QStandardPaths::locate(QStandardPaths::DesktopLocation,""),tr("Alignment File (*.aln *.fa)"));
+    QFile file = QFile(fileName);
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+       QTextStream in(&file);
+       while (!in.atEnd())
+       {
+          result.append(in.readAll());
+       }
+       file.close();
+    }
+    if(result[0] == '>')
+    {
+        QList<QStringList> parsed = Sequence::parseFastaString(result);
+        QList<QString> names = parsed.at(0);
+        QList<QString> seqs = parsed.at(1);
+        QStandardItem *item = new QStandardItem(QString("New Alignment (HUGE)"));//.arg(names.join(", ")));
+        item->setData(seqs, AlignmentRole);
+        item->setData(names,NamesRole);
+        alignStartFolderItem->appendRow(item);
+        ui->alignTreeView->expand(alignStartFolderItem->index());
+        ui->seqViewer->setDisplayAlignment(seqs, names);
+    }
 }
