@@ -1,3 +1,4 @@
+#include "logging.h"
 #include "alignworker.h"
 #include "sequence.h"
 #include <QTemporaryFile>
@@ -47,7 +48,6 @@ void AlignWorker::run()
            aligned.close();
         }
         tempDir.remove();
-        qDebug() <<result;
         emit resultReady(Sequence::splitFastaAlignmentString(result));
 
 

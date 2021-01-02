@@ -1,0 +1,10 @@
+#ifndef LOGGING_H
+#define LOGGING_H
+
+#include <QLoggingCategory>
+Q_DECLARE_LOGGING_CATEGORY(lnoMain);
+Q_DECLARE_LOGGING_CATEGORY(lnoIo);
+Q_DECLARE_LOGGING_CATEGORY(lnoView);
+Q_DECLARE_LOGGING_CATEGORY(lnoProc);
+
+#endif // LOGGING_H

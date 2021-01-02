@@ -1,6 +1,6 @@
 #include "searchuniprot.h"
 #include "ui_searchuniprot.h"
-//#include "spdlog/spdlog.h"
+#include "logging.h"
 #include <QNetworkReply>
 
 
@@ -60,7 +60,7 @@ void SearchUniprot::on_searchButton_clicked()
         }
 
         request.setUrl(url);
-        //spdlog::info("Searching with URL {}", url.toDisplayString().toStdString());
+        qInfo(lnoIo)<<"Searching with URL\n" << url.toDisplayString();
         manager->get(request);
     }
 
@@ -74,7 +74,7 @@ void SearchUniprot::httpFinished(QNetworkReply *reply)
     bar->showMessage("Search complete");
     if (reply->error())
     {
-        qDebug() << reply->errorString();
+        qDebug(lnoIo) << reply->errorString();
         bar->showMessage("Unable to search UniPROT!");
         return;
     }
@@ -187,7 +187,7 @@ void SearchUniprot::sslErrorOccured(QNetworkReply *reply, QList<QSslError>)
 {
     if(reply->error())
     {
-        qDebug() << reply->errorString();
+        qDebug(lnoIo) << reply->errorString();
         return;
     }
 }

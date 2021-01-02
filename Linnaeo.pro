@@ -10,7 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 #Application version
 VERSION_MAJOR = 0
-VERSION_MINOR = 5
+VERSION_MINOR = 6
 VERSION_BUILD = 0
 
 DEFINES += "VERSION_MAJOR=$$VERSION_MAJOR"\
@@ -23,6 +23,7 @@ VERSION = $${VERSION_MAJOR}.$${VERSION_MINOR}.$${VERSION_BUILD}
 
 SOURCES += \
     alignworker.cpp \
+    logging.cpp \
     main.cpp \
     linnaeo.cpp \
     preferences.cpp \
@@ -36,6 +37,7 @@ SOURCES += \
 HEADERS += \
     alignworker.h \
     linnaeo.h \
+    logging.h \
     preferences.h \
     searchuniprot.h \
     seqeditor.h \

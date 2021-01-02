@@ -8,15 +8,10 @@
 #include <QDir>
 #include <QStandardPaths>
 #include <QFileDialog>
-#include <QStandardItemModel>
-#include <QStandardItem>
-#include <QFileIconProvider>
 #include <QPersistentModelIndex>
 #include <QScrollBar>
 #include <QFontDatabase>
 #include <QClipboard>
-//#include <spdlog/spdlog.h>
-#include <iostream>
 
 
 Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
@@ -53,7 +48,7 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     seqRoot->appendRow(seqStartFolderItem);
     connect(ui->seqTreeView, &QTreeView::expanded, this, &Linnaeo::expand_seqTreeView_item);
     connect(ui->seqTreeView, &QTreeView::collapsed, this, &Linnaeo::collapse_seqTreeView_item);
-    connect(ui->seqTreeView, &QTreeView::doubleClicked, this, &Linnaeo::on_seqTreeView_doubleClicked);
+    //connect(ui->seqTreeView, &QTreeView::doubleClicked, this, &Linnaeo::on_seqTreeView_doubleClicked);
 
     // Connect tool buttons
     ui->quickAlignButton->setDefaultAction(ui->actionMake_Alignment);
@@ -167,20 +162,21 @@ void Linnaeo::on_actionCopy_triggered()
 {
     if(ui->seqTreeView->hasFocus() && ui->seqTreeView->selectionModel()->selectedIndexes().length() > 0)
     {
-        qDebug() << "SeqTree clicked";
+        //qDebug() << "SeqTree clicked";
         QString copied;
         for(int i = 0; i<ui->seqTreeView->selectionModel()->selectedIndexes().length(); i++)
         {
             QModelIndex index = ui->seqTreeView->selectionModel()->selectedIndexes().at(i);
             if(!index.data(FolderRole).toBool())
             {
-                qDebug() << "Sending to printer";
+                //qDebug() << "Sending to printer";
                 copied.append(Sequence::prettyPrintFastaSequence(index.data(Qt::DisplayRole).toString(),index.data(SequenceRole).toString()));
 
             }
         }
         QClipboard *clippy = QGuiApplication::clipboard();
         clippy->setText(copied);
+        qInfo(lnoIo) << "Copied out sequences!" << "\n" << qPrintable(copied);
     }
     else if (ui->alignTreeView->hasFocus() && ui->alignTreeView->selectionModel()->selectedIndexes().length() > 0)
     {
@@ -190,7 +186,7 @@ void Linnaeo::on_actionCopy_triggered()
         {
             QStringList names = index.data(NamesRole).toStringList();
             QStringList seqs = index.data(AlignmentRole).toStringList();
-            qDebug() <<names <<seqs;
+            //qDebug() <<names <<seqs;
             for(int i = 0; i<names.length(); i++)
             {
                 copied.append(Sequence::prettyPrintFastaSequence(names.at(i),seqs.at(i)));
@@ -200,8 +196,9 @@ void Linnaeo::on_actionCopy_triggered()
         }
         QClipboard *clippy = QGuiApplication::clipboard();
         clippy->setText(copied);
+        qInfo() << "Copied out alignment!" << "\n" << copied;
     }
-    else qDebug()<<"not selected!";
+    else qDebug(lnoIo)<<"not selected!";
 }
 
 // MANAGE MENU SLOTS
@@ -479,7 +476,7 @@ void Linnaeo::on_actionGet_Online_Sequence_triggered()
                 info.append(organisms.at(i));
                 info.append(descs.at(i));
                 infoStr = info.join("||");
-                qDebug() << infoStr << "\n";
+                //qDebug(lnoIo) << infoStr << "\n";
                 item->setData(infoStr, InfoRole);
                 if(nameSource == 0) {item->setText(ids.at(i));}
                 else if(nameSource == 1) {item->setText(names.at(i));}
@@ -628,13 +625,20 @@ void Linnaeo::on_actionAlignment_from_file_triggered()
     if(result[0] == '>')
     {
         QList<QStringList> parsed = Sequence::splitFastaAlignmentString(result);
+
         QList<QString> names = parsed.at(0);
         QList<QString> seqs = parsed.at(1);
+        if(seqs.length() > 15)
+        {
+            ui->wrapEnabled->setChecked(false);
+            qInfo(lnoView) << "Detected"<<seqs.length()<<"sequences in alignment, disabling sequence wrapping to improve performance";
+        }
         QStandardItem *item = new QStandardItem(QString("New Alignment (HUGE)"));//.arg(names.join(", ")));
         item->setData(seqs, AlignmentRole);
         item->setData(names,NamesRole);
         alignStartFolderItem->appendRow(item);
         ui->alignTreeView->expand(alignStartFolderItem->index());
+
         ui->seqViewer->setDisplayAlignment(seqs, names);
     }
 }

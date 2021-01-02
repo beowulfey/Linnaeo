@@ -1,6 +1,7 @@
 #ifndef LINNAEO_H
 #define LINNAEO_H
 
+#include "logging.h"
 #include <QMainWindow>
 #include <QStandardItemModel>
 #include <QItemSelection>
