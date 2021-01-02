@@ -709,13 +709,18 @@ void Linnaeo::on_alignTreeView_doubleClicked(const QModelIndex &index)
 
 void Linnaeo::on_actionExportAlignment_triggered()
 {
-    ui->alignTreeView->selectionModel()->selectedIndexes();
+    QModelIndex selected = ui->alignTreeView->selectionModel()->selectedIndexes().first();
+    if(!selected.data(FolderRole).toBool())
+    {
+
+    }
+
 }
 
 void Linnaeo::on_actionAlignment_from_file_triggered()
 {
     QString result;
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Alignment"),QStandardPaths::locate(QStandardPaths::DesktopLocation,""),tr("Alignment File (*.aln *.fa)"));
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Alignment"),QStandardPaths::locate(QStandardPaths::DesktopLocation,""),tr("Fasta alignment (*.aln *.fa)"));
     QFile file = QFile(fileName);
     if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {

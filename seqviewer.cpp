@@ -75,6 +75,7 @@ QStringList SeqViewer::getSeqList()
 }
 
 void SeqViewer::resizeEvent(QResizeEvent *event)
+// bug here: for some reason it tries to resize permanently with how this is right now.
 {
     if(wrapSeqs)
     {
@@ -204,9 +205,9 @@ void SeqViewer::drawSequenceOrAlignment()
                 namesFormatted.append("\n\n");
                 rulerFormatted.append("\n\n");
             }
+            bool lastRuler = true;
             for(int j=0; j<displayedSeqs.length();j++) // for each sequence in the list...
             {
-                bool lastRuler = true;
 
                 // Name stuff
                 namesFormatted.append(displayedNames.at(j)).append("\n");
@@ -215,10 +216,14 @@ void SeqViewer::drawSequenceOrAlignment()
                 QString seg;
                 if(colorOn && !resizing)  // Color uses the displayedSeqsColor List<List<String>> of the sequence expanded with color data
                 {
-                    if(!(i==numBlocks)) seg = QList<QString>(displayedSeqsColor.at(j).sliced(i*numChars, numChars)).join("").append("\n");
+                    if(!(i==numBlocks)) {
+                        qDebug(lnoView) << "not last block";
+                        seg = QList<QString>(displayedSeqsColor.at(j).sliced(i*numChars, numChars)).join("").append("\n");
+                    }
                     else {
+                        qDebug(lnoView) <<"last block color!";
                         seg = displayedSeqsColor.at(j).mid(i*numChars).join("");
-                        if(displayedSeqsColor.at(j).mid(i*numChars).length() + displayedRuler.at(j).last().length() <=numChars-1) {
+                        if((displayedSeqsColor.at(j).mid(i*numChars).length() + displayedRuler.at(j).last().length()) <numChars-1) {
                             seg.append(" ").append(displayedRuler.at(j).last());
                             lastRuler = false;
                         }
@@ -227,11 +232,17 @@ void SeqViewer::drawSequenceOrAlignment()
 
                 } else // Black and white only uses the displayedSeqs parameter -- less resource intensive
                 {
-                    if(!(i==numBlocks)) seg = displayedSeqs.at(j).sliced(i*numChars, numChars).append("\n");
+                    qDebug(lnoView) << " using black and white generator";
+                    if(!(i==numBlocks)) {
+                        qDebug(lnoView) << "not last block bw";
+                        seg = displayedSeqs.at(j).sliced(i*numChars, numChars).append("\n");
+                    }
                     else {
+                        qDebug(lnoView) << "last blocK!!!";
                         seg = displayedSeqs.at(j).mid(i*numChars);
-                        if(displayedSeqs.at(j).mid(i*numChars).length()+displayedRuler.at(j).last().length() <= numChars-1)
+                        if((displayedSeqs.at(j).mid(i*numChars).length()+displayedRuler.at(j).last().length()) < numChars-1)
                         {
+                            qDebug(lnoView) <<"determined it was too small";
                             seg.append(" ").append(displayedRuler.at(j).last());
                             lastRuler = false;
                         }
@@ -244,7 +255,11 @@ void SeqViewer::drawSequenceOrAlignment()
                 if(!(i==numBlocks)) rulerFormatted.append(displayedRuler.at(j).at(i*numChars+numChars)).append("\n");
                 else {
                     if(lastRuler) rulerFormatted.append(displayedRuler.at(j).last()).append("\n");
-                    else rulerFormatted.append("\n");
+                    else
+                    {
+                        qDebug() << "not placing last ruler because it fit on screen!";
+                        rulerFormatted.append("\n");
+                    }
                 }
             }
             formatted.append("\n");
