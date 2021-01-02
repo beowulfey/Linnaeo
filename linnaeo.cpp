@@ -44,7 +44,7 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     //this->seqModel->setHorizontalHeaderLabels(QStringList("Sequences"));
     seqRoot = this->seqModel->invisibleRootItem();
     seqStartFolderItem = new QStandardItem(QIcon(":/icons/ui/folder.svg"),QString("Uncategorized"));
-    seqStartFolderItem->setData(true, FolderRole);
+    seqStartFolderItem->setData(QVariant(true), FolderRole);
     seqRoot->appendRow(seqStartFolderItem);
     connect(ui->seqTreeView, &QTreeView::expanded, this, &Linnaeo::expand_seqTreeView_item);
     connect(ui->seqTreeView, &QTreeView::collapsed, this, &Linnaeo::collapse_seqTreeView_item);
@@ -68,7 +68,7 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     alignModel = new QStandardItemModel(this);
     alignRoot = alignModel->invisibleRootItem();
     alignStartFolderItem = new QStandardItem(QIcon(":/icons/ui/folder.svg"),QString("Uncategorized"));
-    alignStartFolderItem->setData(true, FolderRole);
+    alignStartFolderItem->setData(QVariant(true), FolderRole);
     alignRoot->appendRow(alignStartFolderItem);
     // Connect tool buttons
     ui->importAlignmentButton->setDefaultAction(ui->actionAlignment_from_file);
@@ -90,7 +90,7 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
 
     // DEBUGGING!
     QStandardItem *debugItem = new QStandardItem("DEBUG");
-    debugItem->setData( "MDADASTITPEELDFIRQRALRRFDSIVPTAGREGTEIASDIFKGRTLAIYTSGGDSQGM"
+    debugItem->setData(QVariant("MDADASTITPEELDFIRQRALRRFDSIVPTAGREGTEIASDIFKGRTLAIYTSGGDSQGM"
                         "NSAVRSITRMAIYCGCKVYLIYEGYEGMIEGGDFIKEATWNTVSDIIQQGGTIIGSARSS"
                         "EFRTREGRLKAATNLINRGIGRLVCIGGDGSLTGANTFRLEWTDLVQELVKNQRVTAAAA"
                         "KKIPYIQIVGLVGSIDNDFCGTDMTIGTDSALQRIISSIDAVVATAQSHQRAFVIEVMGR"
@@ -103,7 +103,7 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
                         "RVFIVETMGGYCGYLATLSALSSGADNAYIFEEPFTVQDLSDDVDVILSKMEVGAKRYLV"
                         "VRNEWADKNLTTDFVQNLFDSEGKKNFTTRVNVLGHVQQGGSPTPFDRNMGTKLAARALE"
                         "FLLIQLKENLTADNKVIAKSAHTATLLGLKGRKVVFTPVQDLKKETDFEHRLPSEQWWMA"
-                        "LRPLLRVLARHRSTVESSAILESVEEESADSHMF", SequenceRole);
+                        "LRPLLRVLARHRSTVESSAILESVEEESADSHMF"), SequenceRole);
     seqStartFolderItem->appendRow(debugItem);
     ui->seqTreeView->setExpanded(seqModel->indexFromItem(seqStartFolderItem),true);
 
@@ -228,8 +228,8 @@ void Linnaeo::on_actionAdd_Sequence_triggered()
         {
             QList<QModelIndex>indexes = ui->seqTreeView->selectionModel()->selectedIndexes();
             QStandardItem *newSeq = new QStandardItem(name);
-            newSeq->setData(false,FolderRole);
-            newSeq->setData(seq,SequenceRole);
+            newSeq->setData(QVariant(false),FolderRole);
+            newSeq->setData(QVariant(seq),SequenceRole);
             newSeq->setDropEnabled(false);
             QStandardItem *item;
             bool found = false;
@@ -285,7 +285,7 @@ void Linnaeo::on_actionAdd_Folder_to_Sequence_Panel_triggered()
     /// it finds; otherwise, it will add to the parent of the selected object.
 {
     QStandardItem *newFolder = new QStandardItem(QIcon(":/icons/ui/folder.svg"),QString("New Folder"));
-    newFolder->setData(true,FolderRole);
+    newFolder->setData(QVariant(true),FolderRole);
     QList<QModelIndex> indexes = ui->seqTreeView->selectionModel()->selectedIndexes();
     if (indexes.size() == 0)// || this->seqModel->itemFromIndex(indexes.at(0))->parent() == NULL)
     {
@@ -338,7 +338,7 @@ void Linnaeo::on_actionMake_Alignment_triggered()
                  .append("\n");
     }
     query.sort();
-    exists = searchAllNodes(alignModel->invisibleRootItem()->index(), query);
+    exists = searchForMadeAlignment(alignModel->invisibleRootItem()->index(), query);
     //qDebug(lnoMain) << "Returned value" <<exists;
     if(!exists.isValid())
     {
@@ -362,8 +362,8 @@ void Linnaeo::addAlignmentToTree(const QList<QStringList> result)
     QList<QString> names = result.at(0);
     QList<QString> seqs = result.at(1);
     QStandardItem *item = new QStandardItem(QString("New Alignment (%1)").arg(names.join(", ")));
-    item->setData(seqs, AlignmentRole);
-    item->setData(names,NamesRole);
+    item->setData(QVariant(seqs), AlignmentRole);
+    item->setData(QVariant(names),NamesRole);
     alignStartFolderItem->appendRow(item);
     ui->alignTreeView->expand(alignStartFolderItem->index());
     ui->seqViewer->setDisplayAlignment(seqs, names);
@@ -376,7 +376,7 @@ void Linnaeo::on_actionAdd_Alignment_Folder_triggered()
     /// Identical behavior as for the Sequence equivalent.
 {
     QStandardItem *newFolder = new QStandardItem(QIcon(":/icons/ui/folder.svg"),QString("New Folder"));
-    newFolder->setData(true,FolderRole);
+    newFolder->setData(QVariant(true),FolderRole);
     QList<QModelIndex> indexes = ui->alignTreeView->selectionModel()->selectedIndexes();
     if (indexes.size() == 0)
     {
@@ -441,22 +441,22 @@ void Linnaeo::expand_seqTreeView_item(const QModelIndex &index)
     /// Expand/collapse slots are for animating the icon in the tree view!
 {
     //spdlog::debug("Expanded SeqView tree at position {}", index.row());
-    seqModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder-open.svg"),Qt::DecorationRole);
+    seqModel->itemFromIndex(index)->setData(QVariant(QIcon(":/icons/ui/folder-open.svg")),Qt::DecorationRole);
 }
 void Linnaeo::collapse_seqTreeView_item(const QModelIndex &index)
 {
     //spdlog::debug("Collapsed SeqView tree at position {}", index.row());
-    seqModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder.svg"),Qt::DecorationRole);
+    seqModel->itemFromIndex(index)->setData(QVariant(QIcon(":/icons/ui/folder.svg")),Qt::DecorationRole);
 }
 void Linnaeo::expand_alignTreeView_item(const QModelIndex &index)
 {
     //spdlog::debug("Expanded AlignView tree at position {}", index.row());
-    alignModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder-open.svg"),Qt::DecorationRole);
+    alignModel->itemFromIndex(index)->setData(QVariant(QIcon(":/icons/ui/folder-open.svg")),Qt::DecorationRole);
 }
 void Linnaeo::collapse_alignTreeView_item(const QModelIndex &index)
 {
     //spdlog::debug("Collapsed AlignView tree at position {}", index.row());
-    alignModel->itemFromIndex(index)->setData(QIcon(":/icons/ui/folder.svg"),Qt::DecorationRole);
+    alignModel->itemFromIndex(index)->setData(QVariant(QIcon(":/icons/ui/folder.svg")),Qt::DecorationRole);
 }
 void Linnaeo::on_actionGet_Online_Sequence_triggered()
 {
@@ -486,8 +486,8 @@ void Linnaeo::on_actionGet_Online_Sequence_triggered()
             for(int i = 0; i<seqs.length(); i++)
             {
                 item = new QStandardItem();
-                item->setData(false, FolderRole);
-                item->setData(seqs.at(i),SequenceRole);
+                item->setData(QVariant(false), FolderRole);
+                item->setData(QVariant(seqs.at(i)),SequenceRole);
                 info.append(ids.at(i));
                 info.append(names.at(i));
                 info.append(genes.at(i));
@@ -652,8 +652,8 @@ void Linnaeo::on_actionAlignment_from_file_triggered()
             qInfo(lnoView) << "Detected"<<seqs.length()<<"sequences in alignment, disabling sequence wrapping to improve performance";
         }
         QStandardItem *item = new QStandardItem(QString("New Alignment (HUGE)"));//.arg(names.join(", ")));
-        item->setData(seqs, AlignmentRole);
-        item->setData(names,NamesRole);
+        item->setData(QVariant(seqs), AlignmentRole);
+        item->setData(QVariant(names),NamesRole);
         alignStartFolderItem->appendRow(item);
         ui->alignTreeView->expand(alignStartFolderItem->index());
 
@@ -662,16 +662,16 @@ void Linnaeo::on_actionAlignment_from_file_triggered()
 }
 
 
-QModelIndex Linnaeo::searchAllNodes(QModelIndex root, QStringList query)
+QModelIndex Linnaeo::searchForMadeAlignment(QModelIndex root, QStringList query)
 /// Searches through the nodes of the alignment tree until it finds one that contains the combination of names and sequences
 /// Will create a new alignment if the sequence names have changed, but I'm not sure how to
 {
     QModelIndex found;
-    qDebug(lnoMain) << "Searching for node";
+    //qDebug(lnoMain) << "Searching for node";
     for(int r = 0; r < alignModel->rowCount(root); ++r)
     {
         QStringList compare;
-        qDebug(lnoMain) << "Current parent node" << root.data(Qt::DisplayRole) << "checking row"<<r;
+        //qDebug(lnoMain) << "Current parent node" << root.data(Qt::DisplayRole) << "checking row"<<r;
         QModelIndex index = alignModel->index(r, 0, root);
         for(int i = 0; i < index.data(AlignmentRole).toStringList().length(); i++)
         {
@@ -683,14 +683,128 @@ QModelIndex Linnaeo::searchAllNodes(QModelIndex root, QStringList query)
         compare.sort();
         if(compare == query) {
             found = index;
-            qDebug(lnoMain) << "Found match!" << found;
+            qDebug(lnoMain) << "Found match!";// << found;
             break;
         }
         else{
             qDebug(lnoMain) <<"Searching deeper...";
-            if(alignModel->hasChildren(index)) found = searchAllNodes(index, query);
+            if(alignModel->hasChildren(index)) found = searchForMadeAlignment(index, query);
         }
     }
-    qDebug(lnoMain) << "returning found" <<found;
+    //qDebug(lnoMain) << "returning found" <<found;
     return found;
 }
+
+void Linnaeo::on_actionSave_Workspace_triggered()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save Linnaeo Workspace"),QStandardPaths::locate(QStandardPaths::DesktopLocation,""),tr("Linnaeo Workspace (*.lno)"));
+    QFile file = QFile(fileName);
+    if (file.open(QIODevice::WriteOnly))
+    {
+       QDataStream out(&file);
+       // Write a header with a "magic number" and a version
+       out << (quint32)magic;
+       out << (qint32)fvers;
+       out.setVersion(QDataStream::Qt_6_0);
+
+       // Iterate through the sequence tree and save each QStandardItem
+       qDebug(lnoIo) << "Saving SEQUENCE Tree";
+       dataStreamThroughTree(seqModel->invisibleRootItem(),out,true);
+       qDebug(lnoIo) << "Saving ALIGNMENT Tree";
+       dataStreamThroughTree(alignModel->invisibleRootItem(),out,true);
+       file.close();
+       qInfo(lnoIo) << "Saved workspace to"<<fileName;
+    }
+
+}
+void Linnaeo::dataStreamThroughTree(QStandardItem *root, QDataStream &stream, bool out)
+{
+    if(out)
+    {
+        qint32 rowCount = root->rowCount();
+        stream<<(qint32)rowCount; // save row count for root
+        qDebug(lnoIo) << "Current root has"<<rowCount<<"children";
+        for(int r = 0; r < rowCount; ++r) // for each row under the root
+        {
+             QStandardItem *child = root->child(r);
+             child->write(stream);
+             qint32 childCount = child->rowCount();
+             qDebug(lnoIo) << "Saved tree node" << child->data(Qt::DisplayRole).toString()<<"with"<<childCount<<"children";
+             stream << (qint32)childCount;
+             if(child->hasChildren()) dataStreamThroughTree(child, stream, true);
+        }
+        //qDebug(lnoMain) <<"Completed tree traversal";
+    }
+    else
+    {
+        qint32 rowCount;
+        stream >> rowCount;
+        qDebug(lnoIo) << "Current root has"<<rowCount<<"children";
+
+        for(int r = 0; r < rowCount; ++r) // for each row under the root
+        {
+            QStandardItem *child = new QStandardItem;
+            qint32 childCount;
+            child->read(stream);
+            root->appendRow(child);
+            stream >> childCount;
+            qDebug(lnoIo) << "Loaded tree node" << child->data(Qt::DisplayRole).toString()<<"with"<<childCount<<"children";
+            if(childCount > 0){
+                dataStreamThroughTree(child, stream, false);
+            }
+        }
+        //qDebug(lnoMain) <<"Completed tree traversal";
+    }
+
+}
+
+void Linnaeo::on_actionOpen_triggered()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Linnaeo Workspace"),QStandardPaths::locate(QStandardPaths::DesktopLocation,""),tr("Linnaeo Workspace (*.lno)"));
+    QFile file = QFile(fileName);
+    qInfo(lnoIo) <<"Attempting to read workspace at"<<fileName;
+    if (file.open(QIODevice::ReadOnly))
+    {
+        QDataStream in(&file);
+        quint32 magicIn;
+        in >> magicIn;
+        if (magicIn != magic) {
+            qWarning(lnoIo) << "File corrupted -- unable to read!" << magicIn <<"vs expected"<<magic;
+        }
+        qint32 fileVersion;
+        in >> fileVersion;
+        if (fileVersion < fvers) {
+            qWarning(lnoIo) << "Sorry, this workspace is not compatible with this version!"<<fileVersion<<"vs expected"<<fvers;
+        }
+        else {
+            seqModel->clear();
+            alignModel->clear();
+            in.setVersion(QDataStream::Qt_6_0);
+            qDebug(lnoIo) << "Loading SEQUENCE Tree";
+            dataStreamThroughTree(seqModel->invisibleRootItem(),in,false);
+            qDebug(lnoIo) << "Loading ALIGNMENT Tree";
+            dataStreamThroughTree(alignModel->invisibleRootItem(),in,false);
+            for(int r = 0; r < seqModel->invisibleRootItem()->rowCount(); ++r)
+            {
+                if(seqModel->invisibleRootItem()->child(r)->hasChildren()) ui->seqTreeView->setExpanded((seqModel->invisibleRootItem()->child(r)->index()),true);
+                if(seqModel->invisibleRootItem()->child(r)->data(Qt::DisplayRole).toString() == "Uncategorized")
+                {
+                    this->seqStartFolderItem = seqModel->invisibleRootItem()->child(r);
+                }
+            }
+            for(int r = 0; r < alignModel->invisibleRootItem()->rowCount(); ++r)
+            {
+                if(alignModel->invisibleRootItem()->child(r)->hasChildren()) ui->alignTreeView->setExpanded((alignModel->invisibleRootItem()->child(r)->index()),true);
+                if(alignModel->invisibleRootItem()->child(r)->data(Qt::DisplayRole).toString() == "Uncategorized")
+                {
+                    this->alignStartFolderItem = alignModel->invisibleRootItem()->child(r);
+                }
+            }
+
+            qInfo(lnoIo) << "Workspace loaded successfully!";
+        }
+        file.close();
+    }
+}
+
+

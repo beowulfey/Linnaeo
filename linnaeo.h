@@ -8,20 +8,23 @@
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Linnaeo; }
-class QStandardItemModel;
+//class QStandardItemModel;
 QT_END_NAMESPACE
+
+
 
 class Linnaeo : public QMainWindow
 {
     Q_OBJECT
 
+
 public:
     Linnaeo(QWidget *parent = nullptr);
-    QModelIndex searchAllNodes(QModelIndex root, QStringList query);
+    QModelIndex searchForMadeAlignment(QModelIndex root, QStringList query);
+    void dataStreamThroughTree(QStandardItem *root, QDataStream &stream, bool out=false);
     ~Linnaeo();
-
-private:
-    Ui::Linnaeo *ui;
+    quint32 magic = 0xA0B0C0D0;
+    qint32 fvers = 100;
     enum ItemType
     {
         FolderRole=Qt::UserRole,
@@ -30,6 +33,12 @@ private:
         AlignmentRole=Qt::UserRole+3,
         NamesRole=Qt::UserRole+4
     };
+    Q_ENUM(Linnaeo::ItemType);
+
+
+private:
+    Ui::Linnaeo *ui;
+
     enum seqTheme
     {
         DEFAULT = 0,
@@ -74,7 +83,9 @@ private slots:
     void on_alignTreeView_doubleClicked(const QModelIndex &index);
     void on_actionExportAlignment_triggered();
     void on_actionAlignment_from_file_triggered();
+    void on_actionSave_Workspace_triggered();
+    void on_actionOpen_triggered();
 };
 
-
+//Q_DECLARE_METATYPE(Linnaeo::ItemType);
 #endif // LINNAEO_H
