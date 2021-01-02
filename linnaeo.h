@@ -67,7 +67,7 @@ private slots:
     void on_actionCopy_triggered();
     //void on_seqTreeView_clicked(const QModelIndex &index);
     void modifySeqActions(const QItemSelection &sel, const QItemSelection &desel);
-    void updateNamesAndRuler(const QString);
+    void updateNamesAndRuler(const QString, const QString);
     void on_wrapEnabled_toggled(bool checked);
     void on_alignTreeView_doubleClicked(const QModelIndex &index);
     void on_actionExportAlignment_triggered();

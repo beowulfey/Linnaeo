@@ -26,20 +26,24 @@ private:
     bool wrapSeqs = true;
     bool resizing = false;
     bool colorOn = true;
+    bool rulerOn = false;
     int numBlocks;
+    double scrollPos;
     QTimer *resizeTimer;
     QHash<QChar, QString> lookup;
     QList<QString> displayedNames;
     QList<QString> displayedSeqs;
     QList<QList<QString>> displayedSeqsColor;
+    QList<QList<QString>> displayedRuler;
 
     void calculateColor();
+    void calculateRuler();
     void drawSequenceOrAlignment();
     void resizeTimeout();
 
 
 signals:
-    void updatedNamesAndRuler(const QString names);
+    void updatedNamesAndRuler(const QString names, const QString ruler);
 };
 
 

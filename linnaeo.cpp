@@ -31,10 +31,12 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     defaultFont = QFont("Noto Custom", 10, 1);
     ui->namesEdit->setFont(defaultFont);
     ui->seqViewer->setFont(defaultFont);
-    ui->numbersEdit->setFont(defaultFont);
+    ui->rulerEdit->setFont(defaultFont);
     connect(ui->seqViewer, &SeqViewer::updatedNamesAndRuler, this, &Linnaeo::updateNamesAndRuler);
     connect(ui->seqViewer->verticalScrollBar(), &QScrollBar::valueChanged, ui->namesEdit->verticalScrollBar(), &QScrollBar::setValue);
     connect(ui->namesEdit->verticalScrollBar(), &QScrollBar::valueChanged, ui->seqViewer->verticalScrollBar(), &QScrollBar::setValue);
+    connect(ui->seqViewer->verticalScrollBar(), &QScrollBar::valueChanged, ui->rulerEdit->verticalScrollBar(), &QScrollBar::setValue);
+    connect(ui->rulerEdit->verticalScrollBar(), &QScrollBar::valueChanged, ui->seqViewer->verticalScrollBar(), &QScrollBar::setValue);
 
     // Options Panel setup
     ui->optionsPanel->hide();
@@ -161,9 +163,8 @@ void Linnaeo::on_actionPreferences_triggered()
 {   Preferences *pref = new Preferences(this);
     pref->show(); }
 void Linnaeo::on_actionCopy_triggered()
-    /// Copies either the first sequence or first alignment, depending on what is highlighted.
+    /// Copies either all sequences or first alignment, depending on what is highlighted in focus.
 {
-    qDebug() << "CTRL-C!";
     if(ui->seqTreeView->hasFocus() && ui->seqTreeView->selectionModel()->selectedIndexes().length() > 0)
     {
         qDebug() << "SeqTree clicked";
@@ -187,13 +188,11 @@ void Linnaeo::on_actionCopy_triggered()
         QString copied;
         if(!index.data(FolderRole).toBool())
         {
-            qDebug() << "Sending to printer";
             QStringList names = index.data(NamesRole).toStringList();
             QStringList seqs = index.data(AlignmentRole).toStringList();
             qDebug() <<names <<seqs;
             for(int i = 0; i<names.length(); i++)
             {
-                qDebug() << i << "pass";
                 copied.append(Sequence::prettyPrintFastaSequence(names.at(i),seqs.at(i)));
             }
 
@@ -355,7 +354,9 @@ void Linnaeo::addAlignmentToTree(const QList<QStringList> result)
     alignStartFolderItem->appendRow(item);
     ui->alignTreeView->expand(alignStartFolderItem->index());
     ui->seqViewer->setDisplayAlignment(seqs, names);
+    this->setWindowTitle(QString("Linnaeo [%1]").arg(item->data(Qt::DisplayRole).toString()));
 }
+
 void Linnaeo::on_actionAdd_Alignment_Folder_triggered()
     /// Identical behavior as for the Sequence equivalent.
 {
@@ -581,10 +582,12 @@ void Linnaeo::modifySeqActions(const QItemSelection &sele, const QItemSelection 
     }
 }
 
-void Linnaeo::updateNamesAndRuler(QString names)
+void Linnaeo::updateNamesAndRuler(QString names, QString ruler)
 {
     ui->namesEdit->document()->clear();
     ui->namesEdit->document()->setHtml(names);
+    ui->rulerEdit->document()->clear();
+    ui->rulerEdit->document()->setHtml(ruler);
 }
 
 

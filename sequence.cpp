@@ -59,7 +59,6 @@ namespace Sequence
     /// Returns a formatted Fasta sequence as a string. By default it splits the sequence into
     /// lines of length "lineLength".
     {
-        qDebug() << name << seq;
         QString result;
         QString seg;
         result.append(">").append(name).append("\n");

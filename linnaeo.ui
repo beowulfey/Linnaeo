@@ -596,7 +596,7 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item>
-           <widget class="QTextEdit" name="numbersEdit">
+           <widget class="QTextEdit" name="rulerEdit">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -610,7 +610,7 @@ p, li { white-space: pre-wrap; }
              </size>
             </property>
             <property name="styleSheet">
-             <string notr="true">background-color: rgb(220,220,220);</string>
+             <string notr="true">background-color: rgb(220,220,220);padding-top:1px;</string>
             </property>
             <property name="frameShape">
              <enum>QFrame::NoFrame</enum>

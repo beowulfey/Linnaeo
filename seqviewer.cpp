@@ -4,6 +4,7 @@
 #include <QRegularExpression>
 #include <QFontDatabase>
 #include <QElapsedTimer>
+#include <QScrollBar>
 
 
 SeqViewer::SeqViewer(QWidget *parent): QTextEdit(parent)
@@ -75,7 +76,6 @@ void SeqViewer::resizeEvent(QResizeEvent *event)
     if(wrapSeqs)
     {
         QTextEdit::resizeEvent(event);
-        qDebug() <<" Begin resize";
         resizing = true;
         resizeTimer->start(100);
 
@@ -86,7 +86,7 @@ void SeqViewer::resizeEvent(QResizeEvent *event)
 void SeqViewer::resizeTimeout()
 {
     resizing = false;
-    qDebug() << "DONE RESIZING";
+    //qDebug() << "DONE RESIZING";
     drawSequenceOrAlignment();
 }
 
@@ -99,6 +99,7 @@ void SeqViewer::setDisplaySequence(QString seq, QString name)
     this->displayedNames.clear();
     this->displayedNames.append(name);
     calculateColor();
+    calculateRuler();
     drawSequenceOrAlignment();
 }
 
@@ -110,15 +111,16 @@ void SeqViewer::setDisplayAlignment(QList<QString> seqs, QList<QString> names)
     displayedSeqs = seqs;
     displayedNames = names;
     calculateColor();
+    calculateRuler();
     drawSequenceOrAlignment();
 }
 
 void SeqViewer::calculateColor()
 {
     displayedSeqsColor.clear();
-    QElapsedTimer timer;
+    //QElapsedTimer timer;
 
-    timer.start();
+    //timer.start();
     // Define themes:
 
     QList<QString> colorSeq;
@@ -138,8 +140,28 @@ void SeqViewer::calculateColor()
 
     }
     //qDebug()  << displayedSeqsColor.at(0).length() << "vs" << displayedSeqs.at(0).length();
-    qDebug() << "Creating color version took" << timer.elapsed() << "milliseconds";
+    //qDebug() << "Creating color version took" << timer.elapsed() << "milliseconds";
 }
+
+void SeqViewer::calculateRuler()
+{
+    displayedRuler.clear();
+    int count;
+    for(auto&& seq : displayedSeqs)
+    {
+        count = 0;
+        QList<QString> counter; //is this big enough?
+        for(auto && res : seq)
+        {
+            if(res != '-') count += 1;
+            counter.append(QString::number(count));
+        }
+        displayedRuler.append(counter);
+        //qDebug() << displayedRuler;
+    }
+
+}
+
 
 void SeqViewer::drawSequenceOrAlignment()
 /// Gets the current width of the window and calculates the sequence split.
@@ -153,15 +175,19 @@ void SeqViewer::drawSequenceOrAlignment()
     int numChars;
     QString formatted;
     QString namesFormatted;
+    QString rulerFormatted;
 
 
     if(!displayedSeqs.isEmpty())
     {
-        //qDebug()<<"DRAWING";
-        QElapsedTimer timer;
-        timer.start();
+
+        if(verticalScrollBar()->maximum() > verticalScrollBar()->minimum()) scrollPos = double(verticalScrollBar()->sliderPosition())/double(verticalScrollBar()->maximum()-verticalScrollBar()->minimum());
+        qDebug() << scrollPos << "BEFORE REDRAW";
+        //QElapsedTimer timer;
+        //timer.start();
         formatted = QString("<pre style=\"font-family:%1;\">").arg(font().family());
         namesFormatted = QString("<pre style=\"font-family:%1;text-align:right;\">").arg(font().family());
+        rulerFormatted = QString("<pre style=\"font-family:%1;\">").arg(font().family());
         if(wrapSeqs){
             //qDebug() << "Setting wrap settings";
             charWidth = QFontMetricsF(font()).averageCharWidth();
@@ -170,15 +196,21 @@ void SeqViewer::drawSequenceOrAlignment()
         }
         else
         {
-            qDebug() << "No wrap today.";
             numChars = displayedSeqs.first().length(); // all sequences should have same length at this point! may need to validate.
             numBlocks = 0;
         }
 
         for(int i = 0; i<=numBlocks; i++) // for each text block...
         {
+            if(showRuler)
+            {
+                namesFormatted.append("\n\n");
+                rulerFormatted.append("\n\n");
+            }
             for(int j=0; j<displayedSeqs.length();j++) // for each sequence in the list...
             {
+                bool lastRuler = true;
+
                 // Name stuff
                 namesFormatted.append(displayedNames.at(j)).append("\n");
 
@@ -187,27 +219,56 @@ void SeqViewer::drawSequenceOrAlignment()
                 if(colorOn && !resizing)  // Color uses the displayedSeqsColor List<List<String>> of the sequence expanded with color data
                 {
                     if(!(i==numBlocks)) seg = QList<QString>(displayedSeqsColor.at(j).sliced(i*numChars, numChars)).join("").append("\n");
-                    else seg = QList<QString>(displayedSeqsColor.at(j).last(displayedSeqsColor.at(j).length()-i*numChars)).join("").append("\n");
+                    else {
+                        seg = displayedSeqsColor.at(j).mid(i*numChars).join("");
+                        if(displayedSeqsColor.at(j).mid(i*numChars).length() + displayedRuler.at(j).last().length() <=numChars-1) {
+                            seg.append(" ").append(displayedRuler.at(j).last());
+                            lastRuler = false;
+                        }
+                        seg.append("\n");
+                    }
+
                 } else // Black and white only uses the displayedSeqs parameter
                 {
                     if(!(i==numBlocks)) seg = displayedSeqs.at(j).sliced(i*numChars, numChars).append("\n");
-                    else seg = displayedSeqs.at(j).last(displayedSeqs.at(j).length()-i*numChars).append("\n");
-
+                    else {
+                        seg = displayedSeqs.at(j).mid(i*numChars);
+                        if(displayedSeqs.at(j).mid(i*numChars).length()+displayedRuler.at(j).last().length() <= numChars-1)
+                        {
+                            seg.append(" ").append(displayedRuler.at(j).last());
+                            lastRuler = false;
+                        }
+                        seg.append("\n");
+                    }
                 }
                 formatted.append(seg);
+
+                // Ruler stuff
+                if(!(i==numBlocks)) rulerFormatted.append(displayedRuler.at(j).at(i*numChars+numChars)).append("\n");
+                else {
+                    if(lastRuler) rulerFormatted.append(displayedRuler.at(j).last()).append("\n");
+                    else rulerFormatted.append("\n\n");
+                }
             }
             formatted.append("\n");
             namesFormatted.append("\n");
+            rulerFormatted.append("\n");
         }
         formatted.chop(2);
         formatted.append("</pre>");
         namesFormatted.chop(2);
         namesFormatted.append("</pre>");
+        rulerFormatted.chop(2);
+        rulerFormatted.append("</pre>");
         //qDebug() << formatted << namesFormatted;
         this->document()->clear();
         this->document()->setHtml(formatted);
-        emit updatedNamesAndRuler(namesFormatted); // Send it back to Linnaeo to add to names panel.
-        qDebug() << "The drawing operation took" << timer.elapsed() << "milliseconds";
+        emit updatedNamesAndRuler(namesFormatted, rulerFormatted); // Send it back to Linnaeo to add to names panel.
+        //qDebug() << "The drawing operation took" << timer.elapsed() << "milliseconds";
+        if(verticalScrollBar()->maximum() > verticalScrollBar()->minimum()){
+            verticalScrollBar()->setSliderPosition(round(scrollPos*double(verticalScrollBar()->maximum()-verticalScrollBar()->minimum())));
+            qDebug() << "Scroll position after" <<double(verticalScrollBar()->sliderPosition())/double(verticalScrollBar()->maximum()-verticalScrollBar()->minimum());
+        }
 
 
     }
