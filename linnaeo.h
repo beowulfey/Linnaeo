@@ -78,6 +78,7 @@ private slots:
     void on_actionCopy_triggered();
     //void on_seqTreeView_clicked(const QModelIndex &index);
     void modifySeqActions(const QItemSelection &sel, const QItemSelection &desel);
+    void modifyAlignActions(const QItemSelection &sel, const QItemSelection &desel);
     void updateNamesAndRuler(const QString, const QString);
     void on_wrapEnabled_toggled(bool checked);
     void on_alignTreeView_doubleClicked(const QModelIndex &index);
@@ -85,6 +86,7 @@ private slots:
     void on_actionAlignment_from_file_triggered();
     void on_actionSave_Workspace_triggered();
     void on_actionOpen_triggered();
+    void on_actionSequence_from_file_triggered();
 };
 
 //Q_DECLARE_METATYPE(Linnaeo::ItemType);

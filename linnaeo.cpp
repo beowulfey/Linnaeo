@@ -60,9 +60,15 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     //ui->editSequenceButton
     ui->exportSequenceButton->setDefaultAction(ui->actionExportSequence);
     ui->deleteSequenceButton->setDefaultAction(ui->actionDelete_Selected_Sequences);
+    // disable buttons
     ui->editSequenceButton->setDisabled(true);
     ui->exportSequenceButton->setDisabled(true);
+    ui->deleteSequenceButton->setDisabled(true);
     ui->quickAlignButton->setDisabled(true);
+    ui->actionEdit_Sequence->setDisabled(true);
+    ui->actionExportSequence->setDisabled(true);
+    ui->actionQuick_Align->setDisabled(true);
+    ui->actionDelete_Selected_Sequences->setDisabled(true);
 
     // Alignment tree setup
     alignModel = new QStandardItemModel(this);
@@ -76,13 +82,22 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     //ui->editAlignmentButton
     ui->exportAlignmentButton->setDefaultAction(ui->actionExportAlignment);
     ui->deleteAlignmentButton->setDefaultAction(ui->actionDelete_Selected_Alignments);
+    ui->editAlignmentButton->setDefaultAction(ui->actionEdit_Alignment);
     connect(ui->alignTreeView, &QTreeView::expanded, this, &Linnaeo::expand_alignTreeView_item);
     connect(ui->alignTreeView, &QTreeView::collapsed, this, &Linnaeo::collapse_alignTreeView_item);
-    connect(ui->alignTreeView, &QTreeView::doubleClicked, this, &Linnaeo::on_alignTreeView_doubleClicked);
+   // connect(ui->alignTreeView, &QTreeView::doubleClicked, this, &Linnaeo::on_alignTreeView_doubleClicked);
+    // disable buttons
+    ui->editAlignmentButton->setDisabled(true);
+    ui->actionEdit_Alignment->setDisabled(true);
+    ui->exportAlignmentButton->setDisabled(true);
+    ui->actionExportAlignment->setDisabled(true);
+    ui->deleteAlignmentButton->setDisabled(true);
+    ui->actionDelete_Selected_Alignments->setDisabled(true);
 
     ui->seqTreeView->setModel(seqModel);
     ui->alignTreeView->setModel(alignModel);
     connect(ui->seqTreeView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &Linnaeo::modifySeqActions);
+    connect(ui->alignTreeView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &Linnaeo::modifyAlignActions);
 
     ui->seqTreeView->installEventFilter(this);
     ui->alignTreeView->installEventFilter(this);
@@ -564,14 +579,28 @@ void Linnaeo::modifySeqActions(const QItemSelection &sele, const QItemSelection 
             if(ui->seqTreeView->selectionModel()->selectedIndexes().first().data(FolderRole).toBool()) // if it's a folder...
             {
                 ui->editSequenceButton->setDisabled(true);
+                ui->actionEdit_Sequence->setDisabled(true);
                 ui->exportSequenceButton->setDisabled(true);
+                ui->actionExportSequence->setDisabled(true);
                 ui->quickAlignButton->setDisabled(true);
+                ui->actionQuick_Align->setDisabled(true);
+                //ui->actionDelete_Selected_Sequences->setDisabled(true);
+
+                (ui->seqTreeView->selectionModel()->selectedIndexes().first() == seqStartFolderItem->index()) ? ui->deleteSequenceButton->setDisabled(true) :
+                    ui->deleteSequenceButton->setDisabled(false);
+                (ui->seqTreeView->selectionModel()->selectedIndexes().first() == seqStartFolderItem->index()) ? ui->actionDelete_Selected_Sequences->setDisabled(true) :
+                    ui->actionDelete_Selected_Sequences->setDisabled(false);
             }
             else
             {
+                ui->actionEdit_Sequence->setDisabled(false);
                 ui->editSequenceButton->setDisabled(false);
                 ui->exportSequenceButton->setDisabled(false);
+                ui->actionExportSequence->setDisabled(false);
                 ui->quickAlignButton->setDisabled(true);
+                ui->actionQuick_Align->setDisabled(true);
+                ui->deleteSequenceButton->setDisabled(false);
+                ui->actionDelete_Selected_Sequences->setDisabled(false);
             }
         }
         else
@@ -584,16 +613,73 @@ void Linnaeo::modifySeqActions(const QItemSelection &sele, const QItemSelection 
                     count += 1;
                 }
             }
-            if (count > 1) ui->quickAlignButton->setDisabled(false);
-            else ui->quickAlignButton->setDisabled(true);
+            if (count > 1) {
+                ui->quickAlignButton->setDisabled(false);
+                ui->actionQuick_Align->setDisabled(false);
+            }
+            else {
+                ui->actionQuick_Align->setDisabled(true);
+                ui->quickAlignButton->setDisabled(true);
+            }
+            if (count > 0) {
+                ui->exportSequenceButton->setDisabled(false);
+                ui->actionExportSequence->setDisabled(false);
+                ui->editSequenceButton->setDisabled(false);
+                ui->actionEdit_Sequence->setDisabled(false);
+
+            }
+            ui->deleteSequenceButton->setEnabled(true);
+            ui->actionDelete_Selected_Sequences->setEnabled(true);
+
         }
 
     }
     else
     {
         ui->editSequenceButton->setDisabled(true);
+        ui->actionEdit_Sequence->setDisabled(true);
         ui->exportSequenceButton->setDisabled(true);
+        ui->actionExportSequence->setDisabled(true);
         ui->quickAlignButton->setDisabled(true);
+        ui->actionQuick_Align->setDisabled(true);
+        ui->deleteSequenceButton->setDisabled(true);
+        ui->actionDelete_Selected_Sequences->setDisabled(true);
+    }
+}
+
+void Linnaeo::modifyAlignActions(const QItemSelection &sel, const QItemSelection &desel)
+{
+    if(ui->alignTreeView->selectionModel()->selectedIndexes().size() > 0)
+    {
+        if(ui->alignTreeView->selectionModel()->selectedIndexes().first().data(FolderRole).toBool()) // if it's a folder...
+        {
+            ui->editAlignmentButton->setDisabled(true);
+            ui->actionEdit_Alignment->setDisabled(true);
+            ui->exportAlignmentButton->setDisabled(true);
+            ui->actionExportAlignment->setDisabled(true);
+            (ui->alignTreeView->selectionModel()->selectedIndexes().first() == alignStartFolderItem->index()) ?
+                        ui->deleteAlignmentButton->setDisabled(true): ui->deleteAlignmentButton->setDisabled(false);
+            (ui->alignTreeView->selectionModel()->selectedIndexes().first() == alignStartFolderItem->index()) ?
+                        ui->actionDelete_Selected_Alignments->setDisabled(true): ui->actionDelete_Selected_Alignments->setDisabled(false);
+        }
+        else
+        {
+            ui->editAlignmentButton->setDisabled(false);
+            ui->actionEdit_Alignment->setDisabled(false);
+            ui->exportAlignmentButton->setDisabled(false);
+            ui->actionExportAlignment->setDisabled(false);
+            ui->deleteAlignmentButton->setDisabled(false);
+            ui->actionDelete_Selected_Alignments->setDisabled(false);
+        }
+    }
+    else
+    {
+        ui->editAlignmentButton->setDisabled(true);
+        ui->actionEdit_Alignment->setDisabled(true);
+        ui->exportAlignmentButton->setDisabled(true);
+        ui->actionExportAlignment->setDisabled(true);
+        ui->deleteAlignmentButton->setDisabled(true);
+        ui->actionDelete_Selected_Alignments->setDisabled(true);
     }
 }
 
@@ -623,7 +709,7 @@ void Linnaeo::on_alignTreeView_doubleClicked(const QModelIndex &index)
 
 void Linnaeo::on_actionExportAlignment_triggered()
 {
-
+    ui->alignTreeView->selectionModel()->selectedIndexes();
 }
 
 void Linnaeo::on_actionAlignment_from_file_triggered()
@@ -663,7 +749,8 @@ void Linnaeo::on_actionAlignment_from_file_triggered()
 
 
 QModelIndex Linnaeo::searchForMadeAlignment(QModelIndex root, QStringList query)
-/// Searches through the nodes of the alignment tree until it finds one that contains the combination of names and sequences
+/// Utility function for improving user experience. Prevents duplicate alignments from being added to the tree.
+/// Searches through the nodes of the alignment tree until it finds one that contains the combination of names and sequences.
 /// Will create a new alignment if the sequence names have changed, but I'm not sure how to
 {
     QModelIndex found;
@@ -807,4 +894,10 @@ void Linnaeo::on_actionOpen_triggered()
     }
 }
 
+
+
+void Linnaeo::on_actionSequence_from_file_triggered()
+{
+
+}
 
