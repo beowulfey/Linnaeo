@@ -244,12 +244,12 @@ void SeqViewer::drawSequenceOrAlignment()
                 if(!(i==numBlocks)) rulerFormatted.append(displayedRuler.at(j).at(i*numChars+numChars)).append("\n");
                 else {
                     if(lastRuler) rulerFormatted.append(displayedRuler.at(j).last()).append("\n");
-                    else rulerFormatted.append("\n\n");
+                    else rulerFormatted.append("\n");
                 }
             }
             formatted.append("\n");
-            namesFormatted.append("\n");
-            rulerFormatted.append("\n");
+            namesFormatted.append(" \n");
+            rulerFormatted.append(" \n");
         }
         formatted.chop(2);
         formatted.append("</pre>");
@@ -257,6 +257,7 @@ void SeqViewer::drawSequenceOrAlignment()
         namesFormatted.append("</pre>");
         rulerFormatted.chop(2);
         rulerFormatted.append("</pre>");
+        qDebug(lnoView) << formatted.right(30) <<"\n"<<namesFormatted.right(30)<<"\n"<<rulerFormatted.right(30);
 
         this->document()->clear();
         this->document()->setHtml(formatted);
