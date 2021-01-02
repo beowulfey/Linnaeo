@@ -328,17 +328,18 @@ void Linnaeo::on_actionMake_Alignment_triggered()
 {
     QString unaligned;
     QModelIndex exists;
-    QHash<QString,QString> query;
+    QStringList query;
     QList<QModelIndex> indexes = ui->seqTreeView->selectionModel()->selectedIndexes();
     for(auto&& index: indexes)
     {
-        query[index.data(Qt::DisplayRole).toString()] = index.data(SequenceRole).toString(); // create a hash of name:seq
+        query.append(index.data(SequenceRole).toString()); // create a hash of name:seq
         unaligned.append(">").append(index.data(Qt::DisplayRole).toString())
                  .append("\n").append(index.data(SequenceRole).toString())
                  .append("\n");
     }
+    query.sort();
     exists = searchAllNodes(alignModel->invisibleRootItem()->index(), query);
-    qDebug(lnoMain) << "Returned value" <<exists;
+    //qDebug(lnoMain) << "Returned value" <<exists;
     if(!exists.isValid())
     {
         qDebug(lnoMain) << "Unable to find item, making new";
@@ -352,6 +353,8 @@ void Linnaeo::on_actionMake_Alignment_triggered()
         qDebug(lnoMain) << "using previously generated alignment!";
         ui->seqViewer->setDisplayAlignment(exists.data(AlignmentRole).toStringList(), exists.data(NamesRole).toStringList());
         this->setWindowTitle(QString("Linnaeo [%1]").arg(exists.data(Qt::DisplayRole).toString()));
+        ui->alignTreeView->selectionModel()->select(exists,QItemSelectionModel::ClearAndSelect);
+        ui->alignTreeView->setFocus();
     }
 }
 void Linnaeo::addAlignmentToTree(const QList<QStringList> result)
@@ -365,6 +368,8 @@ void Linnaeo::addAlignmentToTree(const QList<QStringList> result)
     ui->alignTreeView->expand(alignStartFolderItem->index());
     ui->seqViewer->setDisplayAlignment(seqs, names);
     this->setWindowTitle(QString("Linnaeo [%1]").arg(item->data(Qt::DisplayRole).toString()));
+    ui->alignTreeView->selectionModel()->select(item->index(),QItemSelectionModel::ClearAndSelect);
+    ui->alignTreeView->setFocus();
 }
 
 void Linnaeo::on_actionAdd_Alignment_Folder_triggered()
@@ -657,7 +662,7 @@ void Linnaeo::on_actionAlignment_from_file_triggered()
 }
 
 
-QModelIndex Linnaeo::searchAllNodes(QModelIndex root, QHash<QString,QString> query)
+QModelIndex Linnaeo::searchAllNodes(QModelIndex root, QStringList query)
 /// Searches through the nodes of the alignment tree until it finds one that contains the combination of names and sequences
 /// Will create a new alignment if the sequence names have changed, but I'm not sure how to
 {
@@ -665,15 +670,17 @@ QModelIndex Linnaeo::searchAllNodes(QModelIndex root, QHash<QString,QString> que
     qDebug(lnoMain) << "Searching for node";
     for(int r = 0; r < alignModel->rowCount(root); ++r)
     {
-        QHash<QString, QString> compare;
+        QStringList compare;
         qDebug(lnoMain) << "Current parent node" << root.data(Qt::DisplayRole) << "checking row"<<r;
         QModelIndex index = alignModel->index(r, 0, root);
-        for(int i = 0; i < index.data(NamesRole).toStringList().length(); i++)
+        for(int i = 0; i < index.data(AlignmentRole).toStringList().length(); i++)
         {
+            compare.append(QString(index.data(AlignmentRole).toStringList().at(i)).replace("-","",Qt::CaseInsensitive));
             //qDebug(lnoMain) << "Building dictionary for row"<<r;
-            compare[index.data(NamesRole).toStringList().at(i)] = QString(index.data(AlignmentRole).toStringList().at(i)).replace("-","",Qt::CaseInsensitive);
+            //compare[index.data(NamesRole).toStringList().at(i)] = QString(index.data(AlignmentRole).toStringList().at(i)).replace("-","",Qt::CaseInsensitive);
         }
         //qDebug(lnoMain) <<"Compare"<<compare<<"vs"<<query;
+        compare.sort();
         if(compare == query) {
             found = index;
             qDebug(lnoMain) << "Found match!" << found;

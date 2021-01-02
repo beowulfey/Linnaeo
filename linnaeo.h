@@ -17,7 +17,7 @@ class Linnaeo : public QMainWindow
 
 public:
     Linnaeo(QWidget *parent = nullptr);
-    QModelIndex searchAllNodes(QModelIndex root, QHash<QString, QString>);
+    QModelIndex searchAllNodes(QModelIndex root, QStringList query);
     ~Linnaeo();
 
 private:
