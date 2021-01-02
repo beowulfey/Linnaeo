@@ -9,7 +9,8 @@ namespace Sequence
 /// Sequences are stored in Linnaeo (as data in my Item Models) as QStrings for simplicity.
 /// These utilities are provided for validation purposes.
 {
-    QList<QStringList> parseFastaString(QString input);
+    QList<QStringList> splitFastaAlignmentString(QString input);
+    QString prettyPrintFastaSequence(QString name, QString seq, int lineLength=60);
 }
 
 #endif // SEQUENCE_H

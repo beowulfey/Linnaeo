@@ -157,13 +157,13 @@ void SeqViewer::drawSequenceOrAlignment()
 
     if(!displayedSeqs.isEmpty())
     {
-        qDebug()<<"DRAWING";
+        //qDebug()<<"DRAWING";
         QElapsedTimer timer;
         timer.start();
         formatted = QString("<pre style=\"font-family:%1;\">").arg(font().family());
         namesFormatted = QString("<pre style=\"font-family:%1;text-align:right;\">").arg(font().family());
         if(wrapSeqs){
-            qDebug() << "Setting wrap settings";
+            //qDebug() << "Setting wrap settings";
             charWidth = QFontMetricsF(font()).averageCharWidth();
             numChars = trunc((QRectF(rect()).width()-3)/charWidth)-1;
             numBlocks = displayedSeqs.first().length()/numChars;
@@ -199,11 +199,11 @@ void SeqViewer::drawSequenceOrAlignment()
             formatted.append("\n");
             namesFormatted.append("\n");
         }
-        formatted.remove(formatted.length()-2,2);
+        formatted.chop(2);
         formatted.append("</pre>");
-        namesFormatted.remove(namesFormatted.length()-2,2);
+        namesFormatted.chop(2);
         namesFormatted.append("</pre>");
-        qDebug() << formatted << namesFormatted;
+        //qDebug() << formatted << namesFormatted;
         this->document()->clear();
         this->document()->setHtml(formatted);
         emit updatedNamesAndRuler(namesFormatted); // Send it back to Linnaeo to add to names panel.

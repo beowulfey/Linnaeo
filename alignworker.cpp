@@ -48,7 +48,7 @@ void AlignWorker::run()
         }
         tempDir.remove();
         qDebug() <<result;
-        emit resultReady(Sequence::parseFastaString(result));
+        emit resultReady(Sequence::splitFastaAlignmentString(result));
 
 
     }

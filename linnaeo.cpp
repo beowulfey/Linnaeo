@@ -14,6 +14,7 @@
 #include <QPersistentModelIndex>
 #include <QScrollBar>
 #include <QFontDatabase>
+#include <QClipboard>
 //#include <spdlog/spdlog.h>
 #include <iostream>
 
@@ -81,16 +82,6 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     connect(ui->alignTreeView, &QTreeView::expanded, this, &Linnaeo::expand_alignTreeView_item);
     connect(ui->alignTreeView, &QTreeView::collapsed, this, &Linnaeo::collapse_alignTreeView_item);
     connect(ui->alignTreeView, &QTreeView::doubleClicked, this, &Linnaeo::on_alignTreeView_doubleClicked);
-
-    /*alignModel = new QStandardItemModel(this);
-    alignModel->setHorizontalHeaderLabels(QStringList("Alignments"));
-    alignRoot = alignModel->invisibleRootItem();
-    alignStartFolderItem = new QStandardItem(QString("Uncategorized"));
-    alignStartFolderItem->setData(QIcon(":/icons/ui/folder.svg"),Qt::DecorationRole);
-    alignRoot->appendRow(alignStartFolderItem);
-    connect(ui->alignTreeView, &QTreeView::expanded, this, &Linnaeo::expand_alignTreeView_item);
-    connect(ui->alignTreeView, &QTreeView::collapsed, this, &Linnaeo::collapse_alignTreeView_item);
-    */
 
     ui->seqTreeView->setModel(seqModel);
     ui->alignTreeView->setModel(alignModel);
@@ -174,9 +165,43 @@ void Linnaeo::on_actionCopy_triggered()
 {
     qDebug() << "CTRL-C!";
     if(ui->seqTreeView->hasFocus() && ui->seqTreeView->selectionModel()->selectedIndexes().length() > 0)
-    { qDebug()<<"seqTree clicked"; }
+    {
+        qDebug() << "SeqTree clicked";
+        QString copied;
+        for(int i = 0; i<ui->seqTreeView->selectionModel()->selectedIndexes().length(); i++)
+        {
+            QModelIndex index = ui->seqTreeView->selectionModel()->selectedIndexes().at(i);
+            if(!index.data(FolderRole).toBool())
+            {
+                qDebug() << "Sending to printer";
+                copied.append(Sequence::prettyPrintFastaSequence(index.data(Qt::DisplayRole).toString(),index.data(SequenceRole).toString()));
+
+            }
+        }
+        QClipboard *clippy = QGuiApplication::clipboard();
+        clippy->setText(copied);
+    }
     else if (ui->alignTreeView->hasFocus() && ui->alignTreeView->selectionModel()->selectedIndexes().length() > 0)
-    { qDebug()<<"alignTree clicked"; }
+    {
+        QModelIndex index = ui->alignTreeView->selectionModel()->selectedIndexes().at(0);
+        QString copied;
+        if(!index.data(FolderRole).toBool())
+        {
+            qDebug() << "Sending to printer";
+            QStringList names = index.data(NamesRole).toStringList();
+            QStringList seqs = index.data(AlignmentRole).toStringList();
+            qDebug() <<names <<seqs;
+            for(int i = 0; i<names.length(); i++)
+            {
+                qDebug() << i << "pass";
+                copied.append(Sequence::prettyPrintFastaSequence(names.at(i),seqs.at(i)));
+            }
+
+
+        }
+        QClipboard *clippy = QGuiApplication::clipboard();
+        clippy->setText(copied);
+    }
     else qDebug()<<"not selected!";
 }
 
@@ -599,7 +624,7 @@ void Linnaeo::on_actionAlignment_from_file_triggered()
     }
     if(result[0] == '>')
     {
-        QList<QStringList> parsed = Sequence::parseFastaString(result);
+        QList<QStringList> parsed = Sequence::splitFastaAlignmentString(result);
         QList<QString> names = parsed.at(0);
         QList<QString> seqs = parsed.at(1);
         QStandardItem *item = new QStandardItem(QString("New Alignment (HUGE)"));//.arg(names.join(", ")));
