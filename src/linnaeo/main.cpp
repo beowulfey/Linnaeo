@@ -13,7 +13,8 @@ int main(int argc, char *argv[])
     Linnaeo w{};
     a.setWindowIcon(QIcon(":/icons/linnaeo.ico"));
     w.setWindowIcon(QIcon(":/icons/linnaeo.ico"));
-    w.show();
+    qInfo(lnoMain) << a.arguments();
+
     qInfo(lnoMain) << "\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n\t\tWelcome to LINNAEO\t\t\n" << "\t\tLoaded ver."<<qPrintable(version)<<"\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++";
 
     return a.exec();
