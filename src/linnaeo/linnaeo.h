@@ -92,6 +92,7 @@ private slots:
     void on_actionSave_Workspace_triggered();
     void on_actionSequence_from_file_triggered();
     void on_actionOpen_triggered();
+    void on_actionCapture_Image_triggered();
 };
 
 //Q_DECLARE_METATYPE(Linnaeo::ItemType);

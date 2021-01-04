@@ -3,6 +3,15 @@
 /// Theme designs
 /// Adding a theme here requires updating two locations: the themeCombo selections
 /// as well as the setTheme method in the SeqViewer
+///
+/// TO ADD:
+/// Percent identity (single color)
+/// Hydrophobicity (recreate from PyLinnaeo)
+/// Helix Propensity (purple to green)
+/// Some variant of my conservation mode?
+/// Conservation highlighting (implement threshold slider?)
+///
+
 
 QHash<QChar, QString> Themes::debugTheme()
 {

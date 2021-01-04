@@ -5,6 +5,9 @@
 #include <QObject>
 #include "muscle/muscle.h"
 
+/// This takes the place of "main.cpp" from the MUSCLE program.
+/// The constructor just exists to hold the run function and probably
+/// isn't necessary.
 class MuscleAdaptor : public QObject
 {
     Q_OBJECT

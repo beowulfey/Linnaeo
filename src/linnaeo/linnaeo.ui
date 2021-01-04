@@ -933,8 +933,11 @@ p, li { white-space: pre-wrap; }
    <addaction name="actionCopy"/>
    <addaction name="actionPaste"/>
    <addaction name="separator"/>
-   <addaction name="actionShow_Viewer_Options"/>
    <addaction name="separator"/>
+   <addaction name="actionCapture_Image"/>
+   <addaction name="actionIncrease_Font"/>
+   <addaction name="actionDecrease_Font"/>
+   <addaction name="actionShow_Viewer_Options"/>
   </widget>
   <action name="actionAdd_Sequence">
    <property name="icon">
@@ -1201,6 +1204,21 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="toolTip">
     <string>Edit selected alignment</string>
+   </property>
+  </action>
+  <action name="actionIncrease_Font">
+   <property name="text">
+    <string>Increase Font</string>
+   </property>
+  </action>
+  <action name="actionDecrease_Font">
+   <property name="text">
+    <string>Decrease Font</string>
+   </property>
+  </action>
+  <action name="actionCapture_Image">
+   <property name="text">
+    <string>Capture Image</string>
    </property>
   </action>
  </widget>
