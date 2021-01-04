@@ -252,7 +252,7 @@ void SeqViewer::drawSequenceOrAlignment()
                 formatted.append(seg);
 
                 // Ruler stuff
-                if(!(i==numBlocks)) rulerFormatted.append(displayedRuler.at(j).at(i*numChars+numChars)).append("\n");
+                if(!(i==numBlocks)) rulerFormatted.append(displayedRuler.at(j).at(i*numChars+numChars-1)).append("\n");
                 else {
                     if(lastRuler) rulerFormatted.append(displayedRuler.at(j).last()).append("\n");
                     else

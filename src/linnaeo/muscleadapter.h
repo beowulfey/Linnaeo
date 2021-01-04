@@ -3,7 +3,7 @@
 
 #include "logging.h"
 #include <QObject>
-#include "external/muscle/muscle.h"
+#include "muscle/muscle.h"
 
 class MuscleAdaptor : public QObject
 {

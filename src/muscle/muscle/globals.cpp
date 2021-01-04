@@ -85,7 +85,7 @@ void Quit(const char szFormat[], ...)
 	char szStr[4096];
 
 	va_start(ArgList, szFormat);
-    vsprintf_s(szStr, szFormat, ArgList);
+    vsprintf(szStr, szFormat, ArgList);
 
 	fprintf(stderr, "\n*** ERROR ***  %s\n", szStr);
 
