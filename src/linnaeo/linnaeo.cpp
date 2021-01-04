@@ -856,9 +856,9 @@ void Linnaeo::dataStreamThroughTree(QStandardItem *root, QDataStream &stream, bo
 
 }
 
-void Linnaeo::on_actionOpen_triggered()
+void Linnaeo::on_actionOpen_triggered(QString fileName)
 {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Linnaeo Workspace"),QStandardPaths::locate(QStandardPaths::DesktopLocation,""),tr("Linnaeo Workspace (*.lno)"));
+    if(fileName=="none") fileName = QFileDialog::getOpenFileName(this, tr("Open Linnaeo Workspace"),QStandardPaths::locate(QStandardPaths::DesktopLocation,""),tr("Linnaeo Workspace (*.lno)"));
     QFile file = QFile(fileName);
     qInfo(lnoIo) <<"Attempting to read workspace at"<<fileName;
     if (file.open(QIODevice::ReadOnly))

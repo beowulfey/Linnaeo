@@ -50,6 +50,9 @@ private:
     QStandardItemModel *alignModel = nullptr;
     QStandardItem *alignStartFolderItem = nullptr;
     QFont defaultFont;
+public slots:
+    void on_actionOpen_triggered(QString fileName = "none");
+
 protected:
     bool eventFilter(QObject *obj, QEvent *ev) override;
 
@@ -86,7 +89,6 @@ private slots:
     void on_actionExportAlignment_triggered();
     void on_actionAlignment_from_file_triggered();
     void on_actionSave_Workspace_triggered();
-    void on_actionOpen_triggered();
     void on_actionSequence_from_file_triggered();
 };
 

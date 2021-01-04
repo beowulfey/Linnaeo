@@ -14,6 +14,8 @@ int main(int argc, char *argv[])
     a.setWindowIcon(QIcon(":/icons/linnaeo.ico"));
     w.setWindowIcon(QIcon(":/icons/linnaeo.ico"));
     qInfo(lnoMain) << a.arguments();
+    if(a.arguments().length()>1 && a.arguments().at(1).right(3) == "lno") w.on_actionOpen_triggered(a.arguments().at(1));
+    w.show();
 
     qInfo(lnoMain) << "\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n\t\tWelcome to LINNAEO\t\t\n" << "\t\tLoaded ver."<<qPrintable(version)<<"\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++";
 
