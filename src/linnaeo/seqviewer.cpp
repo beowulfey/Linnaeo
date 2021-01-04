@@ -77,15 +77,16 @@ QStringList SeqViewer::getSeqList()
 void SeqViewer::resizeEvent(QResizeEvent *event)
 // bug here: for some reason it tries to resize permanently with how this is right now.
 {
+
     if(wrapSeqs)
     {
-        //qDebug(lnoView) << "Detected resize event";
         QTextEdit::resizeEvent(event);
         resizing = true;
         resizeTimer->start(100);
 
         drawSequenceOrAlignment();
     }
+
 }
 
 void SeqViewer::resizeTimeout()
