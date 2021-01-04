@@ -34,6 +34,7 @@ public:
         NamesRole=Qt::UserRole+4
     };
     Q_ENUM(Linnaeo::ItemType);
+    void openFromFile(QString fileName);
 
 
 private:
@@ -50,8 +51,8 @@ private:
     QStandardItemModel *alignModel = nullptr;
     QStandardItem *alignStartFolderItem = nullptr;
     QFont defaultFont;
-public slots:
-    void on_actionOpen_triggered(QString fileName = "none");
+
+
 
 protected:
     bool eventFilter(QObject *obj, QEvent *ev) override;
@@ -90,6 +91,7 @@ private slots:
     void on_actionAlignment_from_file_triggered();
     void on_actionSave_Workspace_triggered();
     void on_actionSequence_from_file_triggered();
+    void on_actionOpen_triggered();
 };
 
 //Q_DECLARE_METATYPE(Linnaeo::ItemType);
