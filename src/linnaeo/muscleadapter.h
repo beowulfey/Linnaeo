@@ -1,12 +1,19 @@
-#ifndef MUSCLEADAPTER_H
-#define MUSCLEADAPTER_H
+#ifndef MUSCLEADAPTOR_H
+#define MUSCLEADAPTOR_H
 
-#include "muscle/muscle.h"
+#include "logging.h"
+#include <QObject>
+#include "external/muscle/muscle.h"
 
-class MuscleAdapter
+class MuscleAdaptor : public QObject
 {
+    Q_OBJECT
 public:
-    MuscleAdapter();
+    explicit MuscleAdaptor(QObject *parent = nullptr);
+    int run(QString input, QString output);
+
+private:
+
 };
 
-#endif // MUSCLEADAPTER_H
+#endif // MUSCLEADAPTOR_H

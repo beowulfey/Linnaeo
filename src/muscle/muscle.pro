@@ -3,13 +3,16 @@ TARGET = muscle
 TEMPLATE = lib
 
 CONFIG += \
-    staticlib
+    staticlib \
     c++11
 
 DISTFILES += \
     muscle/README.md
 
-DEFINES -= UNICODE DEFINES += _MBCS
+win32 {
+# MUSCLE needs multibyte instead of unicode
+    DEFINES -= UNICODE DEFINES += _MBCS
+}
 
 HEADERS += \
     muscle/alpha.h \
@@ -114,7 +117,6 @@ SOURCES += \
     muscle/hydro.cpp \
     muscle/intmath.cpp \
     muscle/local.cpp \
-    muscle/main.cpp \
     muscle/makerootmsa.cpp \
     muscle/makerootmsab.cpp \
     muscle/maketree.cpp \

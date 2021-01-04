@@ -18,6 +18,7 @@ DEFINES += \
        "VERSION_MINOR=$$VERSION_MINOR"\
        "VERSION_BUILD=$$VERSION_BUILD"
 
+
 #Target version
 VERSION = $${VERSION_MAJOR}.$${VERSION_MINOR}.$${VERSION_BUILD}
 
@@ -66,7 +67,6 @@ RC_ICONS = resources/icons/linnaeo.ico
 
 RESOURCES += \
     resources/linnaeo.qrc
-
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../muscle/release/ -lmuscle

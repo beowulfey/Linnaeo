@@ -92,15 +92,6 @@ void Quit(const char szFormat[], ...)
 	Log("\n*** FATAL ERROR ***  ");
 	Log("%s\n", szStr);
 	Log("Stopped %s\n", GetTimeAsStr());
-
-#ifdef WIN32
-    if (IsDebuggerPresent())
-        {
-        int iBtn = MessageBox(NULL, szStr, "muscle", MB_ICONERROR | MB_OKCANCEL);
-        if (IDCANCEL == iBtn)
-            Break();
-        }
-#endif
 	exit(EXIT_FatalError);
 	}
 

@@ -1,3 +1,4 @@
+#include "muscleadapter.h"
 #include "logging.h"
 #include "alignworker.h"
 #include "sequence.h"
@@ -11,14 +12,49 @@
 AlignWorker::AlignWorker(QString input)
 {
     seqs = input;
+    mcsl = new MuscleAdaptor();
 
 }
 
 void AlignWorker::run()
-// Currently hardcoded. Need to make it more flexible!!
 {
-    QTemporaryDir tempDir;
     QString result;
+    QTemporaryDir tempDir;
+    if(tempDir.isValid())
+    {
+        QFile input(tempDir.path()+"/input.fasta");
+        if (input.open(QIODevice::WriteOnly | QIODevice::Text))
+        {
+           QTextStream out(&input);
+           out << seqs;
+           input.close();
+        }
+        int mcslResult = mcsl->run(input.fileName(), tempDir.path()+"/output.fasta");
+        if(mcslResult == 0)
+        {
+            QFile aligned(tempDir.path()+"/output.fasta");
+            if (aligned.open(QIODevice::ReadOnly | QIODevice::Text))
+            {
+               QTextStream in(&aligned);
+               while (!in.atEnd())
+               {
+                  result.append(in.readAll());
+               }
+               aligned.close();
+            }
+            tempDir.remove();
+            emit resultReady(Sequence::splitFastaAlignmentString(result));
+        }
+        else
+        {
+            emit resultFailed(mcslResult);
+        }
+    }
+
+
+
+    /*
+     * QString result;
     QStringList args;
 
     if(tempDir.isValid())
@@ -51,6 +87,6 @@ void AlignWorker::run()
         emit resultReady(Sequence::splitFastaAlignmentString(result));
 
 
-    }
+    }*/
 
 }

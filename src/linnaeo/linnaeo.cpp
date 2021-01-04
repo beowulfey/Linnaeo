@@ -360,6 +360,7 @@ void Linnaeo::on_actionMake_Alignment_triggered()
         qDebug(lnoMain) << "Unable to find item, making new";
         AlignWorker *worker = new AlignWorker(unaligned);
         connect(worker, &AlignWorker::resultReady, this, &Linnaeo::addAlignmentToTree);
+        connect(worker, &AlignWorker::resultFailed, this, &Linnaeo::alignmentFailed);
         connect(worker, &AlignWorker::finished, worker, &AlignWorker::deleteLater);
         worker->run();
     }
@@ -385,6 +386,11 @@ void Linnaeo::addAlignmentToTree(const QList<QStringList> result)
     this->setWindowTitle(QString("Linnaeo [%1]").arg(item->data(Qt::DisplayRole).toString()));
     ui->alignTreeView->selectionModel()->select(item->index(),QItemSelectionModel::ClearAndSelect);
     ui->alignTreeView->setFocus();
+}
+
+void Linnaeo::alignmentFailed(int err)
+{
+    qInfo(lnoProc) << "Internal muscle error"<<err<<" please try again";
 }
 
 void Linnaeo::on_actionAdd_Alignment_Folder_triggered()

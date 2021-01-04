@@ -242,8 +242,8 @@ void Run()
 	{
 	SetStartTime();
 	Log("Started %s\n", GetTimeAsStr());
-	for (int i = 0; i < g_argc; ++i)
-		Log("%s ", g_argv[i]);
+    //for (int i = 0; i < g_argc; ++i)
+    //	Log("%s ", g_argv[i]);
 	Log("\n");
 
 #if	TIMING

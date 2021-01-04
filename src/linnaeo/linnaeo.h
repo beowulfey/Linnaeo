@@ -75,6 +75,7 @@ private slots:
     void on_colorsEnabled_toggled(bool checked);
     void on_seqTreeView_doubleClicked(const QModelIndex &index);
     void addAlignmentToTree(const QList<QStringList> result);
+    void alignmentFailed(int err);
     void on_actionCopy_triggered();
     //void on_seqTreeView_clicked(const QModelIndex &index);
     void modifySeqActions(const QItemSelection &sel, const QItemSelection &desel);

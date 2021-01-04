@@ -3,6 +3,7 @@
 #include "profile.h"
 #include "enumopts.h"
 
+const char *MUSCLE_LONG_VERSION	= "MUSCLE v" SHORT_VERSION ".";
 const double DEFAULT_MAX_MB_FRACT = 0.8;
 
 SCORE g_scoreCenter = 0;
