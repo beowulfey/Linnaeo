@@ -100,8 +100,9 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     connect(ui->seqTreeView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &Linnaeo::modifySeqActions);
     connect(ui->alignTreeView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &Linnaeo::modifyAlignActions);
 
-    ui->seqTreeView->installEventFilter(this);
-    ui->alignTreeView->installEventFilter(this);
+    //ui->seqTreeView->installEventFilter(this);
+    //ui->alignTreeView->installEventFilter(this);
+    qApp->installEventFilter(this);
 
 
     // DEBUGGING!
@@ -131,6 +132,7 @@ bool Linnaeo::eventFilter(QObject *object, QEvent *event)
 /// Event filter for turning on certain buttons etc, depending on events that are detected
 
 {
+    if(event->type() == QEvent::Resize) qDebug(lnoEvent) << object << event->type();
     return QMainWindow::eventFilter(object, event);
     /*if (object == ui->seqTreeView) {
         if (event->type() == QEvent::FocusIn) {
