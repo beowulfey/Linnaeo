@@ -24,7 +24,7 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
 
     // Set up Viewer panel
     QFontDatabase::addApplicationFont(":/fonts/Noto-Custom.ttf");
-    defaultFont = QFont("Noto Custom", 10, 1);
+    defaultFont = QFont("Noto Custom", 10.0, 1);
     ui->namesEdit->setFont(defaultFont);
     ui->seqViewer->setFont(defaultFont);
     ui->rulerEdit->setFont(defaultFont);
@@ -102,7 +102,7 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
 
     //ui->seqTreeView->installEventFilter(this);
     //ui->alignTreeView->installEventFilter(this);
-    qApp->installEventFilter(this);
+    //qApp->installEventFilter(this);
 
 
     // DEBUGGING!
@@ -124,6 +124,8 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     seqStartFolderItem->appendRow(debugItem);
     ui->seqTreeView->setExpanded(seqModel->indexFromItem(seqStartFolderItem),true);
 
+    //ui->colorsEnabled->setChecked(false);
+
 }
 Linnaeo::~Linnaeo()
 {   delete ui;}
@@ -132,7 +134,7 @@ bool Linnaeo::eventFilter(QObject *object, QEvent *event)
 /// Event filter for turning on certain buttons etc, depending on events that are detected
 
 {
-    if(event->type() == QEvent::Resize) qDebug(lnoEvent) << object << event->type();
+    //if(event->type() == QEvent::Resize) qDebug(lnoEvent) << object << event->type();
     return QMainWindow::eventFilter(object, event);
     /*if (object == ui->seqTreeView) {
         if (event->type() == QEvent::FocusIn) {
@@ -232,6 +234,7 @@ void Linnaeo::on_actionOpen_triggered()
             }
             file.close();
             lastDirWorkspace = QFileInfo(file).absolutePath();
+            on_actionClose_triggered();
         }
     }
 }
@@ -1134,3 +1137,21 @@ void Linnaeo::on_actionCapture_Image_triggered()
 }
 
 
+
+void Linnaeo::on_actionIncrease_Font_triggered()
+{
+    defaultFont.setPointSizeF(defaultFont.pointSizeF()+0.5);
+    ui->seqViewer->setFont(defaultFont);
+    ui->namesEdit->setFont(defaultFont);
+    ui->rulerEdit->setFont(defaultFont);
+    ui->seqViewer->fontChanged();
+}
+
+void Linnaeo::on_actionDecrease_Font_triggered()
+{
+    defaultFont.setPointSizeF(defaultFont.pointSizeF()-0.5);
+    ui->seqViewer->setFont(defaultFont);
+    ui->namesEdit->setFont(defaultFont);
+    ui->rulerEdit->setFont(defaultFont);
+    ui->seqViewer->fontChanged();
+}

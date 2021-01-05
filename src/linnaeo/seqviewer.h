@@ -16,11 +16,13 @@ public:
     void setTheme(int index);
     void setColors(bool colors);
     void setWrapSeqs(bool wrap);
+    void fontChanged();
     //void startDisplayThread();
     QList<QString> getSeqList();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
+    //bool eventFilter(QObject *obj, QEvent *ev) override;
 
 private:
     bool wrapSeqs = true;
@@ -29,18 +31,22 @@ private:
     bool rulerOn = false;
     int numBlocks;
     double scrollPos;
+    double hozScrollPos;
     QTimer *resizeTimer;
     QHash<QChar, QString> lookup;
     QList<QString> displayedNames;
     QList<QString> displayedSeqs;
     QList<QList<QString>> displayedSeqsColor;
     QList<QList<QString>> displayedRuler;
+    QString formattedNames;
+    QString formattedRuler;
 
     void calculateColor();
     void calculateRuler();
     void drawSequenceOrAlignment();
     void resizeTimeout();
-
+private slots:
+    void noWrapUpdateRuler(int val=0);
 
 signals:
     void updatedNamesAndRuler(const QString names, const QString ruler);

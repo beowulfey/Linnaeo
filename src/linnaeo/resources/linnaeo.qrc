@@ -24,5 +24,8 @@
         <file>icons/ui/download.svg</file>
         <file>fonts/Noto-Custom.ttf</file>
         <file>icons/ui/display-settings.svg</file>
+        <file>icons/ui/camera-retro.svg</file>
+        <file>icons/ui/decrease_font.svg</file>
+        <file>icons/ui/increase_font.svg</file>
     </qresource>
 </RCC>

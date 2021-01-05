@@ -544,10 +544,16 @@
           <item>
            <widget class="QTextEdit" name="namesEdit">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>30</width>
+              <height>0</height>
+             </size>
             </property>
             <property name="maximumSize">
              <size>
@@ -619,10 +625,16 @@ p, li { white-space: pre-wrap; }
           <item>
            <widget class="QTextEdit" name="rulerEdit">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>30</width>
+              <height>0</height>
+             </size>
             </property>
             <property name="maximumSize">
              <size>
@@ -641,6 +653,9 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="midLineWidth">
              <number>1</number>
+            </property>
+            <property name="sizeAdjustPolicy">
+             <enum>QAbstractScrollArea::AdjustToContents</enum>
             </property>
            </widget>
           </item>
@@ -933,10 +948,12 @@ p, li { white-space: pre-wrap; }
    <addaction name="actionCopy"/>
    <addaction name="actionPaste"/>
    <addaction name="separator"/>
+   <addaction name="actionInfo_Mode"/>
    <addaction name="separator"/>
-   <addaction name="actionCapture_Image"/>
    <addaction name="actionIncrease_Font"/>
    <addaction name="actionDecrease_Font"/>
+   <addaction name="actionCapture_Image"/>
+   <addaction name="separator"/>
    <addaction name="actionShow_Viewer_Options"/>
   </widget>
   <action name="actionAdd_Sequence">
@@ -1207,18 +1224,38 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="actionIncrease_Font">
+   <property name="icon">
+    <iconset resource="resources/linnaeo.qrc">
+     <normaloff>:/icons/ui/increase_font.svg</normaloff>:/icons/ui/increase_font.svg</iconset>
+   </property>
    <property name="text">
     <string>Increase Font</string>
    </property>
   </action>
   <action name="actionDecrease_Font">
+   <property name="icon">
+    <iconset resource="resources/linnaeo.qrc">
+     <normaloff>:/icons/ui/decrease_font.svg</normaloff>:/icons/ui/decrease_font.svg</iconset>
+   </property>
    <property name="text">
     <string>Decrease Font</string>
    </property>
   </action>
   <action name="actionCapture_Image">
+   <property name="icon">
+    <iconset resource="resources/linnaeo.qrc">
+     <normaloff>:/icons/ui/camera-retro.svg</normaloff>:/icons/ui/camera-retro.svg</iconset>
+   </property>
    <property name="text">
     <string>Capture Image</string>
+   </property>
+  </action>
+  <action name="actionInfo_Mode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Info Mode</string>
    </property>
   </action>
  </widget>

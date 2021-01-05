@@ -2,6 +2,7 @@
 #include "seqviewer.h"
 #include "themes.h"
 #include <math.h>
+#include <QEvent>
 #include <QRegularExpression>
 #include <QFontDatabase>
 #include <QElapsedTimer>
@@ -14,8 +15,16 @@ SeqViewer::SeqViewer(QWidget *parent): QTextEdit(parent)
     resizeTimer = new QTimer(this);
     resizeTimer->setSingleShot(true);
     connect(resizeTimer, &QTimer::timeout, this, &SeqViewer::resizeTimeout);
+    this->horizontalScrollBar()->setTracking(true);
+    connect(this->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(noWrapUpdateRuler(int)));
+    //this->installEventFilter(this);
 }
 
+//bool SeqViewer::eventFilter(QObject *object, QEvent *ev)
+//{
+//    qDebug(lnoEvent) << ev->type();
+//    return QTextEdit::eventFilter(object, ev);
+//}
 void SeqViewer::setTheme(int index)
 {
     switch(index) {
@@ -82,7 +91,7 @@ void SeqViewer::resizeEvent(QResizeEvent *event)
     resizing = true;
     resizeTimer->start(100);
 
-    if(wrapSeqs) drawSequenceOrAlignment();
+    wrapSeqs ? drawSequenceOrAlignment() : noWrapUpdateRuler();
 
 }
 
@@ -90,7 +99,7 @@ void SeqViewer::resizeTimeout()
 {
     resizing = false;
     //qDebug(lnoView) << "DONE RESIZING";
-    if(wrapSeqs) drawSequenceOrAlignment();
+    wrapSeqs ? drawSequenceOrAlignment() : noWrapUpdateRuler();
 }
 
 void SeqViewer::setDisplaySequence(QString seq, QString name)
@@ -169,8 +178,9 @@ void SeqViewer::drawSequenceOrAlignment()
 /// Keep an eye on this...
 {
 
-    float charWidth;
+    float charWidth = 0;
     int numChars;
+    int noWrapChars = 0;
     QString formatted;
     QString namesFormatted;
     QString rulerFormatted;
@@ -179,23 +189,39 @@ void SeqViewer::drawSequenceOrAlignment()
     if(!displayedSeqs.isEmpty())
     {
 
-        if(verticalScrollBar()->maximum() > verticalScrollBar()->minimum()) scrollPos = double(verticalScrollBar()->sliderPosition())/double(verticalScrollBar()->maximum()-verticalScrollBar()->minimum());
+        qDebug(lnoView) << "Lengths:"<<displayedNames.length()<<displayedSeqs.length()<<displayedRuler.length()<<displayedSeqsColor.length();
+        for(int i = 0; i<displayedNames.length();i++)
+        {
+            qDebug(lnoView)<< "Inner Lengths:"<<displayedNames.at(i).length()<<displayedSeqs.at(i).length()<<displayedRuler.at(i).length()<<displayedSeqsColor.at(i).length();
+        }
+        if(verticalScrollBar()->maximum() > verticalScrollBar()->minimum())
+        {
+            scrollPos = double(verticalScrollBar()->sliderPosition())/double(verticalScrollBar()->maximum()-verticalScrollBar()->minimum());
+            //qDebug(lnoView)<<scrollPos;
+            if(scrollPos < 0.05) scrollPos = 0;
+        }
+        if(horizontalScrollBar()->maximum()>horizontalScrollBar()->minimum())
+        {
+            hozScrollPos = double(horizontalScrollBar()->sliderPosition())/double(horizontalScrollBar()->maximum()-horizontalScrollBar()->minimum());
+        }
         //QElapsedTimer timer;
         //timer.start();
         formatted = QString("<pre style=\"font-family:%1;\">").arg(font().family());
+        qInfo(lnoView) << formatted;
         namesFormatted = QString("<pre style=\"font-family:%1;text-align:right;\">").arg(font().family());
         rulerFormatted = QString("<pre style=\"font-family:%1;\">").arg(font().family());
+        charWidth = QFontMetricsF(font()).averageCharWidth();
         if(wrapSeqs){
-            charWidth = QFontMetricsF(font()).averageCharWidth();
-            numChars = trunc((QRectF(rect()).width()-3)/charWidth)-1;
-            numBlocks = displayedSeqs.first().length()/numChars;
+            numChars = int(truncf((QRectF(rect()).width()-2.0)/charWidth)-1.0);
+            numBlocks = trunc(displayedSeqs.first().length()/numChars);
         }
         else
         {
+            noWrapChars = int(truncf((QRectF(rect()).width()-2.0)/charWidth)-1.0);
             numChars = displayedSeqs.first().length(); // all sequences should have same length at this point! may need to validate.
             numBlocks = 0;
         }
-
+        qDebug(lnoView) << "Text"<<charWidth << numChars << numBlocks;
         for(int i = 0; i<=numBlocks; i++) // for each text block...
         {
             if(rulerOn)
@@ -207,6 +233,7 @@ void SeqViewer::drawSequenceOrAlignment()
             for(int j=0; j<displayedSeqs.length();j++) // for each sequence in the list...
             {
 
+                qDebug(lnoView) << "Current Iteration: Text Block"<<i<<"and sequence"<<j;
                 // Name stuff
                 namesFormatted.append(displayedNames.at(j)).append("\n");
 
@@ -219,13 +246,17 @@ void SeqViewer::drawSequenceOrAlignment()
                         seg = QList<QString>(displayedSeqsColor.at(j).sliced(i*numChars, numChars)).join("").append("\n");
                     }
                     else {
-                        //qDebug(lnoView) <<"last block color!";
                         seg = displayedSeqsColor.at(j).mid(i*numChars).join("");
-                        if((displayedSeqsColor.at(j).mid(i*numChars).length() + displayedRuler.at(j).last().length()) <numChars-1) {
-                            seg.append(" ").append(displayedRuler.at(j).last());
-                            lastRuler = false;
+                        if(seg!="")
+                        {
+                            //qDebug(lnoView) <<"last block color!";
+
+                            if((displayedSeqsColor.at(j).mid(i*numChars).length() + displayedRuler.at(j).last().length()) <numChars) {
+                                seg.append(" ").append(displayedRuler.at(j).last());
+                                lastRuler = false;
+                            }
+                            seg.append("\n");
                         }
-                        seg.append("\n");
                     }
 
                 } else // Black and white only uses the displayedSeqs parameter -- less resource intensive
@@ -238,13 +269,16 @@ void SeqViewer::drawSequenceOrAlignment()
                     else {
                         //qDebug(lnoView) << "last blocK!!!";
                         seg = displayedSeqs.at(j).mid(i*numChars);
-                        if((displayedSeqs.at(j).mid(i*numChars).length()+displayedRuler.at(j).last().length()) < numChars-1)
+                        if(seg!="")
                         {
-                            //qDebug(lnoView) <<"determined it was too small";
-                            seg.append(" ").append(displayedRuler.at(j).last());
-                            lastRuler = false;
+                            if(displayedSeqs.at(j).mid(i*numChars).length()+displayedRuler.at(j).last().length() < numChars)
+                            {
+                                //qDebug(lnoView) <<"determined it was too small";
+                                seg.append(" ").append(displayedRuler.at(j).last());
+                                lastRuler = false;
+                            }
+                            seg.append("\n");
                         }
-                        seg.append("\n");
                     }
                 }
                 formatted.append(seg);
@@ -252,7 +286,10 @@ void SeqViewer::drawSequenceOrAlignment()
                 // Ruler stuff
                 if(!(i==numBlocks)) rulerFormatted.append(displayedRuler.at(j).at(i*numChars+numChars-1)).append("\n");
                 else {
-                    if(lastRuler) rulerFormatted.append(displayedRuler.at(j).last()).append("\n");
+                    if(lastRuler) {
+                        wrapSeqs ? rulerFormatted.append(displayedRuler.at(j).last()).append("\n") :
+                                   rulerFormatted.append(displayedRuler.at(j).at(noWrapChars)+"|"+displayedRuler.at(j).last()).append("\n");
+                    }
                     else
                     {
                         qDebug() << "not placing last ruler because it fit on screen!";
@@ -270,20 +307,46 @@ void SeqViewer::drawSequenceOrAlignment()
         namesFormatted.append("</pre>");
         rulerFormatted.chop(2);
         rulerFormatted.append("</pre>");
-        qDebug(lnoView) << formatted.right(30) <<"\n"<<namesFormatted.right(30)<<"\n"<<rulerFormatted.right(30);
-
         this->document()->clear();
         this->document()->setHtml(formatted);
-        emit updatedNamesAndRuler(namesFormatted, rulerFormatted); // Send it back to Linnaeo to add to names panel.
+        this->formattedNames = namesFormatted;
+        this->formattedRuler = rulerFormatted;
+        emit updatedNamesAndRuler(formattedNames, formattedRuler); // Send it back to Linnaeo to add to names panel.
         //qDebug(lnoView) << "The drawing operation took" << timer.elapsed() << "milliseconds";
         if(verticalScrollBar()->maximum() > verticalScrollBar()->minimum()){
             verticalScrollBar()->setSliderPosition(round(scrollPos*double(verticalScrollBar()->maximum()-verticalScrollBar()->minimum())));
-            //qDebug() << "Scroll position after" <<double(verticalScrollBar()->sliderPosition())/double(verticalScrollBar()->maximum()-verticalScrollBar()->minimum());
         }
-
-
+        if(horizontalScrollBar()->maximum()>horizontalScrollBar()->minimum()){
+            horizontalScrollBar()->setSliderPosition(round(hozScrollPos*double(horizontalScrollBar()->maximum()-horizontalScrollBar()->minimum())));
+        }
     }
-
-
 }
 
+void SeqViewer::noWrapUpdateRuler(int val){
+    double charWidth = QFontMetricsF(font()).averageCharWidth();
+    int noWrapChars = int(truncf((QRectF(rect()).width()-2.0)/charWidth)-1.0);
+    int numChars = displayedSeqs.first().length(); // all sequences should have same length at this point! may need to validate.
+    numBlocks = 0;
+    double index = 0;
+    QScrollBar *bar = horizontalScrollBar();
+    if(bar->maximum()>bar->minimum())
+    {
+        qDebug(lnoEvent) << "Sliding!" << bar->sliderPosition()<<"/"<<bar->maximum()<<"-"<<bar->minimum()<<"*"<<numChars<<"+"<<noWrapChars;
+        formattedRuler = QString("<pre style=\"font-family:%1;\">").arg(font().family());
+        int index=trunc(double(double(bar->sliderPosition())/(double(bar->maximum())-double(bar->minimum())))*double(numChars-noWrapChars))+noWrapChars;
+        qDebug(lnoEvent) << int(index);
+        for(int i =0;i<displayedRuler.length();i++)
+        {
+            QString display = displayedRuler.at(i).at(index);
+            if(display.isEmpty()) display = displayedRuler.at(i).last();
+            formattedRuler.append(display+"|"+displayedRuler.at(i).last()).append("\n");
+        }
+        formattedRuler.append("\n");
+    }
+    emit updatedNamesAndRuler(formattedNames, formattedRuler); // Send it back to Linnaeo to add to names panel.
+}
+
+void SeqViewer::fontChanged()
+{
+    if(!displayedSeqs.isEmpty()) drawSequenceOrAlignment();
+}
