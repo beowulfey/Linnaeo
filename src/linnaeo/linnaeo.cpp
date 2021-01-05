@@ -165,17 +165,15 @@ void Linnaeo::on_actionNew_triggered()
 void Linnaeo::on_actionOpen_triggered()
 /// Opens the file selected and streams in the data.
 {
-    int ret = QMessageBox::Cancel;
-    int children = seqModel->invisibleRootItem()->rowCount()+seqStartFolderItem->rowCount()
-                   +alignModel->invisibleRootItem()->rowCount()+alignStartFolderItem->rowCount();
-
-    if(children>2)
+    int ret = QMessageBox::Discard;
+    if(changed)
     {
         QMessageBox msgBox;
+        msgBox.setWindowTitle("Unsaved changes");
         msgBox.setIcon(QMessageBox::Warning);
         msgBox.setTextFormat(Qt::MarkdownText);
-        msgBox.setText("#### What a nice workspace you have here...");
-        msgBox.setInformativeText("It would be a shame to lose it. Do you want to save first?");
+        msgBox.setText("#### Watch out! You have unsaved changes!");
+        msgBox.setInformativeText("Do you want to save your workspace?");
         msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
         msgBox.setDefaultButton(QMessageBox::Save);
         ret = msgBox.exec();
@@ -261,6 +259,7 @@ void Linnaeo::on_actionSave_Workspace_triggered()
            file.close();
            qInfo(lnoIo) << "Saved workspace to"<<fileName;
            lastDirWorkspace = QFileInfo(file).absolutePath();
+           changed = false;
         }
     }
 
@@ -300,6 +299,7 @@ void Linnaeo::on_actionSequence_from_file_triggered()
 
             ui->seqViewer->setDisplaySequence(seq, name);
             this->setWindowTitle(QString("Linnaeo [%1]").arg(item->data(Qt::DisplayRole).toString()));
+            changed = true;
 
         }
     }
@@ -344,6 +344,7 @@ void Linnaeo::on_actionAlignment_from_file_triggered()
 
             ui->seqViewer->setDisplayAlignment(seqs, names);
             this->setWindowTitle(QString("Linnaeo [%1]").arg(item->data(Qt::DisplayRole).toString()));
+            changed = true;
         }
     }
 }
@@ -408,17 +409,15 @@ void Linnaeo::on_actionExportAlignment_triggered()
 void Linnaeo::on_actionQuit_triggered()
     /// Quits Linnaeo. Does not close other detached instances.
 {
-    int ret = QMessageBox::Cancel;
-    int children = seqModel->invisibleRootItem()->rowCount()+seqStartFolderItem->rowCount()
-                   +alignModel->invisibleRootItem()->rowCount()+alignStartFolderItem->rowCount();
-
-    if(children>2)
+    int ret = QMessageBox::Discard;
+    if(changed)
     {
         QMessageBox msgBox;
+        msgBox.setWindowTitle("Unsaved changes");
         msgBox.setIcon(QMessageBox::Warning);
         msgBox.setTextFormat(Qt::MarkdownText);
-        msgBox.setText("#### What a nice workspace you have here...");
-        msgBox.setInformativeText("It would be a shame to lose it. Do you want to save first?");
+        msgBox.setText("#### Watch out! You have unsaved changes!");
+        msgBox.setInformativeText("Do you want to save your workspace?");
         msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
         msgBox.setDefaultButton(QMessageBox::Save);
         ret = msgBox.exec();
@@ -534,6 +533,7 @@ void Linnaeo::on_actionAdd_Sequence_triggered()
             }
             this->setWindowTitle(QString("Linnaeo [%1]").arg(newSeq->data(Qt::DisplayRole).toString()));
             ui->seqViewer->setDisplaySequence(newSeq->data(SequenceRole).toString(),newSeq->data(Qt::DisplayRole).toString());
+            changed = true;
         }
         else
         {
@@ -558,6 +558,7 @@ void Linnaeo::on_actionDelete_Selected_Sequences_triggered()
         }
         foreach (const QPersistentModelIndex &i, pindexes)
             this->seqModel->removeRow(i.row(), i.parent());
+        changed = true;
     }
 }
 void Linnaeo::on_actionAdd_Folder_to_Sequence_Panel_triggered()
@@ -603,6 +604,7 @@ void Linnaeo::on_actionAdd_Folder_to_Sequence_Panel_triggered()
             }
         }
     }
+    changed = true;
 
 }
 void Linnaeo::on_actionMake_Alignment_triggered()
@@ -652,6 +654,7 @@ void Linnaeo::addAlignmentToTree(const QList<QStringList> result)
     this->setWindowTitle(QString("Linnaeo [%1]").arg(item->data(Qt::DisplayRole).toString()));
     ui->alignTreeView->selectionModel()->select(item->index(),QItemSelectionModel::ClearAndSelect);
     ui->alignTreeView->setFocus();
+    changed = true;
 }
 
 void Linnaeo::alignmentFailed(int err)
@@ -700,6 +703,7 @@ void Linnaeo::on_actionAdd_Alignment_Folder_triggered()
             }
         }
     }
+    changed = true;
 }
 void Linnaeo::on_actionDelete_Selected_Alignments_triggered()
 {
@@ -717,11 +721,13 @@ void Linnaeo::on_actionDelete_Selected_Alignments_triggered()
         }
         foreach (const QPersistentModelIndex &i, pindexes)
             this->alignModel->removeRow(i.row(), i.parent());
+        changed = true;
     }
+
 }
 void Linnaeo::on_actionEdit_Sequence_triggered()
 {
-
+    changed = true;
 }
 
 // OTHER SLOTS
@@ -814,6 +820,7 @@ void Linnaeo::on_actionGet_Online_Sequence_triggered()
             }
         }
     }
+    changed = true;
 
 }
 void Linnaeo::on_actionClose_triggered()
@@ -1105,6 +1112,7 @@ void Linnaeo::openFromFile(QString fileName)
             qInfo(lnoIo) << "Workspace loaded successfully!";
         }
         file.close();
+        changed = false;
     }
 }
 

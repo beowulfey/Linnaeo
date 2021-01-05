@@ -48,9 +48,11 @@ private:
     QStandardItemModel *alignModel = nullptr;
     QStandardItem *alignStartFolderItem = nullptr;
     QFont defaultFont;
+    bool changed = false;
     QString lastDirWorkspace;
     QString lastDirSequence;
     QString lastDirAlignment;
+
 
 
 
