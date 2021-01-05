@@ -7,6 +7,7 @@
 #include "sequence.h"
 #include <QDir>
 #include <QStandardPaths>
+#include <QMessageBox>
 #include <QFileDialog>
 #include <QPersistentModelIndex>
 #include <QScrollBar>
@@ -159,14 +160,279 @@ void Linnaeo::on_actionNew_triggered()
     //spdlog::info("Started new window with procID {}", *pid);
     Linnaeo *newLinnaeo = new Linnaeo();
     newLinnaeo->setWindowIcon(QIcon(":/icons/linnaeo.ico"));
-    newLinnaeo->show();}
+    newLinnaeo->show();
+}
+void Linnaeo::on_actionOpen_triggered()
+/// Opens the file selected and streams in the data.
+{
+    int ret = QMessageBox::Cancel;
+    int children = seqModel->invisibleRootItem()->rowCount()+seqStartFolderItem->rowCount()
+                   +alignModel->invisibleRootItem()->rowCount()+alignStartFolderItem->rowCount();
+
+    if(children>2)
+    {
+        QMessageBox msgBox;
+        msgBox.setIcon(QMessageBox::Warning);
+        msgBox.setTextFormat(Qt::MarkdownText);
+        msgBox.setText("#### What a nice workspace you have here...");
+        msgBox.setInformativeText("It would be a shame to lose it. Do you want to save first?");
+        msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Save);
+        ret = msgBox.exec();
+        if(ret == QMessageBox::Save)
+        {
+            on_actionSave_Workspace_triggered();
+        }
+    }
+    if(ret != QMessageBox::Cancel)
+    {
+
+        QString dir;
+        (lastDirWorkspace.isEmpty()) ? dir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation)
+                                   : dir = lastDirWorkspace;
+        QString fileName = QFileDialog::getOpenFileName(this, tr("Open Linnaeo Workspace"),dir,tr("Linnaeo Workspace (*.lno)"));
+        QFile file = QFile(fileName);
+        qInfo(lnoIo) <<"Attempting to read workspace at"<<fileName;
+        if (file.open(QIODevice::ReadOnly))
+        {
+            QDataStream in(&file);
+            quint32 magicIn;
+            in >> magicIn;
+            qint32 fileVersion;
+            in >> fileVersion;
+            if (magicIn != magic || fileVersion < fvers) {
+                qWarning(lnoIo) << "Unable to read file! Sorry, this workspace is likely not compatible with this version.";
+            }
+            else {
+                seqModel->clear();
+                alignModel->clear();
+                in.setVersion(QDataStream::Qt_6_0);
+                qDebug(lnoIo) << "Loading SEQUENCE Tree";
+                dataStreamThroughTree(seqModel->invisibleRootItem(),in,false);
+                qDebug(lnoIo) << "Loading ALIGNMENT Tree";
+                dataStreamThroughTree(alignModel->invisibleRootItem(),in,false);
+                for(int r = 0; r < seqModel->invisibleRootItem()->rowCount(); ++r)
+                {
+                    if(seqModel->invisibleRootItem()->child(r)->hasChildren()) ui->seqTreeView->setExpanded((seqModel->invisibleRootItem()->child(r)->index()),true);
+                    if(seqModel->invisibleRootItem()->child(r)->data(Qt::DisplayRole).toString() == "Uncategorized")
+                    {
+                        this->seqStartFolderItem = seqModel->invisibleRootItem()->child(r);
+                    }
+                }
+                for(int r = 0; r < alignModel->invisibleRootItem()->rowCount(); ++r)
+                {
+                    if(alignModel->invisibleRootItem()->child(r)->hasChildren()) ui->alignTreeView->setExpanded((alignModel->invisibleRootItem()->child(r)->index()),true);
+                    if(alignModel->invisibleRootItem()->child(r)->data(Qt::DisplayRole).toString() == "Uncategorized")
+                    {
+                        this->alignStartFolderItem = alignModel->invisibleRootItem()->child(r);
+                    }
+                }
+
+                qInfo(lnoIo) << "Workspace loaded successfully!";
+            }
+            file.close();
+            lastDirWorkspace = QFileInfo(file).absolutePath();
+        }
+    }
+}
+
+void Linnaeo::on_actionSave_Workspace_triggered()
+{
+    QString dir;
+    (lastDirWorkspace.isEmpty()) ? dir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"//workspace"
+                               : dir = lastDirWorkspace+"//workspace";
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save Linnaeo Workspace"),dir,tr("Linnaeo Workspace (*.lno)"));
+    if(!(fileName == ""))
+    {
+        QFile file = QFile(fileName);
+        if (file.open(QIODevice::WriteOnly))
+        {
+           QDataStream out(&file);
+           // Write a header with a "magic number" and a version
+           out << (quint32)magic;
+           out << (qint32)fvers;
+           out.setVersion(QDataStream::Qt_6_0);
+
+           // Iterate through the sequence tree and save each QStandardItem
+           qDebug(lnoIo) << "Saving SEQUENCE Tree";
+           dataStreamThroughTree(seqModel->invisibleRootItem(),out,true);
+           qDebug(lnoIo) << "Saving ALIGNMENT Tree";
+           dataStreamThroughTree(alignModel->invisibleRootItem(),out,true);
+           file.close();
+           qInfo(lnoIo) << "Saved workspace to"<<fileName;
+           lastDirWorkspace = QFileInfo(file).absolutePath();
+        }
+    }
+
+}
+
+void Linnaeo::on_actionSequence_from_file_triggered()
+/// Import sequence
+{
+    QString dir;
+    (lastDirSequence.isEmpty()) ? dir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation)
+                               : dir = lastDirSequence;
+    QString result;
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Sequence"),dir,tr("Protein Sequence (*.fasta *.fa)"));
+    if(!(fileName == ""))
+    {
+        QFile file = QFile(fileName);
+        if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+           QTextStream in(&file);
+           while (!in.atEnd())
+           {
+              result.append(in.readAll());
+           }
+           file.close();
+           lastDirSequence = QFileInfo(file).absolutePath();
+        }
+        if(result[0] == '>')
+        {
+            QList<QStringList> parsed = Sequence::splitFastaAlignmentString(result);
+
+            const QString name = parsed.at(0).at(0);
+            const QString seq = parsed.at(1).at(0);
+            QStandardItem *item = new QStandardItem(name);
+            item->setData(seq, SequenceRole);
+            seqStartFolderItem->appendRow(item);
+            ui->seqTreeView->expand(seqStartFolderItem->index());
+
+            ui->seqViewer->setDisplaySequence(seq, name);
+            this->setWindowTitle(QString("Linnaeo [%1]").arg(item->data(Qt::DisplayRole).toString()));
+
+        }
+    }
+}
+
+void Linnaeo::on_actionAlignment_from_file_triggered()
+{
+    QString result;
+    QString dir;
+    (lastDirAlignment.isEmpty()) ? dir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation)
+                               : dir = lastDirAlignment;
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Alignment"),dir,tr("Fasta alignment (*.aln *.fa)"));
+    if(!(fileName == ""))
+    {
+        QFile file = QFile(fileName);
+        if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+           QTextStream in(&file);
+           while (!in.atEnd())
+           {
+              result.append(in.readAll());
+           }
+           file.close();
+           lastDirAlignment = QFileInfo(file).absolutePath();
+        }
+        if(result[0] == '>')
+        {
+            QList<QStringList> parsed = Sequence::splitFastaAlignmentString(result);
+
+            QList<QString> names = parsed.at(0);
+            QList<QString> seqs = parsed.at(1);
+            if(seqs.length() > 15)
+            {
+                ui->wrapEnabled->setChecked(false);
+                qInfo(lnoView) << "Detected"<<seqs.length()<<"sequences in alignment, disabling sequence wrapping to improve performance";
+            }
+            QStandardItem *item = new QStandardItem(QString("New Alignment (HUGE)"));//.arg(names.join(", ")));
+            item->setData(QVariant(seqs), AlignmentRole);
+            item->setData(QVariant(names),NamesRole);
+            alignStartFolderItem->appendRow(item);
+            ui->alignTreeView->expand(alignStartFolderItem->index());
+
+            ui->seqViewer->setDisplayAlignment(seqs, names);
+            this->setWindowTitle(QString("Linnaeo [%1]").arg(item->data(Qt::DisplayRole).toString()));
+        }
+    }
+}
+
+void Linnaeo::on_actionExportSequence_triggered()
+{
+    QModelIndex selected = ui->seqTreeView->selectionModel()->selectedIndexes().first();
+    if(!selected.data(FolderRole).toBool())
+    {
+        QString dir;
+        (lastDirSequence.isEmpty()) ? dir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+QString("//%1").arg(selected.data(Qt::DisplayRole).toString())
+                                   : dir = lastDirSequence+QString("//%1").arg(selected.data(Qt::DisplayRole).toString());
+        QString fileName = QFileDialog::getSaveFileName(this, tr("Save Sequence"),dir,tr("Fasta Sequence (*.fasta);; Any (*)"));
+        if(!(fileName == ""))
+        {
+            QFile file = QFile(fileName);
+            if (file.open(QIODevice::WriteOnly))
+            {
+                QTextStream stream(&file);
+                QString output = Sequence::prettyPrintFastaSequence(selected.data(Qt::DisplayRole).toString(), selected.data(SequenceRole).toString());
+                stream << output;
+                file.close();
+            }
+            lastDirSequence = QFileInfo(file).absolutePath();
+        }
+
+    }
+}
+void Linnaeo::on_actionExportAlignment_triggered()
+/// Exports the selected alignment as a FASTA. Only formatted supported for now.
+{
+    QModelIndex selected = ui->alignTreeView->selectionModel()->selectedIndexes().first();
+    if(!selected.data(FolderRole).toBool())
+    {
+        QString dir;
+        (lastDirAlignment.isEmpty()) ? dir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+QString("//%1").arg(selected.data(Qt::DisplayRole).toString())
+                                   : dir = lastDirAlignment+QString("//%1").arg(selected.data(Qt::DisplayRole).toString());
+        QString fileName = QFileDialog::getSaveFileName(this, tr("Save Alignment"),dir,tr("Fasta Alignment (*.aln);; Any (*)"));
+        if(!(fileName == ""))
+        {
+            QFile file = QFile(fileName);
+            if (file.open(QIODevice::WriteOnly))
+            {
+                QTextStream stream(&file);
+                QList<QString> names = selected.data(NamesRole).toStringList();
+                QList<QString> seqs = selected.data(AlignmentRole).toStringList();
+                QString output;
+                for(int i = 0; i<names.length(); i++)
+                {
+                    output.append(Sequence::prettyPrintFastaSequence(names.at(i),seqs.at(i)));
+                }
+                stream << output;
+                file.close();
+                lastDirAlignment = QFileInfo(file).absolutePath();
+            }
+        }
+    }
+}
+
+
+
 void Linnaeo::on_actionQuit_triggered()
     /// Quits Linnaeo. Does not close other detached instances.
-{   //QVector<qint64>::const_iterator iter;
-    //if(this->procIds.length()>0){
-    //    for(iter=this->procIds.begin();iter != this->procIds.end(); iter++){
-    //
-    this->close(); }
+{
+    int ret = QMessageBox::Cancel;
+    int children = seqModel->invisibleRootItem()->rowCount()+seqStartFolderItem->rowCount()
+                   +alignModel->invisibleRootItem()->rowCount()+alignStartFolderItem->rowCount();
+
+    if(children>2)
+    {
+        QMessageBox msgBox;
+        msgBox.setIcon(QMessageBox::Warning);
+        msgBox.setTextFormat(Qt::MarkdownText);
+        msgBox.setText("#### What a nice workspace you have here...");
+        msgBox.setInformativeText("It would be a shame to lose it. Do you want to save first?");
+        msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Save);
+        ret = msgBox.exec();
+        if(ret == QMessageBox::Save)
+        {
+            on_actionSave_Workspace_triggered();
+        }
+    }
+    if(ret != QMessageBox::Cancel)
+    {
+        this->close();
+    }
+}
+
 // EDIT MENU SLOTS
 void Linnaeo::on_actionPreferences_triggered()
     /// Opens preference panel.
@@ -457,6 +723,7 @@ void Linnaeo::on_actionEdit_Sequence_triggered()
 {
 
 }
+
 // OTHER SLOTS
 void Linnaeo::expand_seqTreeView_item(const QModelIndex &index)
     /// Expand/collapse slots are for animating the icon in the tree view!
@@ -715,54 +982,6 @@ void Linnaeo::on_alignTreeView_doubleClicked(const QModelIndex &index)
 
 }
 
-void Linnaeo::on_actionExportAlignment_triggered()
-{
-    QModelIndex selected = ui->alignTreeView->selectionModel()->selectedIndexes().first();
-    if(!selected.data(FolderRole).toBool())
-    {
-
-    }
-
-}
-
-void Linnaeo::on_actionAlignment_from_file_triggered()
-{
-    QString result;
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Alignment"),QStandardPaths::locate(QStandardPaths::DesktopLocation,""),tr("Fasta alignment (*.aln *.fa)"));
-    if(!(fileName == ""))
-    {
-        QFile file = QFile(fileName);
-        if (file.open(QIODevice::ReadOnly | QIODevice::Text))
-        {
-           QTextStream in(&file);
-           while (!in.atEnd())
-           {
-              result.append(in.readAll());
-           }
-           file.close();
-        }
-        if(result[0] == '>')
-        {
-            QList<QStringList> parsed = Sequence::splitFastaAlignmentString(result);
-
-            QList<QString> names = parsed.at(0);
-            QList<QString> seqs = parsed.at(1);
-            if(seqs.length() > 15)
-            {
-                ui->wrapEnabled->setChecked(false);
-                qInfo(lnoView) << "Detected"<<seqs.length()<<"sequences in alignment, disabling sequence wrapping to improve performance";
-            }
-            QStandardItem *item = new QStandardItem(QString("New Alignment (HUGE)"));//.arg(names.join(", ")));
-            item->setData(QVariant(seqs), AlignmentRole);
-            item->setData(QVariant(names),NamesRole);
-            alignStartFolderItem->appendRow(item);
-            ui->alignTreeView->expand(alignStartFolderItem->index());
-
-            ui->seqViewer->setDisplayAlignment(seqs, names);
-        }
-    }
-}
-
 
 QModelIndex Linnaeo::searchForMadeAlignment(QModelIndex root, QStringList query)
 /// Utility function for improving user experience. Prevents duplicate alignments from being added to the tree.
@@ -798,32 +1017,9 @@ QModelIndex Linnaeo::searchForMadeAlignment(QModelIndex root, QStringList query)
     return found;
 }
 
-void Linnaeo::on_actionSave_Workspace_triggered()
-{
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Save Linnaeo Workspace"),QStandardPaths::writableLocation(QStandardPaths::HomeLocation),tr("Linnaeo Workspace (*.lno)"));
-    if(!(fileName == ""))
-    {
-        QFile file = QFile(fileName);
-        if (file.open(QIODevice::WriteOnly))
-        {
-           QDataStream out(&file);
-           // Write a header with a "magic number" and a version
-           out << (quint32)magic;
-           out << (qint32)fvers;
-           out.setVersion(QDataStream::Qt_6_0);
 
-           // Iterate through the sequence tree and save each QStandardItem
-           qDebug(lnoIo) << "Saving SEQUENCE Tree";
-           dataStreamThroughTree(seqModel->invisibleRootItem(),out,true);
-           qDebug(lnoIo) << "Saving ALIGNMENT Tree";
-           dataStreamThroughTree(alignModel->invisibleRootItem(),out,true);
-           file.close();
-           qInfo(lnoIo) << "Saved workspace to"<<fileName;
-        }
-    }
-
-}
 void Linnaeo::dataStreamThroughTree(QStandardItem *root, QDataStream &stream, bool out)
+/// Utility function. Needed for iterating through a tree to rebuild after loading data.
 {
     if(out)
     {
@@ -864,51 +1060,7 @@ void Linnaeo::dataStreamThroughTree(QStandardItem *root, QDataStream &stream, bo
 
 }
 
-void Linnaeo::on_actionOpen_triggered()
-{
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Linnaeo Workspace"),QStandardPaths::writableLocation(QStandardPaths::HomeLocation),tr("Linnaeo Workspace (*.lno)"));
-    QFile file = QFile(fileName);
-    qInfo(lnoIo) <<"Attempting to read workspace at"<<fileName;
-    if (file.open(QIODevice::ReadOnly))
-    {
-        QDataStream in(&file);
-        quint32 magicIn;
-        in >> magicIn;
-        qint32 fileVersion;
-        in >> fileVersion;
-        if (magicIn != magic || fileVersion < fvers) {
-            qWarning(lnoIo) << "Unable to read file! Sorry, this workspace is likely not compatible with this version.";
-        }
-        else {
-            seqModel->clear();
-            alignModel->clear();
-            in.setVersion(QDataStream::Qt_6_0);
-            qDebug(lnoIo) << "Loading SEQUENCE Tree";
-            dataStreamThroughTree(seqModel->invisibleRootItem(),in,false);
-            qDebug(lnoIo) << "Loading ALIGNMENT Tree";
-            dataStreamThroughTree(alignModel->invisibleRootItem(),in,false);
-            for(int r = 0; r < seqModel->invisibleRootItem()->rowCount(); ++r)
-            {
-                if(seqModel->invisibleRootItem()->child(r)->hasChildren()) ui->seqTreeView->setExpanded((seqModel->invisibleRootItem()->child(r)->index()),true);
-                if(seqModel->invisibleRootItem()->child(r)->data(Qt::DisplayRole).toString() == "Uncategorized")
-                {
-                    this->seqStartFolderItem = seqModel->invisibleRootItem()->child(r);
-                }
-            }
-            for(int r = 0; r < alignModel->invisibleRootItem()->rowCount(); ++r)
-            {
-                if(alignModel->invisibleRootItem()->child(r)->hasChildren()) ui->alignTreeView->setExpanded((alignModel->invisibleRootItem()->child(r)->index()),true);
-                if(alignModel->invisibleRootItem()->child(r)->data(Qt::DisplayRole).toString() == "Uncategorized")
-                {
-                    this->alignStartFolderItem = alignModel->invisibleRootItem()->child(r);
-                }
-            }
 
-            qInfo(lnoIo) << "Workspace loaded successfully!";
-        }
-        file.close();
-    }
-}
 
 void Linnaeo::openFromFile(QString fileName)
 {
@@ -957,10 +1109,7 @@ void Linnaeo::openFromFile(QString fileName)
 }
 
 
-void Linnaeo::on_actionSequence_from_file_triggered()
-{
 
-}
 
 
 void Linnaeo::on_actionCapture_Image_triggered()
@@ -973,3 +1122,5 @@ void Linnaeo::on_actionCapture_Image_triggered()
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image"),QStandardPaths::writableLocation(QStandardPaths::HomeLocation),tr("PNG (*.png);; BMP (*.bmp);;TIFF (*.tiff *.tif);; JPEG (*.jpg *.jpeg)"));
     img.save(fileName, nullptr, -1);
 }
+
+

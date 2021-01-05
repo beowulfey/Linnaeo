@@ -22,28 +22,25 @@ public:
     Linnaeo(QWidget *parent = nullptr);
     QModelIndex searchForMadeAlignment(QModelIndex root, QStringList query);
     void dataStreamThroughTree(QStandardItem *root, QDataStream &stream, bool out=false);
+    void openFromFile(QString fileName); // is run from main.cpp for parsing cmd line options
     ~Linnaeo();
+
     quint32 magic = 0xA0B0C0D0;
     qint32 fvers = 100;
     enum ItemType
     {
-        FolderRole=Qt::UserRole,
-        SequenceRole=Qt::UserRole+1,
-        InfoRole=Qt::UserRole+2,
-        AlignmentRole=Qt::UserRole+3,
-        NamesRole=Qt::UserRole+4
+        FolderRole=Qt::UserRole,        // bool
+        SequenceRole=Qt::UserRole+1,    // QString
+        InfoRole=Qt::UserRole+2,        // QString
+        AlignmentRole=Qt::UserRole+3,   // QList<QString>
+        NamesRole=Qt::UserRole+4        // QList<QString>
     };
     Q_ENUM(Linnaeo::ItemType);
-    void openFromFile(QString fileName);
 
 
 private:
     Ui::Linnaeo *ui;
 
-    enum seqTheme
-    {
-        DEFAULT = 0,
-    };
 
     //QVector<qint64> procIds;
     QStandardItemModel *seqModel = nullptr;
@@ -51,6 +48,9 @@ private:
     QStandardItemModel *alignModel = nullptr;
     QStandardItem *alignStartFolderItem = nullptr;
     QFont defaultFont;
+    QString lastDirWorkspace;
+    QString lastDirSequence;
+    QString lastDirAlignment;
 
 
 
@@ -93,6 +93,7 @@ private slots:
     void on_actionSequence_from_file_triggered();
     void on_actionOpen_triggered();
     void on_actionCapture_Image_triggered();
+    void on_actionExportSequence_triggered();
 };
 
 //Q_DECLARE_METATYPE(Linnaeo::ItemType);
