@@ -60,6 +60,10 @@ void SearchUniprot::on_searchButton_clicked()
         }
 
         request.setUrl(url);
+
+        QSslConfiguration config(QSslConfiguration::defaultConfiguration());
+        config.setProtocol(QSsl::TlsV1_0);
+        request.setSslConfiguration(config);
         qInfo(lnoIo)<<"Searching with URL\n" << url.toDisplayString();
         manager->get(request);
     }
@@ -74,7 +78,7 @@ void SearchUniprot::httpFinished(QNetworkReply *reply)
     bar->showMessage("Search complete");
     if (reply->error())
     {
-        qDebug(lnoIo) << reply->errorString();
+        qWarning(lnoIo) << reply->errorString();
         bar->showMessage("Unable to search UniPROT!");
         return;
     }

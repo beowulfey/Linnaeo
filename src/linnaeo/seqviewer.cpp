@@ -82,7 +82,7 @@ void SeqViewer::resizeEvent(QResizeEvent *event)
     resizing = true;
     resizeTimer->start(100);
 
-    drawSequenceOrAlignment();
+    if(wrapSeqs) drawSequenceOrAlignment();
 
 }
 
@@ -90,7 +90,7 @@ void SeqViewer::resizeTimeout()
 {
     resizing = false;
     //qDebug(lnoView) << "DONE RESIZING";
-    drawSequenceOrAlignment();
+    if(wrapSeqs) drawSequenceOrAlignment();
 }
 
 void SeqViewer::setDisplaySequence(QString seq, QString name)
