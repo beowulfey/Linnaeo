@@ -17,14 +17,17 @@ public:
     void setColors(bool colors);
     void setWrapSeqs(bool wrap);
     void fontChanged();
+    void setInfoMode(bool);
     //void startDisplayThread();
     QList<QString> getSeqList();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
-    //bool eventFilter(QObject *obj, QEvent *ev) override;
+    bool eventFilter(QObject *obj, QEvent *ev) override;
+    void paintEvent(QPaintEvent *event) override;
 
 private:
+    bool infoMode = false;
     bool wrapSeqs = true;
     bool resizing = false;
     bool colorOn = true;

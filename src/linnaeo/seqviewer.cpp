@@ -7,6 +7,8 @@
 #include <QFontDatabase>
 #include <QElapsedTimer>
 #include <QScrollBar>
+#include <QPaintEvent>
+#include <QPainter>
 
 
 SeqViewer::SeqViewer(QWidget *parent): QTextEdit(parent)
@@ -18,13 +20,48 @@ SeqViewer::SeqViewer(QWidget *parent): QTextEdit(parent)
     this->horizontalScrollBar()->setTracking(true);
     connect(this->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(noWrapUpdateRuler(int)));
     //this->installEventFilter(this);
+    //this->setMouseTracking(false);
 }
 
-//bool SeqViewer::eventFilter(QObject *object, QEvent *ev)
-//{
-//    qDebug(lnoEvent) << ev->type();
-//    return QTextEdit::eventFilter(object, ev);
-//}
+void SeqViewer::resizeEvent(QResizeEvent *event)
+{
+
+    QTextEdit::resizeEvent(event);
+    resizing = true;
+    resizeTimer->start(100);
+
+    wrapSeqs ? drawSequenceOrAlignment() : noWrapUpdateRuler();
+
+}
+
+void SeqViewer::resizeTimeout()
+{
+    resizing = false;
+    //qDebug(lnoView) << "DONE RESIZING";
+    wrapSeqs ? drawSequenceOrAlignment() : noWrapUpdateRuler();
+}
+
+void SeqViewer::paintEvent(QPaintEvent *event)
+{
+    QTextEdit::paintEvent(event);
+    qDebug(lnoEvent)<<"Found paint event!";
+    const QRect rect = event->rect();
+    //const QFont font = currentCharFormat().font();
+    int x30 = round(QFontMetricsF(font()).averageCharWidth() * 30.0)
+            + document()->documentMargin();
+    QPainter p(viewport());
+    p.setPen(QPen("black"));
+    p.drawLine(x30, rect.top(), x30, rect.bottom());
+    qDebug(lnoEvent) << x30 << document()->documentMargin() << font();
+
+}
+
+bool SeqViewer::eventFilter(QObject *object, QEvent *ev)
+{
+    qDebug(lnoEvent) << object<<ev->type();
+    return QTextEdit::eventFilter(object, ev);
+}
+
 void SeqViewer::setTheme(int index)
 {
     switch(index) {
@@ -56,6 +93,17 @@ void SeqViewer::setTheme(int index)
     }
 }
 
+void SeqViewer::setInfoMode(bool infoMode)
+{
+    this->infoMode = infoMode;
+    int height = QFontMetricsF(font()).height()*displayedSeqs.length()+2;
+
+
+
+}
+
+
+
 void SeqViewer::setColors(bool colors)
 {
     qDebug(lnoView) << "Set show colors to" << colors;
@@ -83,24 +131,7 @@ QStringList SeqViewer::getSeqList()
     return displayedSeqs;
 }
 
-void SeqViewer::resizeEvent(QResizeEvent *event)
-// bug here: for some reason it tries to resize permanently with how this is right now.
-{
 
-    QTextEdit::resizeEvent(event);
-    resizing = true;
-    resizeTimer->start(100);
-
-    wrapSeqs ? drawSequenceOrAlignment() : noWrapUpdateRuler();
-
-}
-
-void SeqViewer::resizeTimeout()
-{
-    resizing = false;
-    //qDebug(lnoView) << "DONE RESIZING";
-    wrapSeqs ? drawSequenceOrAlignment() : noWrapUpdateRuler();
-}
 
 void SeqViewer::setDisplaySequence(QString seq, QString name)
 /// Called upon double-clicking; initializes the viewer with the sequence of choice.
@@ -207,7 +238,7 @@ void SeqViewer::drawSequenceOrAlignment()
         //QElapsedTimer timer;
         //timer.start();
         formatted = QString("<pre style=\"font-family:%1;\">").arg(font().family());
-        qInfo(lnoView) << formatted;
+        //qInfo(lnoView) << formatted;
         namesFormatted = QString("<pre style=\"font-family:%1;text-align:right;\">").arg(font().family());
         rulerFormatted = QString("<pre style=\"font-family:%1;\">").arg(font().family());
         charWidth = QFontMetricsF(font()).averageCharWidth();
