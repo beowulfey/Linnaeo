@@ -1155,3 +1155,8 @@ void Linnaeo::on_actionDecrease_Font_triggered()
     ui->rulerEdit->setFont(defaultFont);
     ui->seqViewer->fontChanged();
 }
+
+void Linnaeo::on_actionInfo_Mode_triggered(bool checked)
+{
+    ui->seqViewer->setInfoMode(checked);
+}

@@ -3,6 +3,7 @@
 
 #include <QTextEdit>
 #include <QTimer>
+//#include <QTextFrame>
 
 class SeqViewer : public QTextEdit
 {
@@ -27,14 +28,20 @@ protected:
     void paintEvent(QPaintEvent *event) override;
 
 private:
+    qreal charWidth;
+    int numChars;
+    int numBlocks;
+    int noWrapChars;
+
     bool infoMode = false;
     bool wrapSeqs = true;
     bool resizing = false;
     bool colorOn = true;
     bool rulerOn = false;
-    int numBlocks;
     double scrollPos;
     double hozScrollPos;
+
+    QTextFrameFormat *form;
     QTimer *resizeTimer;
     QHash<QChar, QString> lookup;
     QList<QString> displayedNames;
@@ -48,6 +55,9 @@ private:
     void calculateRuler();
     void drawSequenceOrAlignment();
     void resizeTimeout();
+    void drawCursor();
+    void setSequenceMetrics();
+
 private slots:
     void noWrapUpdateRuler(int val=0);
 

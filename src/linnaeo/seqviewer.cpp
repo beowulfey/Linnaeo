@@ -9,27 +9,31 @@
 #include <QScrollBar>
 #include <QPaintEvent>
 #include <QPainter>
+#include <QAbstractTextDocumentLayout>
 
+// TODO: COnvert all double to qreal!
 
 SeqViewer::SeqViewer(QWidget *parent): QTextEdit(parent)
 {
 
+
     resizeTimer = new QTimer(this);
     resizeTimer->setSingleShot(true);
     connect(resizeTimer, &QTimer::timeout, this, &SeqViewer::resizeTimeout);
-    this->horizontalScrollBar()->setTracking(true);
+    //this->horizontalScrollBar()->setTracking(true);
+
     connect(this->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(noWrapUpdateRuler(int)));
     //this->installEventFilter(this);
     //this->setMouseTracking(false);
+
 }
 
 void SeqViewer::resizeEvent(QResizeEvent *event)
 {
 
-    QTextEdit::resizeEvent(event);
+    //QTextEdit::resizeEvent(event);
     resizing = true;
     resizeTimer->start(100);
-
     wrapSeqs ? drawSequenceOrAlignment() : noWrapUpdateRuler();
 
 }
@@ -37,28 +41,21 @@ void SeqViewer::resizeEvent(QResizeEvent *event)
 void SeqViewer::resizeTimeout()
 {
     resizing = false;
-    //qDebug(lnoView) << "DONE RESIZING";
+
     wrapSeqs ? drawSequenceOrAlignment() : noWrapUpdateRuler();
 }
 
 void SeqViewer::paintEvent(QPaintEvent *event)
 {
     QTextEdit::paintEvent(event);
-    qDebug(lnoEvent)<<"Found paint event!";
-    const QRect rect = event->rect();
-    //const QFont font = currentCharFormat().font();
-    int x30 = round(QFontMetricsF(font()).averageCharWidth() * 30.0)
-            + document()->documentMargin();
-    QPainter p(viewport());
-    p.setPen(QPen("black"));
-    p.drawLine(x30, rect.top(), x30, rect.bottom());
-    qDebug(lnoEvent) << x30 << document()->documentMargin() << font();
+    drawCursor();
+
 
 }
 
 bool SeqViewer::eventFilter(QObject *object, QEvent *ev)
 {
-    qDebug(lnoEvent) << object<<ev->type();
+    //qDebug(lnoEvent) << object<<ev->type();
     return QTextEdit::eventFilter(object, ev);
 }
 
@@ -97,9 +94,7 @@ void SeqViewer::setInfoMode(bool infoMode)
 {
     this->infoMode = infoMode;
     int height = QFontMetricsF(font()).height()*displayedSeqs.length()+2;
-
-
-
+    drawSequenceOrAlignment();
 }
 
 
@@ -142,6 +137,7 @@ void SeqViewer::setDisplaySequence(QString seq, QString name)
     this->displayedSeqs.append(seq);
     this->displayedNames.clear();
     this->displayedNames.append(name);
+    //setSequenceMetrics();
     calculateColor();
     calculateRuler();
     drawSequenceOrAlignment();
@@ -155,6 +151,7 @@ void SeqViewer::setDisplayAlignment(QList<QString> seqs, QList<QString> names)
     displayedSeqsColor.clear();
     displayedSeqs = seqs;
     displayedNames = names;
+    //setSequenceMetrics();
     calculateColor();
     calculateRuler();
     drawSequenceOrAlignment();
@@ -200,6 +197,24 @@ void SeqViewer::calculateRuler()
 
 }
 
+void SeqViewer::setSequenceMetrics()
+{
+    if(!displayedSeqs.isEmpty()){
+        charWidth = QFontMetricsF(font()).averageCharWidth();
+        if(wrapSeqs){
+            numChars = int(trunc((QRectF(rect()).width()-document()->documentMargin()*2.0-charWidth)/charWidth));
+            //qDebug(lnoEvent) << "rect-margs: (" << QRectF(rect()).width() << "-"<<document()->documentMargin()<<"-"<<document()->documentMargin()<<") /"<<charWidth<<"="<<numChars;
+            //numChars = int(truncf((QRectF(rect()).width()-2.0)/charWidth)-1.0);
+            numBlocks = trunc(displayedSeqs.first().length()/numChars);
+        }
+        else
+        {
+            noWrapChars = floor((QRectF(rect()).width()-document()->documentMargin()*2.0-10)/charWidth);
+            numChars = displayedSeqs.first().length(); // all sequences should have same length at this point! may need to validate.
+            numBlocks = 0;
+        }
+    }
+}
 
 void SeqViewer::drawSequenceOrAlignment()
 /// Gets the current width of the window and calculates the sequence split.
@@ -209,13 +224,15 @@ void SeqViewer::drawSequenceOrAlignment()
 /// Keep an eye on this...
 {
 
-    float charWidth = 0;
-    int numChars;
-    int noWrapChars = 0;
+    //int numChars;
+    //int noWrapChars = 0;
     QString formatted;
     QString namesFormatted;
     QString rulerFormatted;
-
+    setSequenceMetrics();
+    //this->document()->clear();
+    //this->document()->rootFrame()->setFrameFormat(*form);
+    int margin = this->document()->documentMargin();
 
     if(!displayedSeqs.isEmpty())
     {
@@ -237,21 +254,11 @@ void SeqViewer::drawSequenceOrAlignment()
         }
         //QElapsedTimer timer;
         //timer.start();
-        formatted = QString("<pre style=\"font-family:%1;\">").arg(font().family());
-        //qInfo(lnoView) << formatted;
+        formatted = QString("<pre style=\"font-family:%1;;margin-left:%2px;\">").arg(font().family()).arg(round(charWidth/2.0));
+        qDebug(lnoView) << formatted;
         namesFormatted = QString("<pre style=\"font-family:%1;text-align:right;\">").arg(font().family());
         rulerFormatted = QString("<pre style=\"font-family:%1;\">").arg(font().family());
-        charWidth = QFontMetricsF(font()).averageCharWidth();
-        if(wrapSeqs){
-            numChars = int(truncf((QRectF(rect()).width()-2.0)/charWidth)-1.0);
-            numBlocks = trunc(displayedSeqs.first().length()/numChars);
-        }
-        else
-        {
-            noWrapChars = int(truncf((QRectF(rect()).width()-2.0)/charWidth)-1.0);
-            numChars = displayedSeqs.first().length(); // all sequences should have same length at this point! may need to validate.
-            numBlocks = 0;
-        }
+
         qDebug(lnoView) << "Text"<<charWidth << numChars << numBlocks;
         for(int i = 0; i<=numBlocks; i++) // for each text block...
         {
@@ -338,7 +345,9 @@ void SeqViewer::drawSequenceOrAlignment()
         namesFormatted.append("</pre>");
         rulerFormatted.chop(2);
         rulerFormatted.append("</pre>");
-        this->document()->clear();
+        //this->document()->clear();
+        //QTextCursor curs = seqFrame->firstCursorPosition();
+        //this->setTextCursor(curs);
         this->document()->setHtml(formatted);
         this->formattedNames = namesFormatted;
         this->formattedRuler = rulerFormatted;
@@ -354,11 +363,11 @@ void SeqViewer::drawSequenceOrAlignment()
 }
 
 void SeqViewer::noWrapUpdateRuler(int val){
-    double charWidth = QFontMetricsF(font()).averageCharWidth();
-    int noWrapChars = int(truncf((QRectF(rect()).width()-2.0)/charWidth)-1.0);
-    int numChars = displayedSeqs.first().length(); // all sequences should have same length at this point! may need to validate.
-    numBlocks = 0;
-    double index = 0;
+    //double charWidth = QFontMetricsF(font()).averageCharWidth();
+    //int noWrapChars = int(truncf((QRectF(rect()).width()-2.0)/charWidth)-1.0);
+    //int numChars = displayedSeqs.first().length(); // all sequences should have same length at this point! may need to validate.
+    //numBlocks = 0;
+    //double index = 0;
     QScrollBar *bar = horizontalScrollBar();
     if(bar->maximum()>bar->minimum())
     {
@@ -375,9 +384,27 @@ void SeqViewer::noWrapUpdateRuler(int val){
         formattedRuler.append("\n");
     }
     emit updatedNamesAndRuler(formattedNames, formattedRuler); // Send it back to Linnaeo to add to names panel.
+    this->horizontalScrollBar()->setSingleStep(int(charWidth));
 }
 
 void SeqViewer::fontChanged()
 {
+    charWidth = QFontMetricsF(font()).averageCharWidth();
     if(!displayedSeqs.isEmpty()) drawSequenceOrAlignment();
+}
+
+void SeqViewer::drawCursor()
+{
+    {
+        if(infoMode){
+            //qDebug(lnoEvent)<<"Found paint event!";
+            const QRect rect = this->rect();
+            //const QFont font = currentCharFormat().font();
+            int x30 = round(QFontMetricsF(font()).averageCharWidth() * 30.0) + document()->documentMargin()-round(charWidth/2.0); // have a left margin offset in the HTML too.
+            QPainter p(viewport());
+            p.setPen(QPen("black"));
+            p.drawLine(x30, rect.top(), x30, rect.bottom());
+            //qDebug(lnoEvent) << x30 << document()->documentMargin() << font();
+        }
+    }
 }

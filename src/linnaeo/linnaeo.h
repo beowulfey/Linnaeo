@@ -98,6 +98,7 @@ private slots:
     void on_actionExportSequence_triggered();
     void on_actionIncrease_Font_triggered();
     void on_actionDecrease_Font_triggered();
+    void on_actionInfo_Mode_triggered(bool checked);
 };
 
 //Q_DECLARE_METATYPE(Linnaeo::ItemType);
