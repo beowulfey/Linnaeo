@@ -202,14 +202,12 @@ void SeqViewer::setSequenceMetrics()
     if(!displayedSeqs.isEmpty()){
         charWidth = QFontMetricsF(font()).averageCharWidth();
         if(wrapSeqs){
-            numChars = int(trunc((QRectF(rect()).width()-document()->documentMargin()*2.0-charWidth)/charWidth));
-            //qDebug(lnoEvent) << "rect-margs: (" << QRectF(rect()).width() << "-"<<document()->documentMargin()<<"-"<<document()->documentMargin()<<") /"<<charWidth<<"="<<numChars;
-            //numChars = int(truncf((QRectF(rect()).width()-2.0)/charWidth)-1.0);
+            numChars = trunc((QRectF(rect()).width()-document()->documentMargin()*2.0-charWidth)/charWidth);
             numBlocks = trunc(displayedSeqs.first().length()/numChars);
         }
         else
         {
-            noWrapChars = floor((QRectF(rect()).width()-document()->documentMargin()*2.0-10)/charWidth);
+            noWrapChars = trunc((QRectF(rect()).width()-document()->documentMargin()*2.0-charWidth)/charWidth);
             numChars = displayedSeqs.first().length(); // all sequences should have same length at this point! may need to validate.
             numBlocks = 0;
         }
@@ -232,7 +230,6 @@ void SeqViewer::drawSequenceOrAlignment()
     setSequenceMetrics();
     //this->document()->clear();
     //this->document()->rootFrame()->setFrameFormat(*form);
-    int margin = this->document()->documentMargin();
 
     if(!displayedSeqs.isEmpty())
     {

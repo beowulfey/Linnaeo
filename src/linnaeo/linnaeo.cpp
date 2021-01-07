@@ -832,8 +832,8 @@ void Linnaeo::on_actionClose_triggered()
 {
     this->setWindowTitle(QString("Linnaeo"));
     ui->seqViewer->clearViewer();
-    ui->namesEdit->clear();
-    ui->rulerEdit->clear();
+    ui->namesEdit->document()->clear();
+    ui->rulerEdit->document()->clear();
 }
 void Linnaeo::on_themeCombo_currentIndexChanged(int index)
 {
