@@ -22,115 +22,15 @@ SeqViewer::SeqViewer(QWidget *parent): QTextEdit(parent)
     connect(resizeTimer, &QTimer::timeout, this, &SeqViewer::resizeTimeout);
     //this->horizontalScrollBar()->setTracking(true);
 
-    connect(this->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(noWrapUpdateRuler(int)));
+    connect(this->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(noWrapUpdateRuler()));
     //this->installEventFilter(this);
     //this->setMouseTracking(false);
 
 }
 
-void SeqViewer::resizeEvent(QResizeEvent *event)
-{
-
-    QTextEdit::resizeEvent(event);
-    resizing = true;
-    resizeTimer->start(100);
-    wrapSeqs ? drawSequenceOrAlignment() : noWrapUpdateRuler();
-
-}
-
-void SeqViewer::resizeTimeout()
-{
-    resizing = false;
-
-    wrapSeqs ? drawSequenceOrAlignment() : noWrapUpdateRuler();
-}
-
-void SeqViewer::paintEvent(QPaintEvent *event)
-{
-    QTextEdit::paintEvent(event);
-    drawCursor();
-
-
-}
-
-bool SeqViewer::eventFilter(QObject *object, QEvent *ev)
-{
-    //qDebug(lnoEvent) << object<<ev->type();
-    return QTextEdit::eventFilter(object, ev);
-}
-
-void SeqViewer::setTheme(int index)
-{
-    switch(index) {
-    case 0:
-        lookup = Themes::defaultTheme();
-        qDebug(lnoView) << "Chose"<<index<<"-- default theme";
-        break;
-    case 1:
-        lookup = Themes::neonTheme();
-        qDebug(lnoView) << "Chose"<<index<<"-- neon theme";
-        break;
-    case 2:
-        lookup = Themes::gradientTheme();
-        qDebug(lnoView) << "Chose"<<index<<"-- gradient theme";
-        break;
-    case 3:
-        lookup = Themes::newTheme();
-        qDebug(lnoView) << "Chose"<<index<<"-- new theme";
-        break;
-    case 4:
-        lookup = Themes::clustalXTheme();
-        qDebug(lnoView) << "Chose"<<index<<"-- Clustal X theme";
-        break;
-    }
-    if(!displayedSeqs.isEmpty()){
-        qDebug(lnoView) << "Redrawing with new colors";
-        calculateColor();
-        drawSequenceOrAlignment();
-    }
-}
-
-void SeqViewer::setInfoMode(bool infoMode)
-{
-    this->infoMode = infoMode;
-    int height = QFontMetricsF(font()).height()*displayedSeqs.length()+2;
-    drawSequenceOrAlignment();
-}
-
-
-
-void SeqViewer::setColors(bool colors)
-{
-    qDebug(lnoView) << "Set show colors to" << colors;
-    colorOn = colors;
-    if(!displayedSeqs.isEmpty()) drawSequenceOrAlignment();
-
-}
-void SeqViewer::setWrapSeqs(bool wrap)
-{
-    qDebug(lnoView) << "Set wrap sequences to" << wrap;
-    wrapSeqs = wrap;
-    if(!displayedSeqs.isEmpty()) drawSequenceOrAlignment();
-
-}
-
-void SeqViewer::clearViewer()
-{
-    qDebug(lnoView) << "Viewer cleared of all sequences";
-    displayedSeqs.clear();
-    this->document()->setHtml("");
-}
-
-QStringList SeqViewer::getSeqList()
-{
-    return displayedSeqs;
-}
-
-
-
 void SeqViewer::setDisplaySequence(QString seq, QString name)
-/// Called upon double-clicking; initializes the viewer with the sequence of choice.
-/// Calls the sequence redraw function.
+/// Called upon double-clicking in the treeView; initializes the viewer with the sequence of choice.
+/// First clears out the stored sequence and name, then calculates the color based on theme and ruler based on window.
 {
     qDebug(lnoView) << "Setting viewer to a single sequence:"<<name;
     this->displayedSeqs.clear();
@@ -144,6 +44,7 @@ void SeqViewer::setDisplaySequence(QString seq, QString name)
 }
 
 void SeqViewer::setDisplayAlignment(QList<QString> seqs, QList<QString> names)
+/// Same as sequence version.
 {
     qDebug(lnoView) << "Setting viewer to show an alignment";
     displayedSeqs.clear();
@@ -158,27 +59,30 @@ void SeqViewer::setDisplayAlignment(QList<QString> seqs, QList<QString> names)
 }
 
 void SeqViewer::calculateColor()
+/// Uses the lookup from the theme (themes.cpp) to build an extra layer into the list.
+/// Essentially, instead of a QList<QString> the residues are abstracted
+/// into another list (QList<QList<QString> where each residue ("A") is
+/// converted into an html snippet that contains the color info, e.g.
+/// "<span style=\"background-color:#FFFFFF\">A</span>"
+///
 {
-    displayedSeqsColor.clear();
-    QElapsedTimer timer;
-
-    timer.start();
+    //QElapsedTimer timer;
+    //timer.start();
     // Define themes:
-
+    displayedSeqsColor.clear();
     QList<QString> colorSeq;
-
     for(auto&& seq: displayedSeqs)
     {
         colorSeq.clear();
         for(auto&& resi: seq) colorSeq.append(lookup[resi]);
         displayedSeqsColor.append(colorSeq);
-
-
     }
-    qDebug(lnoView) << "Creating color version took" << timer.elapsed() << "milliseconds";
+    //qDebug(lnoView) << "Creating color version took" << timer.elapsed() << "milliseconds";
 }
 
 void SeqViewer::calculateRuler()
+/// Residues get shifted after alignment with hyphens. This creates a list of equivalent
+/// length containing the count value minus the hyphens. Essentially a poor man's graph map.
 {
     displayedRuler.clear();
     int count;
@@ -198,6 +102,8 @@ void SeqViewer::calculateRuler()
 }
 
 void SeqViewer::setSequenceMetrics()
+/// Abstracted out this calculation (used to be done in the drawSequenceOrAlignment func)
+/// in case I want to update the values elsewhere or access them in other functions.
 {
     if(!displayedSeqs.isEmpty()){
         charWidth = QFontMetricsF(font()).averageCharWidth();
@@ -216,20 +122,18 @@ void SeqViewer::setSequenceMetrics()
 
 void SeqViewer::drawSequenceOrAlignment()
 /// Gets the current width of the window and calculates the sequence split.
-/// If there is color, uses the color version of the sequences lists.
-/// In release mode, this is FAST ENOUGH (about 8ms) but in debug it is VERY SLOW
-/// Black and white mode is fast in both!
-/// Keep an eye on this...
+/// If there is color enabled, uses the color version of the sequences lists.
+/// This is very slow in debug mode but fine in release. The crunch appears to be the
+/// "setHtml" step at the end. Setting black and white text is very fast, but including
+/// HTML makes it slow down from <10 ms to >20-50 ms sometimes. Obviously too slow for
+/// rapid redraw, so during a resize event I use the black and white version to go fast.
 {
 
-    //int numChars;
-    //int noWrapChars = 0;
     QString formatted;
     QString namesFormatted;
     QString rulerFormatted;
     setSequenceMetrics();
-    //this->document()->clear();
-    //this->document()->rootFrame()->setFrameFormat(*form);
+
 
     if(!displayedSeqs.isEmpty())
     {
@@ -336,20 +240,19 @@ void SeqViewer::drawSequenceOrAlignment()
             namesFormatted.append(" \n");
             rulerFormatted.append(" \n");
         }
+        // lazy removal of the extra \n from the end"
         formatted.chop(2);
         formatted.append("</pre>");
         namesFormatted.chop(2);
         namesFormatted.append("</pre>");
         rulerFormatted.chop(2);
         rulerFormatted.append("</pre>");
-        //this->document()->clear();
-        //QTextCursor curs = seqFrame->firstCursorPosition();
-        //this->setTextCursor(curs);
         this->document()->setHtml(formatted);
         this->formattedNames = namesFormatted;
         this->formattedRuler = rulerFormatted;
         emit updatedNamesAndRuler(formattedNames, formattedRuler); // Send it back to Linnaeo to add to names panel.
         //qDebug(lnoView) << "The drawing operation took" << timer.elapsed() << "milliseconds";
+        // This resets the scroll bar positions to their original placement.
         if(verticalScrollBar()->maximum() > verticalScrollBar()->minimum()){
             verticalScrollBar()->setSliderPosition(round(scrollPos*double(verticalScrollBar()->maximum()-verticalScrollBar()->minimum())));
         }
@@ -359,23 +262,25 @@ void SeqViewer::drawSequenceOrAlignment()
     }
 }
 
-void SeqViewer::noWrapUpdateRuler(int val){
-    //double charWidth = QFontMetricsF(font()).averageCharWidth();
-    //int noWrapChars = int(truncf((QRectF(rect()).width()-2.0)/charWidth)-1.0);
-    //int numChars = displayedSeqs.first().length(); // all sequences should have same length at this point! may need to validate.
-    //numBlocks = 0;
-    //double index = 0;
+void SeqViewer::noWrapUpdateRuler(){
+/// Because wrap mode vs nowrap mode uses slightly different calculations, and nowrap does not need to be resized dynamically,
+/// this is used in place of drawSequenceOrAlignment during resize operations.
+/// It updates the position in the right hand ruler pane with the rightmost residue number (hopefully).
+/// Some of this code is run in the initial drawSequence func but I don't think I can avoid the duplication;
+/// just make sure to change it there too if you modify this!
     QScrollBar *bar = horizontalScrollBar();
     if(bar->maximum()>bar->minimum())
     {
         qDebug(lnoEvent) << "Sliding!" << bar->sliderPosition()<<"/"<<bar->maximum()<<"-"<<bar->minimum()<<"*"<<numChars<<"+"<<noWrapChars;
         formattedRuler = QString("<pre style=\"font-family:%1;\">").arg(font().family());
-        int index=trunc(double(double(bar->sliderPosition())/(double(bar->maximum())-double(bar->minimum())))*double(numChars-noWrapChars))+noWrapChars-1;
+        int index=trunc(double(double(bar->sliderPosition())/(double(bar->maximum())-double(bar->minimum())))*double(numChars-noWrapChars))+noWrapChars;
         qDebug(lnoEvent) << int(index);
         for(int i =0;i<displayedRuler.length();i++)
         {
-            QString display = displayedRuler.at(i).at(index);
-            if(display.isEmpty()) display = displayedRuler.at(i).last();
+            QString display;
+            (index < displayedRuler.at(i).length()) ? display = displayedRuler.at(i).at(index):
+                                                      display = displayedRuler.at(i).last();
+            qDebug(lnoEvent) << display;
             formattedRuler.append(display+"|"+displayedRuler.at(i).last()).append("\n");
         }
         formattedRuler.append("\n");
@@ -384,16 +289,11 @@ void SeqViewer::noWrapUpdateRuler(int val){
     this->horizontalScrollBar()->setSingleStep(int(charWidth));
 }
 
-void SeqViewer::fontChanged()
-{
-    charWidth = QFontMetricsF(font()).averageCharWidth();
-    if(!displayedSeqs.isEmpty()) drawSequenceOrAlignment();
-}
-
 void SeqViewer::drawCursor()
+/// Draws a little info box
 {
     {
-        if(infoMode){
+        if(infoMode && !displayedSeqs.isEmpty()){
             //qDebug(lnoEvent)<<"Found paint event!";
             const QRect rect = this->rect();
             //const QFont font = currentCharFormat().font();
@@ -404,4 +304,110 @@ void SeqViewer::drawCursor()
             //qDebug(lnoEvent) << x30 << document()->documentMargin() << font();
         }
     }
+}
+
+// Below here are all set-settings functions. Called by Linnaeo.
+void SeqViewer::setTheme(int index)
+{
+    switch(index) {
+    case 0:
+        lookup = Themes::defaultTheme();
+        qDebug(lnoView) << "Chose"<<index<<"-- default theme";
+        break;
+    case 1:
+        lookup = Themes::neonTheme();
+        qDebug(lnoView) << "Chose"<<index<<"-- neon theme";
+        break;
+    case 2:
+        lookup = Themes::gradientTheme();
+        qDebug(lnoView) << "Chose"<<index<<"-- gradient theme";
+        break;
+    case 3:
+        lookup = Themes::newTheme();
+        qDebug(lnoView) << "Chose"<<index<<"-- new theme";
+        break;
+    case 4:
+        lookup = Themes::clustalXTheme();
+        qDebug(lnoView) << "Chose"<<index<<"-- Clustal X theme";
+        break;
+    }
+    if(!displayedSeqs.isEmpty()){
+        qDebug(lnoView) << "Redrawing with new colors";
+        calculateColor();
+        drawSequenceOrAlignment();
+    }
+}
+
+void SeqViewer::setInfoMode(bool infoMode)
+{
+    this->infoMode = infoMode;
+    int height = QFontMetricsF(font()).height()*displayedSeqs.length()+2;
+    drawSequenceOrAlignment();
+}
+
+
+
+void SeqViewer::setColors(bool colors)
+{
+    qDebug(lnoView) << "Set show colors to" << colors;
+    colorOn = colors;
+    if(!displayedSeqs.isEmpty()) drawSequenceOrAlignment();
+
+}
+void SeqViewer::setWrapSeqs(bool wrap)
+{
+    qDebug(lnoView) << "Set wrap sequences to" << wrap;
+    wrapSeqs = wrap;
+    if(!displayedSeqs.isEmpty()) drawSequenceOrAlignment();
+
+}
+
+void SeqViewer::clearViewer()
+{
+    qDebug(lnoView) << "Viewer cleared of all sequences";
+    displayedSeqs.clear();
+    this->document()->setHtml("");
+}
+
+QStringList SeqViewer::getSeqList()
+{
+    return displayedSeqs;
+}
+
+void SeqViewer::fontChanged()
+{
+    charWidth = QFontMetricsF(font()).averageCharWidth();
+    if(!displayedSeqs.isEmpty()) drawSequenceOrAlignment();
+}
+
+// Events below here
+void SeqViewer::resizeEvent(QResizeEvent *event)
+{
+
+    QTextEdit::resizeEvent(event);
+    resizing = true;
+    resizeTimer->start(100);
+    wrapSeqs ? drawSequenceOrAlignment() : noWrapUpdateRuler();
+
+}
+
+void SeqViewer::resizeTimeout()
+{
+    resizing = false;
+
+    wrapSeqs ? drawSequenceOrAlignment() : noWrapUpdateRuler();
+}
+
+void SeqViewer::paintEvent(QPaintEvent *event)
+{
+    QTextEdit::paintEvent(event);
+    drawCursor();
+
+
+}
+
+bool SeqViewer::eventFilter(QObject *object, QEvent *ev)
+{
+    //qDebug(lnoEvent) << object<<ev->type();
+    return QTextEdit::eventFilter(object, ev);
 }

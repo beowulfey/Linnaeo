@@ -59,7 +59,7 @@ private:
     void setSequenceMetrics();
 
 private slots:
-    void noWrapUpdateRuler(int val=0);
+    void noWrapUpdateRuler();
 
 signals:
     void updatedNamesAndRuler(const QString names, const QString ruler);
