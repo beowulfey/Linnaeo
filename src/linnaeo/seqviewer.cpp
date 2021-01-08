@@ -289,10 +289,12 @@ void SeqViewer::noWrapUpdateRuler(){
     this->horizontalScrollBar()->setSingleStep(int(charWidth));
 }
 
-void SeqViewer::drawCursor()
+void SeqViewer::drawCursor(QPoint pos=QPoint(0,0))
 /// Draws a little info box
 {
     {
+
+        QPoint debug = QPoint(46,74);
 
         if(infoMode && !displayedSeqs.isEmpty()){
             //qDebug(lnoEvent)<<"Found paint event!";
@@ -422,7 +424,7 @@ void SeqViewer::paintEvent(QPaintEvent *event)
 
 void SeqViewer::mousePressEvent(QMouseEvent *event)
 {
-    qDebug(lnoEvent) << "MOUSE PRESS" << event->pos();
+    //qDebug(lnoEvent) << "MOUSE PRESS" << event->pos();
 }
 
 bool SeqViewer::eventFilter(QObject *object, QEvent *ev)
