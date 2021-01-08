@@ -293,14 +293,30 @@ void SeqViewer::drawCursor()
 /// Draws a little info box
 {
     {
+
         if(infoMode && !displayedSeqs.isEmpty()){
             //qDebug(lnoEvent)<<"Found paint event!";
-            const QRect rect = this->rect();
-            //const QFont font = currentCharFormat().font();
-            int x30 = round(QFontMetricsF(font()).averageCharWidth() * 30.0) + document()->documentMargin()-round(charWidth/2.0); // have a left margin offset in the HTML too.
+            QFontMetricsF mets = QFontMetricsF(font());
+            const QRectF rect = QRectF(this->rect());
+            qreal leftOfCol = mets.averageCharWidth() * qreal(infoPos) + document()->documentMargin() + charWidth/2.0; // have a left margin offset in the HTML too.
+            qreal rightOfCol = leftOfCol+mets.averageCharWidth();
+            qreal topOfCol = rect.top()+document()->documentMargin();
+            qreal botOfCol = topOfCol+mets.height()*displayedSeqs.length();
             QPainter p(viewport());
-            p.setPen(QPen("black"));
-            p.drawLine(x30, rect.top(), x30, rect.bottom());
+            p.setPen(QPen("dark blue"));
+            qreal lineTop;
+            qreal lineBot;
+            (topOfCol-mets.height() > rect.top()) ? lineTop = topOfCol-mets.height() : lineTop = rect.top();
+            (botOfCol+mets.height() < rect.bottom()) ? lineBot = botOfCol+mets.height() : lineBot = rect.bottom();
+            QRegion colReg = QRegion(rect.toRect()).subtracted(QRegion(QRect(QPoint(leftOfCol,topOfCol), QPoint(rightOfCol,botOfCol))));
+            QRegion orig = p.clipRegion();
+            p.setClipping(true);
+            p.setClipRegion(colReg);
+            p.fillRect(rect,QColor(237, 237, 237, 180));
+            //p.setClipping(false);
+            //p.drawLine(leftOfCol, lineTop, leftOfCol, lineBot);
+
+
             //qDebug(lnoEvent) << x30 << document()->documentMargin() << font();
         }
     }
@@ -402,8 +418,11 @@ void SeqViewer::paintEvent(QPaintEvent *event)
 {
     QTextEdit::paintEvent(event);
     drawCursor();
+}
 
-
+void SeqViewer::mousePressEvent(QMouseEvent *event)
+{
+    qDebug(lnoEvent) << "MOUSE PRESS" << event->pos();
 }
 
 bool SeqViewer::eventFilter(QObject *object, QEvent *ev)

@@ -26,13 +26,14 @@ protected:
     void resizeEvent(QResizeEvent *event) override;
     bool eventFilter(QObject *obj, QEvent *ev) override;
     void paintEvent(QPaintEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
 
 private:
     qreal charWidth;
     int numChars;
     int numBlocks;
     int noWrapChars;
-
+    int infoPos = 5;
     bool infoMode = false;
     bool wrapSeqs = true;
     bool resizing = false;
@@ -55,11 +56,11 @@ private:
     void calculateRuler();
     void drawSequenceOrAlignment();
     void resizeTimeout();
-    void drawCursor();
     void setSequenceMetrics();
 
 private slots:
     void noWrapUpdateRuler();
+    void drawCursor(QPoint pos);
 
 signals:
     void updatedNamesAndRuler(const QString names, const QString ruler);
