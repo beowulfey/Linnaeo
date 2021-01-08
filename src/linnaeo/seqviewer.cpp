@@ -31,7 +31,7 @@ SeqViewer::SeqViewer(QWidget *parent): QTextEdit(parent)
 void SeqViewer::resizeEvent(QResizeEvent *event)
 {
 
-    //QTextEdit::resizeEvent(event);
+    QTextEdit::resizeEvent(event);
     resizing = true;
     resizeTimer->start(100);
     wrapSeqs ? drawSequenceOrAlignment() : noWrapUpdateRuler();
@@ -370,7 +370,7 @@ void SeqViewer::noWrapUpdateRuler(int val){
     {
         qDebug(lnoEvent) << "Sliding!" << bar->sliderPosition()<<"/"<<bar->maximum()<<"-"<<bar->minimum()<<"*"<<numChars<<"+"<<noWrapChars;
         formattedRuler = QString("<pre style=\"font-family:%1;\">").arg(font().family());
-        int index=trunc(double(double(bar->sliderPosition())/(double(bar->maximum())-double(bar->minimum())))*double(numChars-noWrapChars))+noWrapChars;
+        int index=trunc(double(double(bar->sliderPosition())/(double(bar->maximum())-double(bar->minimum())))*double(numChars-noWrapChars))+noWrapChars-1;
         qDebug(lnoEvent) << int(index);
         for(int i =0;i<displayedRuler.length();i++)
         {
