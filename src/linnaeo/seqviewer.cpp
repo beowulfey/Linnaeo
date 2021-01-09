@@ -9,7 +9,8 @@
 #include <QScrollBar>
 #include <QPaintEvent>
 #include <QPainter>
-#include <QAbstractTextDocumentLayout>
+#include <QTextFrame>
+#include <QTextFrameFormat>
 
 // TODO: COnvert all double to qreal!
 
@@ -393,31 +394,32 @@ void SeqViewer::paintEvent(QPaintEvent *event)
 {
     QTextEdit::paintEvent(event);
     if(infoMode && !displayedSeqs.isEmpty()){
-        qDebug(lnoEvent) << " PAINTING";
+        //qDebug(lnoEvent) << " PAINTING";
         if(currentCur.isEmpty()) currentCur = {0,0,4};
         QFontMetricsF mets = QFontMetricsF(font());
+        QTextBlockFormat docMets = document()->firstBlock().blockFormat();
         const QRectF rect = QRectF(this->rect());
         const qreal xoff = document()->documentMargin()+charWidth/2.0;
         const qreal yoff = document()->documentMargin();
         int block = currentCur.at(0);
         int seq = currentCur.at(1);
         int col = currentCur.at(2);
-
-        //qDebug(lnoEvent) << "Col" << col<<"ROW"<<row<<"BLOCK"<<block<<"SEQ"<<seq<<"INDEX"<<index<<"RESID"<<resId;
+        qDebug(lnoEvent) << document()->firstBlock().text();
         qreal leftOfCol = col*mets.averageCharWidth()+xoff;
         qreal rightOfCol = leftOfCol+mets.averageCharWidth();
-        qreal topOfCol = (displayedSeqs.length()+1)*block*mets.height()+yoff;
-        qreal botOfCol = topOfCol+displayedSeqs.length()*mets.height();
+        qreal topOfCol = yoff+qreal(displayedSeqs.length()+1.0)*(mets.lineSpacing())*qreal(block);
+        qDebug(lnoEvent) << "TOP OF BLOCK" << topOfCol;
+        qreal botOfCol = topOfCol+displayedSeqs.length()*(mets.lineSpacing());
         //qreal leftOfCol = mets.averageCharWidth() * qreal(infoPos) + document()->documentMargin() + charWidth/2.0; // have a left margin offset in the HTML too.
         //qreal rightOfCol = leftOfCol+mets.averageCharWidth();
         //qreal topOfCol = rect.top()+document()->documentMargin();
         //qreal botOfCol = topOfCol+mets.height()*displayedSeqs.length();
         QPainter p(viewport());
         p.setPen(QPen("dark blue"));
-        qreal lineTop;
-        qreal lineBot;
-        (topOfCol-mets.height() > rect.top()) ? lineTop = topOfCol-mets.height() : lineTop = rect.top();
-        (botOfCol+mets.height() < rect.bottom()) ? lineBot = botOfCol+mets.height() : lineBot = rect.bottom();
+        //qreal lineTop;
+        //qreal lineBot;
+        //(topOfCol-mets.height() > rect.top()) ? lineTop = topOfCol : lineTop = rect.top();
+        //(botOfCol+mets.height() < rect.bottom()) ? lineBot = botOfCol+mets.height() : lineBot = rect.bottom();
         QRegion colReg = QRegion(rect.toRect()).subtracted(QRegion(QRect(QPoint(leftOfCol,topOfCol), QPoint(rightOfCol,botOfCol))));
         QRegion orig = p.clipRegion();
         p.setClipping(true);
@@ -430,6 +432,7 @@ void SeqViewer::mousePressEvent(QMouseEvent *event)
 {
     if(infoMode && !displayedSeqs.isEmpty()){
         QFontMetricsF mets = QFontMetricsF(font());
+        QTextBlockFormat docMets = document()->firstBlock().blockFormat();
         //const QRectF rect = QRectF(this->rect());
         const qreal xoff = document()->documentMargin()+charWidth/2.0;
         const qreal yoff = document()->documentMargin();
@@ -438,13 +441,14 @@ void SeqViewer::mousePressEvent(QMouseEvent *event)
         // Find the index closest to the point.
         // get column and row
         int col = trunc((pos.x()-xoff)/mets.averageCharWidth());
-        int row = trunc((pos.y()-yoff-verticalScrollBar()->value())/mets.height());
+        int row = trunc((pos.y()-yoff-verticalScrollBar()->value())/(mets.lineSpacing()));
         //determine which sequence block this is in, and which sequence it is
         int block = trunc(row/(displayedSeqs.length()+1)); //include last "/n"
         int seq = row-block*(displayedSeqs.length()+1);
         // determine the index and true residue ID
         //int index = block*numChars+col;
         //int resId = displayedRuler.at(seq).at(index).toInt();
+        qDebug(lnoEvent) << "Found block, seq"<<block<<seq;
         currentCur = {block,seq,col};
         this->viewport()->update();
     }
