@@ -289,44 +289,10 @@ void SeqViewer::noWrapUpdateRuler(){
     this->horizontalScrollBar()->setSingleStep(int(charWidth));
 }
 
-void SeqViewer::drawCursor(QPoint pos=QPoint(46,74))
+void SeqViewer::drawCursor()
 /// Draws a little info box
 {
-    {
 
-        if(infoMode && !displayedSeqs.isEmpty()){
-            //qDebug(lnoEvent)<<"Found paint event!";
-            QFontMetricsF mets = QFontMetricsF(font());
-            const QRectF rect = QRectF(this->rect());
-
-            // Find the index closest to the point.
-            //qreal leftOfCol = pos/mets.averageCharWidth()
-            int col = (pos.x()-document()->documentMargin()+charWidth/2.0)/mets.averageCharWidth()+1;
-            int row = (pos.y()-document()->documentMargin())/mets.height()+1;
-            int index = row/(displayedSeqs.length()+1);
-            qDebug(lnoEvent) << "Col,Row" << col<<row<<index;
-            qreal leftOfCol = mets.averageCharWidth() * qreal(infoPos) + document()->documentMargin() + charWidth/2.0; // have a left margin offset in the HTML too.
-            qreal rightOfCol = leftOfCol+mets.averageCharWidth();
-            qreal topOfCol = rect.top()+document()->documentMargin();
-            qreal botOfCol = topOfCol+mets.height()*displayedSeqs.length();
-            QPainter p(viewport());
-            p.setPen(QPen("dark blue"));
-            qreal lineTop;
-            qreal lineBot;
-            (topOfCol-mets.height() > rect.top()) ? lineTop = topOfCol-mets.height() : lineTop = rect.top();
-            (botOfCol+mets.height() < rect.bottom()) ? lineBot = botOfCol+mets.height() : lineBot = rect.bottom();
-            QRegion colReg = QRegion(rect.toRect()).subtracted(QRegion(QRect(QPoint(leftOfCol,topOfCol), QPoint(rightOfCol,botOfCol))));
-            QRegion orig = p.clipRegion();
-            p.setClipping(true);
-            p.setClipRegion(colReg);
-            p.fillRect(rect,QColor(237, 237, 237, 180));
-            //p.setClipping(false);
-            //p.drawLine(leftOfCol, lineTop, leftOfCol, lineBot);
-
-
-            //qDebug(lnoEvent) << x30 << document()->documentMargin() << font();
-        }
-    }
 }
 
 // Below here are all set-settings functions. Called by Linnaeo.
@@ -364,7 +330,6 @@ void SeqViewer::setTheme(int index)
 void SeqViewer::setInfoMode(bool infoMode)
 {
     this->infoMode = infoMode;
-    int height = QFontMetricsF(font()).height()*displayedSeqs.length()+2;
     drawSequenceOrAlignment();
 }
 
@@ -389,6 +354,9 @@ void SeqViewer::clearViewer()
 {
     qDebug(lnoView) << "Viewer cleared of all sequences";
     displayedSeqs.clear();
+    currentCur.clear();
+    displayedNames.clear();
+    displayedRuler.clear();
     this->document()->setHtml("");
 }
 
@@ -424,14 +392,64 @@ void SeqViewer::resizeTimeout()
 void SeqViewer::paintEvent(QPaintEvent *event)
 {
     QTextEdit::paintEvent(event);
-    drawCursor();
+    if(infoMode && !displayedSeqs.isEmpty()){
+        qDebug(lnoEvent) << " PAINTING";
+        if(currentCur.isEmpty()) currentCur = {0,0,4};
+        QFontMetricsF mets = QFontMetricsF(font());
+        const QRectF rect = QRectF(this->rect());
+        const qreal xoff = document()->documentMargin()+charWidth/2.0;
+        const qreal yoff = document()->documentMargin();
+        int block = currentCur.at(0);
+        int seq = currentCur.at(1);
+        int col = currentCur.at(2);
+
+        //qDebug(lnoEvent) << "Col" << col<<"ROW"<<row<<"BLOCK"<<block<<"SEQ"<<seq<<"INDEX"<<index<<"RESID"<<resId;
+        qreal leftOfCol = col*mets.averageCharWidth()+xoff;
+        qreal rightOfCol = leftOfCol+mets.averageCharWidth();
+        qreal topOfCol = (displayedSeqs.length()+1)*block*mets.height()+yoff;
+        qreal botOfCol = topOfCol+displayedSeqs.length()*mets.height();
+        //qreal leftOfCol = mets.averageCharWidth() * qreal(infoPos) + document()->documentMargin() + charWidth/2.0; // have a left margin offset in the HTML too.
+        //qreal rightOfCol = leftOfCol+mets.averageCharWidth();
+        //qreal topOfCol = rect.top()+document()->documentMargin();
+        //qreal botOfCol = topOfCol+mets.height()*displayedSeqs.length();
+        QPainter p(viewport());
+        p.setPen(QPen("dark blue"));
+        qreal lineTop;
+        qreal lineBot;
+        (topOfCol-mets.height() > rect.top()) ? lineTop = topOfCol-mets.height() : lineTop = rect.top();
+        (botOfCol+mets.height() < rect.bottom()) ? lineBot = botOfCol+mets.height() : lineBot = rect.bottom();
+        QRegion colReg = QRegion(rect.toRect()).subtracted(QRegion(QRect(QPoint(leftOfCol,topOfCol), QPoint(rightOfCol,botOfCol))));
+        QRegion orig = p.clipRegion();
+        p.setClipping(true);
+        p.setClipRegion(colReg);
+        p.fillRect(rect,QColor(237, 237, 237, 180));
+    }
 }
 
 void SeqViewer::mousePressEvent(QMouseEvent *event)
 {
-    qDebug(lnoEvent) << "MOUSE PRESS" << event->pos();
+    if(infoMode && !displayedSeqs.isEmpty()){
+        QFontMetricsF mets = QFontMetricsF(font());
+        //const QRectF rect = QRectF(this->rect());
+        const qreal xoff = document()->documentMargin()+charWidth/2.0;
+        const qreal yoff = document()->documentMargin();
+        qDebug(lnoEvent) << "MOUSE PRESS" << event->pos();
+        QPoint pos = event->pos();
+        // Find the index closest to the point.
+        // get column and row
+        int col = trunc((pos.x()-xoff)/mets.averageCharWidth());
+        int row = trunc((pos.y()-yoff-verticalScrollBar()->value())/mets.height());
+        //determine which sequence block this is in, and which sequence it is
+        int block = trunc(row/(displayedSeqs.length()+1)); //include last "/n"
+        int seq = row-block*(displayedSeqs.length()+1);
+        // determine the index and true residue ID
+        //int index = block*numChars+col;
+        //int resId = displayedRuler.at(seq).at(index).toInt();
+        currentCur = {block,seq,col};
+        this->viewport()->update();
+    }
+    else currentCur.clear();
 }
-
 bool SeqViewer::eventFilter(QObject *object, QEvent *ev)
 {
     //qDebug(lnoEvent) << object<<ev->type();

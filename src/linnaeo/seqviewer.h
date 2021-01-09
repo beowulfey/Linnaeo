@@ -51,6 +51,7 @@ private:
     QList<QList<QString>> displayedRuler;
     QString formattedNames;
     QString formattedRuler;
+    QList<int> currentCur;
 
     void calculateColor();
     void calculateRuler();
@@ -60,7 +61,7 @@ private:
 
 private slots:
     void noWrapUpdateRuler();
-    void drawCursor(QPoint pos);
+    void drawCursor();
 
 signals:
     void updatedNamesAndRuler(const QString names, const QString ruler);
