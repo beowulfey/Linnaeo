@@ -289,17 +289,22 @@ void SeqViewer::noWrapUpdateRuler(){
     this->horizontalScrollBar()->setSingleStep(int(charWidth));
 }
 
-void SeqViewer::drawCursor(QPoint pos=QPoint(0,0))
+void SeqViewer::drawCursor(QPoint pos=QPoint(46,74))
 /// Draws a little info box
 {
     {
-
-        QPoint debug = QPoint(46,74);
 
         if(infoMode && !displayedSeqs.isEmpty()){
             //qDebug(lnoEvent)<<"Found paint event!";
             QFontMetricsF mets = QFontMetricsF(font());
             const QRectF rect = QRectF(this->rect());
+
+            // Find the index closest to the point.
+            //qreal leftOfCol = pos/mets.averageCharWidth()
+            int col = (pos.x()-document()->documentMargin()+charWidth/2.0)/mets.averageCharWidth()+1;
+            int row = (pos.y()-document()->documentMargin())/mets.height()+1;
+            int index = row/(displayedSeqs.length()+1);
+            qDebug(lnoEvent) << "Col,Row" << col<<row<<index;
             qreal leftOfCol = mets.averageCharWidth() * qreal(infoPos) + document()->documentMargin() + charWidth/2.0; // have a left margin offset in the HTML too.
             qreal rightOfCol = leftOfCol+mets.averageCharWidth();
             qreal topOfCol = rect.top()+document()->documentMargin();
@@ -424,7 +429,7 @@ void SeqViewer::paintEvent(QPaintEvent *event)
 
 void SeqViewer::mousePressEvent(QMouseEvent *event)
 {
-    //qDebug(lnoEvent) << "MOUSE PRESS" << event->pos();
+    qDebug(lnoEvent) << "MOUSE PRESS" << event->pos();
 }
 
 bool SeqViewer::eventFilter(QObject *object, QEvent *ev)
