@@ -27,6 +27,8 @@ protected:
     bool eventFilter(QObject *obj, QEvent *ev) override;
     void paintEvent(QPaintEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
 
 private:
     qreal charWidth;
@@ -34,6 +36,7 @@ private:
     int numBlocks;
     int noWrapChars;
     int infoPos = 5;
+    bool mouseMoving = false;
     bool infoMode = false;
     bool wrapSeqs = true;
     bool resizing = false;
@@ -62,7 +65,7 @@ private:
 
 private slots:
     void noWrapUpdateRuler();
-    void updateHilighting(int);
+    void updateHilighting(QTextCursor);
 
 signals:
     void updatedNamesAndRuler(const QString names, const QString ruler);

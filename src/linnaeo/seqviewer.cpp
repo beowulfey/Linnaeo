@@ -24,7 +24,9 @@ SeqViewer::SeqViewer(QWidget *parent): QTextEdit(parent)
     connect(resizeTimer, &QTimer::timeout, this, &SeqViewer::resizeTimeout);
     //this->horizontalScrollBar()->setTracking(true);
 
+
     connect(this->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(noWrapUpdateRuler()));
+    //connect(this->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(updateHilighting(int)));
     //this->installEventFilter(this);
     //this->setMouseTracking(false);
 
@@ -266,10 +268,6 @@ void SeqViewer::drawSequenceOrAlignment()
         if(horizontalScrollBar()->maximum()>horizontalScrollBar()->minimum()){
             horizontalScrollBar()->setSliderPosition(round(hozScrollPos*double(horizontalScrollBar()->maximum()-horizontalScrollBar()->minimum())));
         }
-        for(int i = 0; i<document()->blockCount();i++)
-        {
-            qDebug(lnoEvent) << i << document()->findBlockByNumber(i).text();
-        }
     }
 }
 
@@ -301,11 +299,7 @@ void SeqViewer::noWrapUpdateRuler(){
 
 }
 
-void SeqViewer::drawCursor()
-/// Draws a little info box
-{
 
-}
 
 // Below here are all set-settings functions. Called by Linnaeo.
 void SeqViewer::setTheme(int index)
@@ -401,103 +395,81 @@ void SeqViewer::resizeTimeout()
     wrapSeqs ? drawSequenceOrAlignment() : noWrapUpdateRuler();
 }
 
+void SeqViewer::updateHilighting(QTextCursor curs)
+{
+    //QTextCursor curs = this->cursorForPosition(pos);
+    if(curs.block().text().trimmed() != "")
+    {
+
+        int line = curs.blockNumber();
+        int seqBlock = trunc(line/(displayedSeqs.length()+1)); // seqBlock is all the wrapped sequences for this section
+        int seq = line-seqBlock*(displayedSeqs.length()+1);
+        int index = seqBlock*numChars+curs.positionInBlock();
+        if(index <= displayedSeqs.at(seq).length()-1)
+        {
+            currentCur = {seqBlock,seq,index};
+            int topBlock = line-seq;
+            int botBlock = line+displayedSeqs.length()-1;
+            int left = cursorRect(curs).left();
+            curs.movePosition(QTextCursor::NextCharacter,QTextCursor::MoveAnchor);
+            int right =cursorRect(curs).right();
+            for(int i=0; i<seq;i++) curs.movePosition(QTextCursor::Up,QTextCursor::MoveAnchor);
+            int top = cursorRect(curs).top();
+            for(int i=0; i<displayedSeqs.length()-1;i++) curs.movePosition(QTextCursor::Down,QTextCursor::MoveAnchor);
+            int bottom = cursorRect(curs).bottom();
+
+            qDebug(lnoEvent) << "top line is"<<topBlock << "bottom is" <<botBlock;
+            hiliteRect = {QPoint(left,top),QPoint(right,bottom)};
+            this->viewport()->update();
+        }
+    }
+}
+
+
+
 void SeqViewer::paintEvent(QPaintEvent *event)
 {
     QTextEdit::paintEvent(event);
     if(infoMode && !displayedSeqs.isEmpty()){
         QRect rect = QRect(this->rect());
         if(currentCur.isEmpty()) currentCur = {0,0,4};
-        if(hiliteRect.isEmpty()) hiliteRect = {rect.topLeft(),rect.bottomRight()};
+        if(hiliteRect.isEmpty()){
+            hiliteRect = {rect.topLeft(),rect.bottomRight()};
+            QTextCursor curs = QTextCursor(document());
+            curs.setPosition(5);
+            updateHilighting(curs);
+        }
 
         qDebug(lnoEvent) << "Clicked block:"<<currentCur.at(0)<<
                             "line" << currentCur.at(0)*(displayedSeqs.length()+1)<<
+                            document()->findBlockByLineNumber(currentCur.at(0)*(displayedSeqs.length()+1)).text() <<
                             "Seq" << currentCur.at(1) <<
                             "Index" << currentCur.at(2) <<
                             "True Index" << displayedRuler.at(currentCur.at(1)).at(currentCur.at(2));
         QPainter p(viewport());
-        p.setPen(QPen("dark blue"));
+        QPen pen = QPen("black");
+        pen.setWidthF(0.5);
+        p.setPen(pen);
+
         qDebug(lnoEvent) << hiliteRect;
         QRegion colReg = QRegion(rect).subtracted(QRegion(QRect(hiliteRect.at(0), hiliteRect.at(1))));
         QRegion orig = p.clipRegion();
         p.setClipping(true);
         p.setClipRegion(colReg);
         p.fillRect(rect,QColor(237, 237, 237, 180));
-
-
-        /*QTextBlockFormat docMets = document()->firstBlock().blockFormat();
-        QFontMetricsF mets = QFontMetricsF(font());
-        const QRectF rect = QRectF(this->rect());
-        const qreal xoff = document()->documentMargin()+charWidth/2.0;
-        const qreal yoff = document()->documentMargin();
-        int block = currentCur.at(0);
-        int seq = currentCur.at(1);
-        int col = currentCur.at(2);
-        qDebug(lnoEvent) << "yoff" << yoff << "line height" << mets.lineSpacing();
-
-        qreal leftOfCol = col*mets.averageCharWidth()+xoff;
-        qreal rightOfCol = leftOfCol+mets.averageCharWidth();
-        qreal topOfCol = yoff+qreal(displayedSeqs.length()+1.0)*mets.lineSpacing()*qreal(block);
-        qreal botOfCol = topOfCol+qreal(displayedSeqs.length())*(mets.lineSpacing());
-        qDebug(lnoEvent) << "TOP OF BLOCK" << topOfCol << "DIF" << botOfCol-topOfCol;
-        //qreal leftOfCol = mets.averageCharWidth() * qreal(infoPos) + document()->documentMargin() + charWidth/2.0; // have a left margin offset in the HTML too.
-        //qreal rightOfCol = leftOfCol+mets.averageCharWidth();
-        //qreal topOfCol = rect.top()+document()->documentMargin();
-        //qreal botOfCol = topOfCol+mets.height()*displayedSeqs.length();
-        QPainter p(viewport());
-        p.setPen(QPen("dark blue"));
-        //qreal lineTop;
-        //qreal lineBot;
-        //(topOfCol-mets.height() > rect.top()) ? lineTop = topOfCol : lineTop = rect.top();
-        //(botOfCol+mets.height() < rect.bottom()) ? lineBot = botOfCol+mets.height() : lineBot = rect.bottom();
-        QRegion colReg = QRegion(rect.toRect()).subtracted(QRegion(QRect(QPoint(leftOfCol,topOfCol), QPoint(rightOfCol,botOfCol))));
-        QRegion orig = p.clipRegion();
-        p.setClipping(true);
-        p.setClipRegion(colReg);
-        p.fillRect(rect,QColor(237, 237, 237, 180));
-        */
+        p.setClipping(false);
+        p.drawRect(QRect(hiliteRect.at(0),hiliteRect.at(1)));
+        pen.setWidthF(2.0);
+        p.setPen(pen);
+        p.drawLine(QPoint(hiliteRect.at(0).x()-1,hiliteRect.at(0).y()-charWidth),QPoint(hiliteRect.at(0).x()-1,hiliteRect.at(1).y()+charWidth));
     }
 }
 
 void SeqViewer::mousePressEvent(QMouseEvent *event)
 {
     if(infoMode && !displayedSeqs.isEmpty()){
-        QTextCursor curs = this->cursorForPosition(event->pos());
-        int line = curs.blockNumber();
-        int seqBlock = trunc(line/(displayedSeqs.length()+1)); // seqBlock is all the wrapped sequences for this section
-        int seq = line-seqBlock*(displayedSeqs.length()+1);
-        int index = seqBlock*numChars+curs.positionInBlock();
-        currentCur = {seqBlock,seq,index};
-        int topBlock = line-seq;
-        int botBlock = line+displayedSeqs.length()-1;
-        int left = cursorRect(curs).left();
-        curs.movePosition(QTextCursor::NextCharacter,QTextCursor::MoveAnchor);
-        int right =cursorRect(curs).right();
-        for(int i=0; i<seq;i++) curs.movePosition(QTextCursor::Up,QTextCursor::MoveAnchor);
-        int top = cursorRect(curs).top();
-        for(int i=0; i<displayedSeqs.length()-1;i++) curs.movePosition(QTextCursor::Down,QTextCursor::MoveAnchor);
-        int bottom = cursorRect(curs).bottom();
-
-        qDebug(lnoEvent) << "top line is"<<topBlock << "bottom is" <<botBlock;
-        hiliteRect = {QPoint(left,top),QPoint(right,bottom)};
-        this->viewport()->update();
-        /*QFontMetricsF mets = QFontMetricsF(font());
-        QTextBlockFormat docMets = document()->firstBlock().blockFormat();
-        //const QRectF rect = QRectF(this->rect());
-        const qreal xoff = document()->documentMargin()+charWidth/2.0;
-        const qreal yoff = document()->documentMargin();
-        qDebug(lnoEvent) << "MOUSE PRESS" << event->pos();
-        QPoint pos = event->pos();
-        // Find the index closest to the point.
-        // get column and row
-        int col = trunc((pos.x()-xoff)/mets.averageCharWidth());
-        int row = trunc((pos.y()-yoff-verticalScrollBar()->value())/(mets.lineSpacing()));
-        //determine which sequence block this is in, and which sequence it is
-        int block = trunc(row/(displayedSeqs.length()+1)); //include last "/n"
-        int seq = row-block*(displayedSeqs.length()+1);
-        // determine the index and true residue ID
-        //int index = block*numChars+col;
-        //int resId = displayedRuler.at(seq).at(index).toInt();
-        //qDebug(lnoEvent) << "Found block, seq"<<block<<seq;*/
+        mouseMoving = true;
+        updateHilighting(cursorForPosition(event->pos()));
     }
     else
     {
@@ -505,8 +477,20 @@ void SeqViewer::mousePressEvent(QMouseEvent *event)
         hiliteRect.clear();
     }
 }
+
+void SeqViewer::mouseMoveEvent(QMouseEvent *event)
+{
+    if(infoMode && !displayedSeqs.isEmpty() && mouseMoving) updateHilighting(cursorForPosition(event->pos()));
+}
+
+void SeqViewer::mouseReleaseEvent(QMouseEvent *event)
+{
+    mouseMoving = false;
+    //QTextEdit::mouseReleaseEvent(event);
+}
+
 bool SeqViewer::eventFilter(QObject *object, QEvent *ev)
 {
-    qDebug(lnoEvent) << object<<ev->type();
+    //qDebug(lnoEvent) << object<<ev->type();
     return QTextEdit::eventFilter(object, ev);
 }

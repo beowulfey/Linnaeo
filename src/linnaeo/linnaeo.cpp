@@ -37,7 +37,7 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     // Options Panel setup
     ui->optionsPanel->hide();
     ui->optLine->hide();
-    ui->themeCombo->addItems(QStringList()= {"Default","Neon","Gradient","New",
+    ui->themeCombo->addItems(QStringList()= {"Linnaeo","Neon","Gradient","New",
             "Clustal X","Annotations"});
 
     // Sequence TreeView setup
