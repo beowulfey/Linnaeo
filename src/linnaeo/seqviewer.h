@@ -52,6 +52,7 @@ private:
     QString formattedNames;
     QString formattedRuler;
     QList<int> currentCur;
+    QList<QPoint> hiliteRect;
 
     void calculateColor();
     void calculateRuler();
@@ -61,7 +62,7 @@ private:
 
 private slots:
     void noWrapUpdateRuler();
-    void drawCursor();
+    void updateHilighting(int);
 
 signals:
     void updatedNamesAndRuler(const QString names, const QString ruler);

@@ -11,6 +11,7 @@
 #include <QPainter>
 #include <QTextFrame>
 #include <QTextFrameFormat>
+#include <QAbstractTextDocumentLayout>
 
 // TODO: COnvert all double to qreal!
 
@@ -93,8 +94,12 @@ void SeqViewer::calculateRuler()
         QList<QString> counter; //is this big enough?
         for(auto && res : seq)
         {
-            if(res != '-') count += 1;
-            counter.append(QString::number(count));
+            if(res != '-')
+            {
+                count += 1;
+                counter.append(QString::number(count));
+            }
+            else counter.append("");
         }
         displayedRuler.append(counter);
         //qDebug() << displayedRuler;
@@ -244,6 +249,7 @@ void SeqViewer::drawSequenceOrAlignment()
         // lazy removal of the extra \n from the end"
         formatted.chop(2);
         formatted.append("</pre>");
+        //qDebug(lnoEvent) << formatted;
         namesFormatted.chop(2);
         namesFormatted.append("</pre>");
         rulerFormatted.chop(2);
@@ -259,6 +265,10 @@ void SeqViewer::drawSequenceOrAlignment()
         }
         if(horizontalScrollBar()->maximum()>horizontalScrollBar()->minimum()){
             horizontalScrollBar()->setSliderPosition(round(hozScrollPos*double(horizontalScrollBar()->maximum()-horizontalScrollBar()->minimum())));
+        }
+        for(int i = 0; i<document()->blockCount();i++)
+        {
+            qDebug(lnoEvent) << i << document()->findBlockByNumber(i).text();
         }
     }
 }
@@ -288,6 +298,7 @@ void SeqViewer::noWrapUpdateRuler(){
     }
     emit updatedNamesAndRuler(formattedNames, formattedRuler); // Send it back to Linnaeo to add to names panel.
     this->horizontalScrollBar()->setSingleStep(int(charWidth));
+
 }
 
 void SeqViewer::drawCursor()
@@ -394,22 +405,40 @@ void SeqViewer::paintEvent(QPaintEvent *event)
 {
     QTextEdit::paintEvent(event);
     if(infoMode && !displayedSeqs.isEmpty()){
-        //qDebug(lnoEvent) << " PAINTING";
+        QRect rect = QRect(this->rect());
         if(currentCur.isEmpty()) currentCur = {0,0,4};
+        if(hiliteRect.isEmpty()) hiliteRect = {rect.topLeft(),rect.bottomRight()};
+
+        qDebug(lnoEvent) << "Clicked block:"<<currentCur.at(0)<<
+                            "line" << currentCur.at(0)*(displayedSeqs.length()+1)<<
+                            "Seq" << currentCur.at(1) <<
+                            "Index" << currentCur.at(2) <<
+                            "True Index" << displayedRuler.at(currentCur.at(1)).at(currentCur.at(2));
+        QPainter p(viewport());
+        p.setPen(QPen("dark blue"));
+        qDebug(lnoEvent) << hiliteRect;
+        QRegion colReg = QRegion(rect).subtracted(QRegion(QRect(hiliteRect.at(0), hiliteRect.at(1))));
+        QRegion orig = p.clipRegion();
+        p.setClipping(true);
+        p.setClipRegion(colReg);
+        p.fillRect(rect,QColor(237, 237, 237, 180));
+
+
+        /*QTextBlockFormat docMets = document()->firstBlock().blockFormat();
         QFontMetricsF mets = QFontMetricsF(font());
-        QTextBlockFormat docMets = document()->firstBlock().blockFormat();
         const QRectF rect = QRectF(this->rect());
         const qreal xoff = document()->documentMargin()+charWidth/2.0;
         const qreal yoff = document()->documentMargin();
         int block = currentCur.at(0);
         int seq = currentCur.at(1);
         int col = currentCur.at(2);
-        qDebug(lnoEvent) << document()->firstBlock().text();
+        qDebug(lnoEvent) << "yoff" << yoff << "line height" << mets.lineSpacing();
+
         qreal leftOfCol = col*mets.averageCharWidth()+xoff;
         qreal rightOfCol = leftOfCol+mets.averageCharWidth();
-        qreal topOfCol = yoff+qreal(displayedSeqs.length()+1.0)*(mets.lineSpacing())*qreal(block);
-        qDebug(lnoEvent) << "TOP OF BLOCK" << topOfCol;
-        qreal botOfCol = topOfCol+displayedSeqs.length()*(mets.lineSpacing());
+        qreal topOfCol = yoff+qreal(displayedSeqs.length()+1.0)*mets.lineSpacing()*qreal(block);
+        qreal botOfCol = topOfCol+qreal(displayedSeqs.length())*(mets.lineSpacing());
+        qDebug(lnoEvent) << "TOP OF BLOCK" << topOfCol << "DIF" << botOfCol-topOfCol;
         //qreal leftOfCol = mets.averageCharWidth() * qreal(infoPos) + document()->documentMargin() + charWidth/2.0; // have a left margin offset in the HTML too.
         //qreal rightOfCol = leftOfCol+mets.averageCharWidth();
         //qreal topOfCol = rect.top()+document()->documentMargin();
@@ -425,13 +454,33 @@ void SeqViewer::paintEvent(QPaintEvent *event)
         p.setClipping(true);
         p.setClipRegion(colReg);
         p.fillRect(rect,QColor(237, 237, 237, 180));
+        */
     }
 }
 
 void SeqViewer::mousePressEvent(QMouseEvent *event)
 {
     if(infoMode && !displayedSeqs.isEmpty()){
-        QFontMetricsF mets = QFontMetricsF(font());
+        QTextCursor curs = this->cursorForPosition(event->pos());
+        int line = curs.blockNumber();
+        int seqBlock = trunc(line/(displayedSeqs.length()+1)); // seqBlock is all the wrapped sequences for this section
+        int seq = line-seqBlock*(displayedSeqs.length()+1);
+        int index = seqBlock*numChars+curs.positionInBlock();
+        currentCur = {seqBlock,seq,index};
+        int topBlock = line-seq;
+        int botBlock = line+displayedSeqs.length()-1;
+        int left = cursorRect(curs).left();
+        curs.movePosition(QTextCursor::NextCharacter,QTextCursor::MoveAnchor);
+        int right =cursorRect(curs).right();
+        for(int i=0; i<seq;i++) curs.movePosition(QTextCursor::Up,QTextCursor::MoveAnchor);
+        int top = cursorRect(curs).top();
+        for(int i=0; i<displayedSeqs.length()-1;i++) curs.movePosition(QTextCursor::Down,QTextCursor::MoveAnchor);
+        int bottom = cursorRect(curs).bottom();
+
+        qDebug(lnoEvent) << "top line is"<<topBlock << "bottom is" <<botBlock;
+        hiliteRect = {QPoint(left,top),QPoint(right,bottom)};
+        this->viewport()->update();
+        /*QFontMetricsF mets = QFontMetricsF(font());
         QTextBlockFormat docMets = document()->firstBlock().blockFormat();
         //const QRectF rect = QRectF(this->rect());
         const qreal xoff = document()->documentMargin()+charWidth/2.0;
@@ -448,14 +497,16 @@ void SeqViewer::mousePressEvent(QMouseEvent *event)
         // determine the index and true residue ID
         //int index = block*numChars+col;
         //int resId = displayedRuler.at(seq).at(index).toInt();
-        qDebug(lnoEvent) << "Found block, seq"<<block<<seq;
-        currentCur = {block,seq,col};
-        this->viewport()->update();
+        //qDebug(lnoEvent) << "Found block, seq"<<block<<seq;*/
     }
-    else currentCur.clear();
+    else
+    {
+        currentCur.clear();
+        hiliteRect.clear();
+    }
 }
 bool SeqViewer::eventFilter(QObject *object, QEvent *ev)
 {
-    //qDebug(lnoEvent) << object<<ev->type();
+    qDebug(lnoEvent) << object<<ev->type();
     return QTextEdit::eventFilter(object, ev);
 }
