@@ -10,6 +10,7 @@ class AlignWorker : public QThread
 public:
     AlignWorker(QString input);
     void run() override;
+    ~AlignWorker();
 signals:
     void resultReady(const QList<QStringList> s);
     void resultFailed(int err);

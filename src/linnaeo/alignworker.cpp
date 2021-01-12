@@ -9,10 +9,21 @@
 #include <QProcess>
 #include <QMessageBox>
 
+/// MEMORY LEAK PROBLEMS HERE (KEEPS SAME MUSCLE INSTANCE!?)
+
 AlignWorker::AlignWorker(QString input)
 {
     seqs = input;
     mcsl = new MuscleAdaptor();
+
+}
+
+AlignWorker::~AlignWorker()
+{
+    this->quit();
+    this->wait();
+    delete mcsl;
+    delete this;
 
 }
 

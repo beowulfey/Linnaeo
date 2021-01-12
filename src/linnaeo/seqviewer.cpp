@@ -26,7 +26,7 @@ SeqViewer::SeqViewer(QWidget *parent): QTextEdit(parent)
 
 
     connect(this->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(noWrapUpdateRuler()));
-    //connect(this->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(updateHilighting(int)));
+    connect(this->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(callUpdateHilighting()));
     //this->installEventFilter(this);
     //this->setMouseTracking(false);
 
@@ -41,10 +41,12 @@ void SeqViewer::setDisplaySequence(QString seq, QString name)
     this->displayedSeqs.append(seq);
     this->displayedNames.clear();
     this->displayedNames.append(name);
+    this->currentCur.clear();
     //setSequenceMetrics();
     calculateColor();
     calculateRuler();
     drawSequenceOrAlignment();
+    if(infoMode) callUpdateHilighting();
 }
 
 void SeqViewer::setDisplayAlignment(QList<QString> seqs, QList<QString> names)
@@ -56,10 +58,12 @@ void SeqViewer::setDisplayAlignment(QList<QString> seqs, QList<QString> names)
     displayedSeqsColor.clear();
     displayedSeqs = seqs;
     displayedNames = names;
+    this->currentCur.clear();
     //setSequenceMetrics();
     calculateColor();
     calculateRuler();
     drawSequenceOrAlignment();
+    if(infoMode) callUpdateHilighting();
 }
 
 void SeqViewer::calculateColor()
@@ -384,6 +388,7 @@ void SeqViewer::resizeEvent(QResizeEvent *event)
     QTextEdit::resizeEvent(event);
     resizing = true;
     resizeTimer->start(100);
+    if(!displayedSeqs.isEmpty() && infoMode) callUpdateHilighting();
     wrapSeqs ? drawSequenceOrAlignment() : noWrapUpdateRuler();
 
 }
@@ -400,27 +405,29 @@ void SeqViewer::updateHilighting(QTextCursor curs)
     //QTextCursor curs = this->cursorForPosition(pos);
     if(curs.block().text().trimmed() != "")
     {
-
-        int line = curs.blockNumber();
-        int seqBlock = trunc(line/(displayedSeqs.length()+1)); // seqBlock is all the wrapped sequences for this section
-        int seq = line-seqBlock*(displayedSeqs.length()+1);
-        int index = seqBlock*numChars+curs.positionInBlock();
-        if(index <= displayedSeqs.at(seq).length()-1)
+        if(curs.positionInBlock() < numChars)
         {
-            currentCur = {seqBlock,seq,index};
-            int topBlock = line-seq;
-            int botBlock = line+displayedSeqs.length()-1;
-            int left = cursorRect(curs).left();
-            curs.movePosition(QTextCursor::NextCharacter,QTextCursor::MoveAnchor);
-            int right =cursorRect(curs).right();
-            for(int i=0; i<seq;i++) curs.movePosition(QTextCursor::Up,QTextCursor::MoveAnchor);
-            int top = cursorRect(curs).top();
-            for(int i=0; i<displayedSeqs.length()-1;i++) curs.movePosition(QTextCursor::Down,QTextCursor::MoveAnchor);
-            int bottom = cursorRect(curs).bottom();
+            int line = curs.blockNumber();
+            int seqBlock = trunc(line/(displayedSeqs.length()+1)); // seqBlock is all the wrapped sequences for this section
+            int seq = line-seqBlock*(displayedSeqs.length()+1);
+            int index = seqBlock*numChars+curs.positionInBlock();
+            if(index <= displayedSeqs.at(seq).length()-1)
+            {
+                currentCur = {seqBlock,seq,index,curs.position()};
+                int topBlock = line-seq;
+                int botBlock = line+displayedSeqs.length()-1;
+                int left = cursorRect(curs).left();
+                curs.movePosition(QTextCursor::NextCharacter,QTextCursor::MoveAnchor);
+                int right =cursorRect(curs).right();
+                for(int i=0; i<seq;i++) curs.movePosition(QTextCursor::Up,QTextCursor::MoveAnchor);
+                int top = cursorRect(curs).top();
+                for(int i=0; i<displayedSeqs.length()-1;i++) curs.movePosition(QTextCursor::Down,QTextCursor::MoveAnchor);
+                int bottom = cursorRect(curs).bottom();
 
-            qDebug(lnoEvent) << "top line is"<<topBlock << "bottom is" <<botBlock;
-            hiliteRect = {QPoint(left,top),QPoint(right,bottom)};
-            this->viewport()->update();
+                qDebug(lnoEvent) << "top line is"<<topBlock << "bottom is" <<botBlock;
+                hiliteRect = {QPoint(left,top),QPoint(right,bottom)};
+                this->viewport()->update();
+            }
         }
     }
 }
@@ -440,18 +447,18 @@ void SeqViewer::paintEvent(QPaintEvent *event)
             updateHilighting(curs);
         }
 
-        qDebug(lnoEvent) << "Clicked block:"<<currentCur.at(0)<<
-                            "line" << currentCur.at(0)*(displayedSeqs.length()+1)<<
-                            document()->findBlockByLineNumber(currentCur.at(0)*(displayedSeqs.length()+1)).text() <<
-                            "Seq" << currentCur.at(1) <<
-                            "Index" << currentCur.at(2) <<
-                            "True Index" << displayedRuler.at(currentCur.at(1)).at(currentCur.at(2));
+        //qDebug(lnoEvent) << "Clicked block:"<<currentCur.at(0)<<
+        //                    "line" << currentCur.at(0)*(displayedSeqs.length()+1)<<
+        //                    document()->findBlockByLineNumber(currentCur.at(0)*(displayedSeqs.length()+1)).text() <<
+        //                    "Seq" << currentCur.at(1) <<
+        //                    "Index" << currentCur.at(2) <<
+        //                    "True Index" << displayedRuler.at(currentCur.at(1)).at(currentCur.at(2));
         QPainter p(viewport());
         QPen pen = QPen("black");
         pen.setWidthF(0.5);
         p.setPen(pen);
 
-        qDebug(lnoEvent) << hiliteRect;
+        //qDebug(lnoEvent) << hiliteRect;
         QRegion colReg = QRegion(rect).subtracted(QRegion(QRect(hiliteRect.at(0), hiliteRect.at(1))));
         QRegion orig = p.clipRegion();
         p.setClipping(true);
@@ -489,8 +496,22 @@ void SeqViewer::mouseReleaseEvent(QMouseEvent *event)
     //QTextEdit::mouseReleaseEvent(event);
 }
 
+void SeqViewer::callUpdateHilighting()
+{
+
+    QTextCursor curs = QTextCursor(document());
+    curs.setPosition(currentCur.at(3));
+    updateHilighting(curs);
+
+}
+
 bool SeqViewer::eventFilter(QObject *object, QEvent *ev)
 {
     //qDebug(lnoEvent) << object<<ev->type();
+    //if(object==this->verticalScrollBar() && (ev->type() == QEvent::Wheel || ev->type() == QEvent::Timer)) {
+    //    QTextCursor curs = QTextCursor(document());
+    //    curs.setPosition(currentCur.at(3));
+    //    updateHilighting(curs);
+    //}
     return QTextEdit::eventFilter(object, ev);
 }

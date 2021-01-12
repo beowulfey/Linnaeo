@@ -62,10 +62,11 @@ private:
     void drawSequenceOrAlignment();
     void resizeTimeout();
     void setSequenceMetrics();
+    void updateHilighting(QTextCursor);
 
 private slots:
     void noWrapUpdateRuler();
-    void updateHilighting(QTextCursor);
+    void callUpdateHilighting();
 
 signals:
     void updatedNamesAndRuler(const QString names, const QString ruler);
