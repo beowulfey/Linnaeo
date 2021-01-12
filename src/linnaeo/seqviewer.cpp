@@ -27,6 +27,7 @@ SeqViewer::SeqViewer(QWidget *parent): QTextEdit(parent)
 
     connect(this->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(noWrapUpdateRuler()));
     connect(this->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(callUpdateHilighting()));
+    connect(this->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(callUpdateHilighting())); // turn this off to move with scroll (useful!)
     //this->installEventFilter(this);
     //this->setMouseTracking(false);
 
