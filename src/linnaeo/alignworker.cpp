@@ -9,7 +9,9 @@
 #include <QProcess>
 #include <QMessageBox>
 
-/// MEMORY LEAK PROBLEMS HERE (KEEPS SAME MUSCLE INSTANCE!?)
+/// Because Muscle uses a STATIC VARIABLE I hacked it so that there is a single MUSCLE worker
+/// for the program and I clear out that variable when the run is done. I'm hoping this isn't too
+/// dangerous.
 
 AlignWorker::AlignWorker(QObject *parent) : QThread(parent)
 {
