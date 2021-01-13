@@ -6,7 +6,7 @@
 
 const unsigned DEFAULT_SEQ_LENGTH = 500;
 
-unsigned MSA::m_uIdCount = 0;
+thread_local unsigned MSA::m_uIdCount = 0;
 
 MSA::MSA()
 	{

@@ -110,7 +110,11 @@ void MuscleOutput(MSA &msa)
 		Stabilize(msa, msaStable);
 		msa.Clear();	// save memory
 		DoOutput(msaStable);
+        MSA::m_uIdCount = 0;
 		}
 	else
+    {
 		DoOutput(msa);
+        MSA::m_uIdCount = 0;
+    }
 	}

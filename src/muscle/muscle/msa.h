@@ -105,7 +105,7 @@ public:
 		{
 		Free();
 		}
-	unsigned GetSeqCount() const
+    unsigned GetSeqCount() const
 		{
 		return m_uSeqCount;
 		}
@@ -117,7 +117,8 @@ public:
 	static bool SeqsEq(const MSA &a1, unsigned uSeqIndex1, const MSA &a2,
 	  unsigned uSeqIndex2);
 
-	static void SetIdCount(unsigned uIdCount);
+    static void SetIdCount(unsigned uIdCount);
+    static thread_local unsigned m_uIdCount; // oh my god i'm sorry for making this public but this code is a mess
 
 private:
 	friend void SetMSAWeightsMuscle(MSA &msa);
@@ -144,6 +145,7 @@ private:
 	void CalcHenikoffWeightsColPB(unsigned uColIndex) const;
 	void CalcHenikoffWeightsCol(unsigned uColIndex) const;
 
+
 private:
 	unsigned m_uSeqCount;
 	unsigned m_uColCount;
@@ -152,7 +154,6 @@ private:
 	char **m_szSeqs;
 	char **m_szNames;
 
-	static unsigned m_uIdCount;
 
 	unsigned *m_IdToSeqIndex;
 	unsigned *m_SeqIndexToId;
