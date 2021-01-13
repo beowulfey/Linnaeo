@@ -13,10 +13,21 @@ SeqEditor::SeqEditor(QWidget *parent) :
     ui(new Ui::SeqEditor)
 {
     ui->setupUi(this);
-    //seqEntryEditor = new SeqEntryTextEdit(this);
-    //ui->verticalLayout->insertWidget(3,seqEntryEditor);
     connect(ui->seqEntryEditor, &SeqEntryTextEdit::pastedSequence, this, &SeqEditor::receivedSequence);
     connect(ui->seqEntryEditor, &SeqEntryTextEdit::extractedSeqName, this, &SeqEditor::receivedSeqInfo);
+}
+
+SeqEditor::SeqEditor(QWidget *parent, QString seqName, QString seq, QString seqInfo) :
+    QDialog(parent),
+    ui(new Ui::SeqEditor)
+{
+    ui->setupUi(this);
+    connect(ui->seqEntryEditor, &SeqEntryTextEdit::pastedSequence, this, &SeqEditor::receivedSequence);
+    connect(ui->seqEntryEditor, &SeqEntryTextEdit::extractedSeqName, this, &SeqEditor::receivedSeqInfo);
+    QLineEdit *infoLine = new QLineEdit(seqInfo);
+    ui->verticalLayout->addWidget(infoLine);
+    ui->seqEntryEditor->setPlainText(seq);
+    ui->seqNameEdit->setText(seqName);
 }
 
 SeqEditor::~SeqEditor()

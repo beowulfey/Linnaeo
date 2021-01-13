@@ -14,6 +14,7 @@ class SeqEditor : public QDialog
 
 public:
     explicit SeqEditor(QWidget *parent = nullptr);
+    explicit SeqEditor(QWidget *parent, QString seqName, QString seq, QString seqInfo);
     ~SeqEditor();
     QString submittedSequence();
     QString submittedName();

@@ -64,7 +64,7 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     ui->importSequenceButton->setDefaultAction(ui->actionSequence_from_file);
     ui->addSequenceFolderButton->setDefaultAction(ui->actionAdd_Folder_to_Sequence_Panel);
     ui->downloadSeqButton->setDefaultAction(ui->actionGet_Online_Sequence);
-    //ui->editSequenceButton
+    ui->editSequenceButton->setDefaultAction(ui->actionEdit_Sequence);
     ui->exportSequenceButton->setDefaultAction(ui->actionExportSequence);
     ui->deleteSequenceButton->setDefaultAction(ui->actionDelete_Selected_Sequences);
     // disable buttons
@@ -509,12 +509,12 @@ void Linnaeo::on_actionAdd_Sequence_triggered()
     /// By default, adds to the permanent "uncategorized" folder (hidden if empty).
     /// Otherwise, it will add to whatever folder is selected.
 {
-    SeqEditor seqEdit(this);
+    SeqEditor *seqEdit = new SeqEditor(this);
 
-    if (seqEdit.exec() == QDialog::Accepted) {
+    if (seqEdit->exec() == QDialog::Accepted) {
         QString name, seq;
-        name = seqEdit.submittedName();
-        seq = seqEdit.submittedSequence();
+        name = seqEdit->submittedName();
+        seq = seqEdit->submittedSequence();
         if(name != "" && seq != "")
         {
             QList<QModelIndex>indexes = ui->seqTreeView->selectionModel()->selectedIndexes();
@@ -735,7 +735,25 @@ void Linnaeo::on_actionDelete_Selected_Alignments_triggered()
 }
 void Linnaeo::on_actionEdit_Sequence_triggered()
 {
-    changed = true;
+    QModelIndex index = ui->seqTreeView->selectionModel()->selectedIndexes()[0];
+    SeqEditor *seqEdit = new SeqEditor(this, index.data(Qt::DisplayRole).toString(), index.data(SequenceRole).toString(),index.data(InfoRole).toString());
+
+    if (seqEdit->exec() == QDialog::Accepted)
+    {
+        QString name, seq;
+        name = seqEdit->submittedName();
+        seq = seqEdit->submittedSequence();
+        if(name != "" && seq != "")
+        {
+            QStandardItem *item = seqModel->itemFromIndex(index);
+            item->setData(false,FolderRole);
+            item->setData(seq,SequenceRole);
+            item->setData(name,Qt::DisplayRole);
+            item->setDropEnabled(false);
+        }
+        changed = true;
+    }
+
 }
 
 // OTHER SLOTS
@@ -1162,4 +1180,9 @@ void Linnaeo::on_actionDecrease_Font_triggered()
 void Linnaeo::on_actionInfo_Mode_triggered(bool checked)
 {
     ui->seqViewer->setInfoMode(checked);
+}
+
+void Linnaeo::on_actionPaste_triggered()
+{
+
 }

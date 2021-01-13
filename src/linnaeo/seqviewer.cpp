@@ -342,6 +342,7 @@ void SeqViewer::setInfoMode(bool infoMode)
 {
     this->infoMode = infoMode;
     drawSequenceOrAlignment();
+    callUpdateHilighting();
 }
 
 

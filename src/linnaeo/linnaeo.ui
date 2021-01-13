@@ -888,11 +888,8 @@ p, li { white-space: pre-wrap; }
      <string>Edit</string>
     </property>
     <addaction name="actionCopy"/>
-    <addaction name="actionPaste"/>
     <addaction name="separator"/>
-    <addaction name="actionSelect_All"/>
     <addaction name="separator"/>
-    <addaction name="actionPreferences"/>
    </widget>
    <widget class="QMenu" name="menuManage">
     <property name="title">
@@ -949,7 +946,6 @@ p, li { white-space: pre-wrap; }
    <addaction name="actionSave_Workspace"/>
    <addaction name="separator"/>
    <addaction name="actionCopy"/>
-   <addaction name="actionPaste"/>
    <addaction name="separator"/>
    <addaction name="actionInfo_Mode"/>
    <addaction name="separator"/>
@@ -997,10 +993,10 @@ p, li { white-space: pre-wrap; }
      <normaloff>:/icons/ui/copy.svg</normaloff>:/icons/ui/copy.svg</iconset>
    </property>
    <property name="text">
-    <string>Copy</string>
+    <string>Copy to text</string>
    </property>
    <property name="toolTip">
-    <string>Copy highlighted sequences or alignment</string>
+    <string>Copy current selection as FASTA</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+C</string>
@@ -1172,7 +1168,10 @@ p, li { white-space: pre-wrap; }
      <normaloff>:/icons/ui/indent.svg</normaloff>:/icons/ui/indent.svg</iconset>
    </property>
    <property name="text">
-    <string>Quick Align</string>
+    <string>Align</string>
+   </property>
+   <property name="toolTip">
+    <string>Align the currently highlighted sequences</string>
    </property>
   </action>
   <action name="actionEdit_Sequence">
