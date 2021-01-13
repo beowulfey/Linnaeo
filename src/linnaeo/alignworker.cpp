@@ -11,20 +11,23 @@
 
 /// MEMORY LEAK PROBLEMS HERE (KEEPS SAME MUSCLE INSTANCE!?)
 
-AlignWorker::AlignWorker(QString input)
+AlignWorker::AlignWorker(QObject *parent) : QThread(parent)
 {
-    seqs = input;
     mcsl = new MuscleAdaptor();
 
 }
 
+
 AlignWorker::~AlignWorker()
 {
-    this->quit();
-    this->wait();
     delete mcsl;
-    delete this;
+    this->quit();
 
+}
+
+void AlignWorker::setSeqs(QString input)
+{
+    seqs = input;
 }
 
 void AlignWorker::run()

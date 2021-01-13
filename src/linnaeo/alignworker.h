@@ -8,7 +8,8 @@ class AlignWorker : public QThread
 {
     Q_OBJECT
 public:
-    AlignWorker(QString input);
+    AlignWorker(QObject *parent);
+    void setSeqs(QString);
     void run() override;
     ~AlignWorker();
 signals:

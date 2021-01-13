@@ -34,6 +34,12 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     connect(ui->seqViewer->verticalScrollBar(), &QScrollBar::valueChanged, ui->rulerEdit->verticalScrollBar(), &QScrollBar::setValue);
     connect(ui->rulerEdit->verticalScrollBar(), &QScrollBar::valueChanged, ui->seqViewer->verticalScrollBar(), &QScrollBar::setValue);
 
+    worker = new AlignWorker(this);
+    connect(worker, &AlignWorker::resultReady, this, &Linnaeo::addAlignmentToTree);
+    connect(worker, &AlignWorker::resultFailed, this, &Linnaeo::alignmentFailed);
+    connect(worker, &AlignWorker::finished, worker, &AlignWorker::deleteLater);
+
+
     // Options Panel setup
     ui->optionsPanel->hide();
     ui->optLine->hide();
@@ -631,10 +637,7 @@ void Linnaeo::on_actionMake_Alignment_triggered()
     if(!exists.isValid())
     {
         qDebug(lnoMain) << "Unable to find item, making new";
-        AlignWorker *worker = new AlignWorker(unaligned);
-        connect(worker, &AlignWorker::resultReady, this, &Linnaeo::addAlignmentToTree);
-        connect(worker, &AlignWorker::resultFailed, this, &Linnaeo::alignmentFailed);
-        connect(worker, &AlignWorker::finished, worker, &AlignWorker::deleteLater);
+        worker->setSeqs(unaligned);
         worker->run();
     }
     else

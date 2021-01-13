@@ -2,6 +2,7 @@
 #define LINNAEO_H
 
 #include "logging.h"
+#include "alignworker.h"
 #include <QMainWindow>
 #include <QStandardItemModel>
 #include <QItemSelection>
@@ -40,6 +41,7 @@ public:
 
 private:
     Ui::Linnaeo *ui;
+    AlignWorker *worker;
 
 
     //QVector<qint64> procIds;

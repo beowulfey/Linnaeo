@@ -545,9 +545,13 @@ void SeqViewer::callUpdateHilighting()
 /// during a window resize, or scrolling)
 {
 
-    QTextCursor curs = QTextCursor(document());
-    curs.setPosition(currentCur.at(3));
-    updateHilighting(curs);
+    if(!displayedSeqs.isEmpty() && infoMode)
+    {
+        if(currentCur.isEmpty()) currentCur = {0,0,4};
+        QTextCursor curs = QTextCursor(document());
+        curs.setPosition(currentCur.at(3));
+        updateHilighting(curs);
+    }
 
 }
 
