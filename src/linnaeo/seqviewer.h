@@ -52,6 +52,7 @@ private:
     QList<QString> displayedSeqs;
     QList<QList<QString>> displayedSeqsColor;
     QList<QList<QString>> displayedRuler;
+    QList<QList<QChar>> seqsConservation;
     QString formattedNames;
     QString formattedRuler;
     QList<int> currentCur;

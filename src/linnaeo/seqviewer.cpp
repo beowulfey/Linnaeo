@@ -1,6 +1,7 @@
 #include "logging.h"
 #include "seqviewer.h"
 #include "themes.h"
+#include "sequence.h"
 #include <math.h>
 #include <QEvent>
 #include <QRegularExpression>
@@ -75,18 +76,56 @@ void SeqViewer::calculateColor()
 /// "<span style=\"background-color:#FFFFFF\">A</span>"
 ///
 {
-    //QElapsedTimer timer;
-    //timer.start();
+    QElapsedTimer timer;
+    timer.start();
     // Define themes:
     displayedSeqsColor.clear();
+    seqsConservation.clear();
     QList<QString> colorSeq;
-    for(auto&& seq: displayedSeqs)
+    if(displayedSeqs.length() > 1)
     {
-        colorSeq.clear();
-        for(auto&& resi: seq) colorSeq.append(lookup[resi]);
-        displayedSeqsColor.append(colorSeq);
+        QList<QList<QChar>> consvWrongOrientation;
+        for(int i=0; i<displayedSeqs.first().length(); i++)
+        {
+            QList<QChar> resList;
+            for(auto&& seq: displayedSeqs)
+            {
+                resList.append(seq.at(i));
+            }
+            consvWrongOrientation.append(Sequence::calculateConservation(resList));
+        }
+
+
+        seqsConservation.resize(displayedSeqs.length());
+        for(int i=0; i<displayedSeqs.length();i++)
+        {
+            for(int j=0; j<displayedSeqs.first().length(); j++)
+            {
+                seqsConservation[i].append(consvWrongOrientation.at(j).at(i));
+            }
+        }
     }
-    //qDebug(lnoView) << "Creating color version took" << timer.elapsed() << "milliseconds";
+    if(lookup == Themes::clustalXTheme())
+    {
+        for(auto&& seq: seqsConservation)
+        {
+            colorSeq.clear();
+            for(auto&& resi: seq) colorSeq.append(lookup[resi]);
+            displayedSeqsColor.append(colorSeq);
+        }
+    }
+    else
+    {
+        for(auto&& seq: displayedSeqs)
+        {
+            colorSeq.clear();
+            for(auto&& resi: seq) colorSeq.append(lookup[resi]);
+            displayedSeqsColor.append(colorSeq);
+        }
+    }
+
+
+    qDebug(lnoView) << "Creating color version took" << timer.elapsed() << "milliseconds";
 }
 
 void SeqViewer::calculateRuler()
@@ -158,13 +197,13 @@ void SeqViewer::drawSequenceOrAlignment()
         }
         if(verticalScrollBar()->maximum() > verticalScrollBar()->minimum())
         {
-            scrollPos = double(verticalScrollBar()->sliderPosition())/double(verticalScrollBar()->maximum()-verticalScrollBar()->minimum());
+            scrollPos = qreal(verticalScrollBar()->sliderPosition())/qreal(verticalScrollBar()->maximum()-verticalScrollBar()->minimum());
             //qDebug(lnoView)<<scrollPos;
             if(scrollPos < 0.05) scrollPos = 0;
         }
         if(horizontalScrollBar()->maximum()>horizontalScrollBar()->minimum())
         {
-            hozScrollPos = double(horizontalScrollBar()->sliderPosition())/double(horizontalScrollBar()->maximum()-horizontalScrollBar()->minimum());
+            hozScrollPos = qreal(horizontalScrollBar()->sliderPosition())/qreal(horizontalScrollBar()->maximum()-horizontalScrollBar()->minimum());
         }
         //QElapsedTimer timer;
         //timer.start();
@@ -268,10 +307,10 @@ void SeqViewer::drawSequenceOrAlignment()
         //qDebug(lnoView) << "The drawing operation took" << timer.elapsed() << "milliseconds";
         // This resets the scroll bar positions to their original placement.
         if(verticalScrollBar()->maximum() > verticalScrollBar()->minimum()){
-            verticalScrollBar()->setSliderPosition(round(scrollPos*double(verticalScrollBar()->maximum()-verticalScrollBar()->minimum())));
+            verticalScrollBar()->setSliderPosition(round(scrollPos*qreal(verticalScrollBar()->maximum()-verticalScrollBar()->minimum())));
         }
         if(horizontalScrollBar()->maximum()>horizontalScrollBar()->minimum()){
-            horizontalScrollBar()->setSliderPosition(round(hozScrollPos*double(horizontalScrollBar()->maximum()-horizontalScrollBar()->minimum())));
+            horizontalScrollBar()->setSliderPosition(round(hozScrollPos*qreal(horizontalScrollBar()->maximum()-horizontalScrollBar()->minimum())));
         }
     }
 }
@@ -287,7 +326,7 @@ void SeqViewer::noWrapUpdateRuler(){
     {
         qDebug(lnoEvent) << "Sliding!" << bar->sliderPosition()<<"/"<<bar->maximum()<<"-"<<bar->minimum()<<"*"<<numChars<<"+"<<noWrapChars;
         formattedRuler = QString("<pre style=\"font-family:%1;\">").arg(font().family());
-        int index=trunc(double(double(bar->sliderPosition())/(double(bar->maximum())-double(bar->minimum())))*double(numChars-noWrapChars))+noWrapChars;
+        int index=trunc(qreal(qreal(bar->sliderPosition())/(qreal(bar->maximum())-qreal(bar->minimum())))*qreal(numChars-noWrapChars))+noWrapChars;
         qDebug(lnoEvent) << int(index);
         for(int i =0;i<displayedRuler.length();i++)
         {
@@ -315,10 +354,10 @@ void SeqViewer::setTheme(int index)
         qDebug(lnoView) << "Chose"<<index<<"-- default theme";
         break;
     case 1:
-        lookup = Themes::neonTheme();
-        qDebug(lnoView) << "Chose"<<index<<"-- neon theme";
+        lookup = Themes::clustalXTheme();
+        qDebug(lnoView) << "Chose"<<index<<"-- clustalX theme";
         break;
-    case 2:
+    /*case 2:
         lookup = Themes::gradientTheme();
         qDebug(lnoView) << "Chose"<<index<<"-- gradient theme";
         break;
@@ -330,6 +369,7 @@ void SeqViewer::setTheme(int index)
         lookup = Themes::clustalXTheme();
         qDebug(lnoView) << "Chose"<<index<<"-- Clustal X theme";
         break;
+        */
     }
     if(!displayedSeqs.isEmpty()){
         qDebug(lnoView) << "Redrawing with new colors";

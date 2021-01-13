@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
 
 {
     qSetMessagePattern("%{category}.%{type}: %{message}");
-    QLoggingCategory::setFilterRules(QStringLiteral("*.debug=false\n" "*.event.debug=true"));
+    QLoggingCategory::setFilterRules(QStringLiteral("*.debug=false\n" "*.proc.debug=true"));
     QString version = QString("%1.%2.%3").arg(VERSION_MAJOR).arg(VERSION_MINOR).arg(VERSION_BUILD);
     QApplication a(argc, argv);
     Linnaeo w{};
