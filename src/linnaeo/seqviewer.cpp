@@ -379,7 +379,10 @@ QStringList SeqViewer::getSeqList()
 void SeqViewer::fontChanged()
 {
     charWidth = QFontMetricsF(font()).averageCharWidth();
-    if(!displayedSeqs.isEmpty()) drawSequenceOrAlignment();
+    if(!displayedSeqs.isEmpty()) {
+        drawSequenceOrAlignment();
+        if(infoMode) callUpdateHilighting();
+    }
 }
 
 // Events below here
@@ -389,8 +392,8 @@ void SeqViewer::resizeEvent(QResizeEvent *event)
     QTextEdit::resizeEvent(event);
     resizing = true;
     resizeTimer->start(100);
-    if(!displayedSeqs.isEmpty() && infoMode) callUpdateHilighting();
     wrapSeqs ? drawSequenceOrAlignment() : noWrapUpdateRuler();
+    if(!displayedSeqs.isEmpty() && infoMode) callUpdateHilighting();
 
 }
 
@@ -399,14 +402,15 @@ void SeqViewer::resizeTimeout()
     resizing = false;
 
     wrapSeqs ? drawSequenceOrAlignment() : noWrapUpdateRuler();
+    if(!displayedSeqs.isEmpty() && infoMode) callUpdateHilighting();
 }
 
 void SeqViewer::updateHilighting(QTextCursor curs)
+// Might be nice to have this move with the line above or below if currently over a blank line
 {
-    //QTextCursor curs = this->cursorForPosition(pos);
-    if(curs.block().text().trimmed() != "")
+    if(curs.block().text().trimmed() != "") // don't do blank lines.
     {
-        if(curs.positionInBlock() < numChars)
+        if(curs.positionInBlock() < numChars) // This prevents it from highlighting the \n at the end of each line.
         {
             int line = curs.blockNumber();
             int seqBlock = trunc(line/(displayedSeqs.length()+1)); // seqBlock is all the wrapped sequences for this section
@@ -415,8 +419,8 @@ void SeqViewer::updateHilighting(QTextCursor curs)
             if(index <= displayedSeqs.at(seq).length()-1)
             {
                 currentCur = {seqBlock,seq,index,curs.position()};
-                int topBlock = line-seq;
-                int botBlock = line+displayedSeqs.length()-1;
+                //int topBlock = line-seq;
+                //int botBlock = line+displayedSeqs.length()-1;
                 int left = cursorRect(curs).left();
                 curs.movePosition(QTextCursor::NextCharacter,QTextCursor::MoveAnchor);
                 int right =cursorRect(curs).right();
@@ -425,8 +429,8 @@ void SeqViewer::updateHilighting(QTextCursor curs)
                 for(int i=0; i<displayedSeqs.length()-1;i++) curs.movePosition(QTextCursor::Down,QTextCursor::MoveAnchor);
                 int bottom = cursorRect(curs).bottom();
 
-                qDebug(lnoEvent) << "top line is"<<topBlock << "bottom is" <<botBlock;
-                hiliteRect = {QPoint(left,top),QPoint(right,bottom)};
+                //qDebug(lnoEvent) << "top line is"<<topBlock << "bottom is" <<botBlock;
+                highlightRect = {QPoint(left,top),QPoint(right,bottom)};
                 this->viewport()->update();
             }
         }
@@ -436,13 +440,16 @@ void SeqViewer::updateHilighting(QTextCursor curs)
 
 
 void SeqViewer::paintEvent(QPaintEvent *event)
+/// This modified painter is for overlaying the INFO MODE information, based on the selected
+/// cursor information.
 {
     QTextEdit::paintEvent(event);
     if(infoMode && !displayedSeqs.isEmpty()){
         QRect rect = QRect(this->rect());
-        if(currentCur.isEmpty()) currentCur = {0,0,4};
-        if(hiliteRect.isEmpty()){
-            hiliteRect = {rect.topLeft(),rect.bottomRight()};
+        if(currentCur.isEmpty()) currentCur = {0,0,4}; // Default cursor position. Need it here since I clear it sometimes.
+        //
+        if(highlightRect.isEmpty()){
+            highlightRect = {rect.topLeft(),rect.bottomRight()};
             QTextCursor curs = QTextCursor(document());
             curs.setPosition(5);
             updateHilighting(curs);
@@ -454,22 +461,57 @@ void SeqViewer::paintEvent(QPaintEvent *event)
         //                    "Seq" << currentCur.at(1) <<
         //                    "Index" << currentCur.at(2) <<
         //                    "True Index" << displayedRuler.at(currentCur.at(1)).at(currentCur.at(2));
+
+        // Set up painter.
         QPainter p(viewport());
         QPen pen = QPen("black");
         pen.setWidthF(0.5);
         p.setPen(pen);
 
-        //qDebug(lnoEvent) << hiliteRect;
-        QRegion colReg = QRegion(rect).subtracted(QRegion(QRect(hiliteRect.at(0), hiliteRect.at(1))));
+        // Gather the clipping region that will be focused and draw a semi-transparent window over the rest.
+        QRegion colReg = QRegion(rect).subtracted(QRegion(QRect(highlightRect.at(0), highlightRect.at(1))));
         QRegion orig = p.clipRegion();
         p.setClipping(true);
         p.setClipRegion(colReg);
         p.fillRect(rect,QColor(237, 237, 237, 180));
         p.setClipping(false);
-        p.drawRect(QRect(hiliteRect.at(0),hiliteRect.at(1)));
+        p.drawRect(QRect(highlightRect.at(0),highlightRect.at(1)));
+
+        // Give it a bold "handle".
         pen.setWidthF(2.0);
         p.setPen(pen);
-        p.drawLine(QPoint(hiliteRect.at(0).x()-1,hiliteRect.at(0).y()-charWidth),QPoint(hiliteRect.at(0).x()-1,hiliteRect.at(1).y()+charWidth));
+        p.drawLine(QPoint(highlightRect.at(0).x()-1,highlightRect.at(0).y()-charWidth),QPoint(highlightRect.at(0).x()-1,highlightRect.at(1).y()+charWidth));
+
+        // Add the information about the sequences.
+        p.setFont(this->font());
+        //p.setBackgroundMode(Qt::OpaqueMode);
+        //p.setBackground(QBrush("white"));
+        QPoint textTopLeft;
+        QPoint textBotRight;
+        QStringList indices;
+        int longestNumber = 0;
+        for(int i=0; i<displayedRuler.length(); i++)
+        {
+            indices.append(displayedRuler.at(i).at(currentCur.at(2)));
+            if(indices.last().length() > longestNumber) longestNumber = indices.last().length();
+        }
+        textTopLeft = QPoint(highlightRect.at(0).x()+1.5*charWidth,highlightRect.at(0).y()); // shifted to the right, aligned with the top line
+        textBotRight = QPoint(textTopLeft.x()+charWidth*longestNumber,highlightRect.at(1).y());
+        if(textBotRight.x() > rect.right()) // if this doesn't fit on the right side...
+        {
+            textTopLeft = QPoint(textTopLeft.x()-(3+longestNumber)*charWidth,textTopLeft.y());
+            textBotRight = QPoint(textTopLeft.x()+charWidth*longestNumber,highlightRect.at(1).y());
+        }
+
+        QRect textRect = QRect(QPoint(textTopLeft.x()-1,textTopLeft.y()),textBotRight);
+        //p.fillRect(textRect,QColor("#FFFFBF"));
+        p.fillRect(textRect,QColor("#FFE9C6"));
+        pen.setWidthF(0.5);
+        p.setPen(pen);
+        p.drawRect(textRect);
+
+        p.drawText(QRect(textTopLeft, textBotRight),Qt::AlignLeft,indices.join("\n"));
+
     }
 }
 
@@ -482,7 +524,7 @@ void SeqViewer::mousePressEvent(QMouseEvent *event)
     else
     {
         currentCur.clear();
-        hiliteRect.clear();
+        highlightRect.clear();
     }
 }
 
@@ -498,6 +540,9 @@ void SeqViewer::mouseReleaseEvent(QMouseEvent *event)
 }
 
 void SeqViewer::callUpdateHilighting()
+/// When the cursor isn't moving but the window is, this method
+/// will use the saved cursor to update its position (such as
+/// during a window resize, or scrolling)
 {
 
     QTextCursor curs = QTextCursor(document());

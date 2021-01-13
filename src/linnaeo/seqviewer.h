@@ -55,7 +55,7 @@ private:
     QString formattedNames;
     QString formattedRuler;
     QList<int> currentCur;
-    QList<QPoint> hiliteRect;
+    QList<QPoint> highlightRect;
 
     void calculateColor();
     void calculateRuler();
