@@ -241,12 +241,12 @@ QHash<QChar, QString> Themes::clustalXTheme()
     lookup['D'] = QString("<span style=\"background-color:#CC4CCC\">D</span>");
     lookup['E'] = QString("<span style=\"background-color:#CC4CCC\">E</span>");
     // Aromatic
-    lookup['H'] = QString("<span style=\"background-color:#19B2B2\">H</span>");
-    lookup['Y'] = QString("<span style=\"background-color:#19B2B2\">Y</span>");
+    lookup['H'] = QString("<span style=\"background-color:#68DFDF\">H</span>");
+    lookup['Y'] = QString("<span style=\"background-color:#68DFDF\">Y</span>");
     // Misc
-    lookup['G'] = QString("<span style=\"background-color:#E0E0E0\">G</span>");
-    lookup['P'] = QString("<span style=\"background-color:#CCCC00\">P</span>");
-    lookup['C'] = QString("<span style=\"background-color:#E57F7F\">C</span>");
+    lookup['G'] = QString("<span style=\"background-color:#F08D42\">G</span>");
+    lookup['P'] = QString("<span style=\"background-color:#FFFF0A\">P</span>");
+    lookup['C'] = QString("<span style=\"background-color:#EE6D6D\">C</span>");
     lookup['-'] = QString("<span style=\"background-color:#FFFFFF\">-</span>");
     // not conserved!
     lookup['a'] = QString("<span style=\"background-color:#FFFFFF\">A</span>");

@@ -131,7 +131,7 @@ namespace Sequence
             else if(QList<QChar>({'I','L','M','V'}).contains(resi)) (phb > 0.6)? consv.append(resi): consv.append(resi.toLower());
             else if(QList<QChar>({'K','R'}).contains(resi)) (kr > 0.6 || (q>0.60||h>0.60)) ? consv.append(resi): consv.append(resi.toLower());
             else if(resi == 'N') (n>0.60 || pol>0.6) ? consv.append(resi): consv.append(resi.toLower());
-            else if(resi == 'Q') (kr>0.6 || qe>0.60 ||  (q>0.60||e>0.60||k>0.6||r>0.6)) ? consv.append(resi): consv.append(resi.toLower());    // fix this to be more BLOSUM62-like?
+            else if(resi == 'Q') (kr>0.6 || qe>0.60 || q>0.60||e>0.60||pol>0.6) ? consv.append(resi): consv.append(resi.toLower());    // fix this to be more BLOSUM62-like?
             else if(resi == 'S') (s>0.6 || pol>0.6) ? consv.append(resi): consv.append(resi.toLower());
             else if(resi == 'T') {
                 if(ts>0.6||(s>0.6||t>0.6)) consv.append(resi);
