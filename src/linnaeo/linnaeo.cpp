@@ -43,7 +43,7 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     // Options Panel setup
     ui->optionsPanel->hide();
     ui->optLine->hide();
-    ui->themeCombo->addItems(QStringList()= {"Linnaeo","Clustal X"});
+    ui->themeCombo->addItems(QStringList()= {"Linnaeo","Clustal X","Debug", "Colorsafe"});
 
     // Sequence TreeView setup
     this->seqModel = new QStandardItemModel(this);
@@ -1184,4 +1184,9 @@ void Linnaeo::on_actionInfo_Mode_triggered(bool checked)
 void Linnaeo::on_actionPaste_triggered()
 {
 
+}
+
+void Linnaeo::on_conservedEnabled_toggled(bool checked)
+{
+    ui->seqViewer->setConsv(checked);
 }

@@ -34,6 +34,40 @@ SeqViewer::SeqViewer(QWidget *parent): QTextEdit(parent)
 
 }
 
+void SeqViewer::setTheme(int index)
+/// Use this to add or update themes.
+{
+    switch(index) {
+    case 0:
+        lookup = Themes::defaultTheme();
+        qDebug(lnoView) << "Chose"<<index<<"-- default theme";
+        break;
+    case 1:
+        lookup = Themes::clustalXTheme();
+        qDebug(lnoView) << "Chose"<<index<<"-- clustalX theme";
+        break;
+    case 2:
+        lookup = Themes::debugTheme();
+        qDebug(lnoView) << "Chose"<<index<<"-- gradient theme";
+        break;
+    case 3:
+        lookup = Themes::colorsafeTheme();
+        qDebug(lnoView) << "Chose"<<index<<"-- new theme";
+        break;
+        /*
+    case 4:
+        lookup = Themes::clustalXTheme();
+        qDebug(lnoView) << "Chose"<<index<<"-- Clustal X theme";
+        break;
+        */
+    }
+    if(!displayedSeqs.isEmpty()){
+        qDebug(lnoView) << "Redrawing with new colors";
+        calculateColor();
+        drawSequenceOrAlignment();
+    }
+}
+
 void SeqViewer::setDisplaySequence(QString seq, QString name)
 /// Called upon double-clicking in the treeView; initializes the viewer with the sequence of choice.
 /// First clears out the stored sequence and name, then calculates the color based on theme and ruler based on window.
@@ -105,7 +139,7 @@ void SeqViewer::calculateColor()
             }
         }
     }
-    if(lookup == Themes::clustalXTheme())
+    if(consvOn && displayedSeqs.length() >1)
     {
         for(auto&& seq: seqsConservation)
         {
@@ -345,38 +379,8 @@ void SeqViewer::noWrapUpdateRuler(){
 
 
 
-// Below here are all set-settings functions. Called by Linnaeo.
-void SeqViewer::setTheme(int index)
-{
-    switch(index) {
-    case 0:
-        lookup = Themes::defaultTheme();
-        qDebug(lnoView) << "Chose"<<index<<"-- default theme";
-        break;
-    case 1:
-        lookup = Themes::clustalXTheme();
-        qDebug(lnoView) << "Chose"<<index<<"-- clustalX theme";
-        break;
-    /*case 2:
-        lookup = Themes::gradientTheme();
-        qDebug(lnoView) << "Chose"<<index<<"-- gradient theme";
-        break;
-    case 3:
-        lookup = Themes::newTheme();
-        qDebug(lnoView) << "Chose"<<index<<"-- new theme";
-        break;
-    case 4:
-        lookup = Themes::clustalXTheme();
-        qDebug(lnoView) << "Chose"<<index<<"-- Clustal X theme";
-        break;
-        */
-    }
-    if(!displayedSeqs.isEmpty()){
-        qDebug(lnoView) << "Redrawing with new colors";
-        calculateColor();
-        drawSequenceOrAlignment();
-    }
-}
+// Below here are all additional set-settings functions. Called by Linnaeo.
+
 
 void SeqViewer::setInfoMode(bool infoMode)
 {
@@ -385,7 +389,14 @@ void SeqViewer::setInfoMode(bool infoMode)
     callUpdateHilighting();
 }
 
-
+void SeqViewer::setConsv(bool consv){
+    qDebug(lnoView) << "Set show colors to" << consv;
+    consvOn = consv;
+    if(!displayedSeqs.isEmpty()){
+        calculateColor();
+        drawSequenceOrAlignment();
+    }
+}
 
 void SeqViewer::setColors(bool colors)
 {

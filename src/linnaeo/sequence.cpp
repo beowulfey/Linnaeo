@@ -76,6 +76,8 @@ namespace Sequence
         QList<QChar> consv;
         qreal phb = (resList.count('A')+resList.count('C')+resList.count('F')+resList.count('H')+resList.count('I')+
                 resList.count('L')+resList.count('M')+resList.count('P')+resList.count('V')+resList.count('W'))/resList.length();
+        qreal renq = (resList.count('E')+resList.count('N')+resList.count('Q')+resList.count('R'))/resList.length(); // histidine
+        qreal pol = (resList.count('S')+resList.count('T')+resList.count('H')+resList.count('Q'))/resList.length();
         qreal kr = (resList.count('K')+resList.count('R'))/resList.length();
         qreal qe = (resList.count('Q')+resList.count('E'))/resList.length();
         qreal ed =(resList.count('E')+resList.count('D'))/resList.length();
@@ -102,20 +104,48 @@ namespace Sequence
         qreal y = resList.count('Y')/resList.length();
 
         for(auto&& resi: resList)
+            /// Based on Blosum62
+            /// Extra residues: B,b,J,O,o,Z
         {
             if(resi == '-') consv.append(resi);
-            else if(resi == 'C') (c>0.85) ? consv.append('B'): consv.append(resi.toLower());
-            else if(QList<QChar>({'A','I','L','M','F','W','V','C'}).contains(resi)) (phb > 0.6)? consv.append(resi): consv.append(resi.toLower());
-            else if(QList<QChar>({'K','R'}).contains(resi)) (kr > 0.6 || (k > 0.8||r>0.8||q>0.8)) ? consv.append(resi): consv.append(resi.toLower());
-            else if(resi == 'E') (kr>0.6 || qe>0.5 || (q>0.85||e>0.85||d>0.85)) ? consv.append(resi): consv.append(resi.toLower());
-            else if(resi == 'D') (kr>0.6 || ed > 0.50 || (k>0.85||r>0.85||q>0.85)) ? consv.append(resi): consv.append(resi.toLower());
-            else if(resi == 'N') (n>0.5 || (n>0.85 || y>0.85)) ? consv.append(resi): consv.append(resi.toLower());
-            else if(resi == 'Q') (kr>0.6 || qe>0.5 ||  (q>0.85||e>0.85||k>0.85||r>0.85)) ? consv.append(resi): consv.append(resi.toLower());
-            else if(QList<QChar>({'S','T'}).contains(resi)) (phb>0.6||ts>0.5||(s>0.85||t>0.85)) ? consv.append(resi): consv.append(resi.toLower());
-            else if(resi == 'G') (g>0) ? consv.append(resi): consv.append(resi.toLower());
-            else if(resi == 'P') (p>0) ? consv.append(resi): consv.append(resi.toLower());
-            else if(QList<QChar>({'H','Y'}).contains(resi)) (phb>0.6||(w>0.85||y>0.85||a>0.85||c>0.85||p>0.85||q>0.85||f>0.85||h>0.85||i>0.85
-                                                                       ||l>0.85||m>0.85||v>0.85)) ? consv.append(resi): consv.append(resi.toLower());
+            else if(resi == 'A') {
+                if(a>0.60) consv.append(resi);
+                else if(phb > 0.6) consv.append('B'); // color it like a hydrophobe
+                else consv.append(resi.toLower()); }
+            else if(resi == 'C'){
+                if(c>0.85) consv.append(resi);
+                else consv.append(resi.toLower()); }
+            else if(resi == 'D') (kr>0.6 || ed > 0.60 || k>0.6||r>0.6||q>0.6) ? consv.append(resi): consv.append(resi.toLower()); // fix this to be more BLOSUM62-like
+            else if(resi == 'E') (kr>0.6 || qe>0.6 || q>0.6||e>0.6||d>0.6 || ed>0.6) ? consv.append(resi): consv.append(resi.toLower()); // fix this
+            else if(resi == 'F') {
+                if(f>0.60) consv.append(resi);
+                else if(phb>0.6) consv.append('b'); // hydrophobe color
+                else consv.append(resi.toLower()); }
+            else if(resi == 'G') (g>0.60) ? consv.append(resi): consv.append(resi.toLower());
+            else if(resi == 'H') {
+                if(h>0.60) consv.append(resi);
+                else if(y>0.60) consv.append(resi);   // aromatic still
+                else if (renq >0.6) consv.append('J'); // color like it's polar
+                else if (pol > 0.6) consv.append('J');
+                else consv.append(resi.toLower()); }
+            else if(QList<QChar>({'I','L','M','V'}).contains(resi)) (phb > 0.6)? consv.append(resi): consv.append(resi.toLower());
+            else if(QList<QChar>({'K','R'}).contains(resi)) (kr > 0.6 || (q>0.60||h>0.60)) ? consv.append(resi): consv.append(resi.toLower());
+            else if(resi == 'N') (n>0.60 || pol>0.6) ? consv.append(resi): consv.append(resi.toLower());
+            else if(resi == 'Q') (kr>0.6 || qe>0.60 ||  (q>0.60||e>0.60||k>0.6||r>0.6)) ? consv.append(resi): consv.append(resi.toLower());    // fix this to be more BLOSUM62-like?
+            else if(resi == 'S') (s>0.6 || pol>0.6) ? consv.append(resi): consv.append(resi.toLower());
+            else if(resi == 'T') {
+                if(ts>0.6||(s>0.6||t>0.6)) consv.append(resi);
+                else if(phb>0.6) consv.append('O'); // color like phobe
+                else consv.append(resi.toLower()); }
+            else if(resi == 'P') (p>0.6) ? consv.append(resi): consv.append(resi.toLower());
+            else if(resi == 'Y') {
+                if(y>0.6) consv.append(resi);
+                else if(f>0.6) consv.append('o'); // color like hydrophobe
+                else consv.append(resi.toLower()); }
+            else if(resi == 'W') {
+                if(w>0.6) consv.append(resi);
+                else if(f>0.6) consv.append('Z'); // color like hydrophobe
+                else consv.append(resi.toLower()); }
             else consv.append(resi.toLower());
 
         }

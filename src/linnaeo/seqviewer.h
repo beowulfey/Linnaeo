@@ -15,6 +15,7 @@ public:
     void setDisplaySequence(QString seq, QString name);
     void setDisplayAlignment(QList<QString> seqs, QList<QString> names);
     void setTheme(int index);
+    void setConsv(bool consv);
     void setColors(bool colors);
     void setWrapSeqs(bool wrap);
     void fontChanged();
@@ -42,6 +43,7 @@ private:
     bool resizing = false;
     bool colorOn = true;
     bool rulerOn = false;
+    bool consvOn = false;
     double scrollPos;
     double hozScrollPos;
 

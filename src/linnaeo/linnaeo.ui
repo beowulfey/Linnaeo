@@ -799,7 +799,7 @@ p, li { white-space: pre-wrap; }
        <item>
         <widget class="QCheckBox" name="conservedEnabled">
          <property name="text">
-          <string>Highlight conserved</string>
+          <string>Show conservation</string>
          </property>
         </widget>
        </item>
@@ -822,7 +822,7 @@ p, li { white-space: pre-wrap; }
           <widget class="QComboBox" name="conservedCombo">
            <item>
             <property name="text">
-             <string>Placeholder</string>
+             <string>Consensus</string>
             </property>
            </item>
           </widget>
