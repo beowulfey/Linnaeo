@@ -40,26 +40,19 @@ void SeqViewer::setTheme(int index)
     switch(index) {
     case 0:
         lookup = Themes::defaultTheme();
-        qDebug(lnoView) << "Chose"<<index<<"-- default theme";
         break;
     case 1:
         lookup = Themes::clustalXTheme();
-        qDebug(lnoView) << "Chose"<<index<<"-- clustalX theme";
         break;
     case 2:
         lookup = Themes::debugTheme();
-        qDebug(lnoView) << "Chose"<<index<<"-- gradient theme";
         break;
     case 3:
         lookup = Themes::colorsafeTheme();
-        qDebug(lnoView) << "Chose"<<index<<"-- new theme";
         break;
-        /*
     case 4:
-        lookup = Themes::clustalXTheme();
-        qDebug(lnoView) << "Chose"<<index<<"-- Clustal X theme";
+        lookup = Themes::hydrophobicityTheme();
         break;
-        */
     }
     if(!displayedSeqs.isEmpty()){
         qDebug(lnoView) << "Redrawing with new colors";
@@ -83,6 +76,8 @@ void SeqViewer::setDisplaySequence(QString seq, QString name)
     calculateRuler();
     drawSequenceOrAlignment();
     if(infoMode) callUpdateHilighting();
+    emit updateSeqComboPlease(displayedNames);
+    this->refSeq = -1;
 }
 
 void SeqViewer::setDisplayAlignment(QList<QString> seqs, QList<QString> names)
@@ -100,6 +95,8 @@ void SeqViewer::setDisplayAlignment(QList<QString> seqs, QList<QString> names)
     calculateRuler();
     drawSequenceOrAlignment();
     if(infoMode) callUpdateHilighting();
+    emit updateSeqComboPlease(displayedNames);
+    this->refSeq = -1;
 }
 
 void SeqViewer::calculateColor()
@@ -122,14 +119,19 @@ void SeqViewer::calculateColor()
         for(int i=0; i<displayedSeqs.first().length(); i++)
         {
             QList<QChar> resList;
-            for(auto&& seq: displayedSeqs)
+            for(int j=0; j<displayedSeqs.length();j++)
             {
-                resList.append(seq.at(i));
+                resList.append(displayedSeqs.at(j).at(i));
             }
-            consvWrongOrientation.append(Sequence::calculateConservation(resList));
+            qDebug(lnoProc) << "refSeq is" <<refSeq;
+            if(refSeq==-1)
+            {
+                qDebug(lnoProc) << "using consensus";
+                consvWrongOrientation.append(Sequence::calculateConservation(resList)); // Build consensus conservation
+            }
+            else consvWrongOrientation.append(Sequence::calculateIdentityToReference(resList, refSeq));
+
         }
-
-
         seqsConservation.resize(displayedSeqs.length());
         for(int i=0; i<displayedSeqs.length();i++)
         {
@@ -435,6 +437,17 @@ void SeqViewer::fontChanged()
         drawSequenceOrAlignment();
         if(infoMode) callUpdateHilighting();
     }
+}
+
+void SeqViewer::setReferenceSeq(int index)
+{
+    qDebug(lnoView) << refSeq << index;
+    index<displayedSeqs.length() ? refSeq=index-1 : refSeq=displayedSeqs.length()-1;
+    if(!displayedSeqs.isEmpty()){
+        calculateColor();
+        drawSequenceOrAlignment();
+    }
+
 }
 
 // Events below here

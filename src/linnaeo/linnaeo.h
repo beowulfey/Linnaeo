@@ -62,6 +62,10 @@ protected:
     bool eventFilter(QObject *obj, QEvent *ev) override;
 
 private slots:
+    void updateSequenceCombo(QStringList names);
+    void addAlignmentToTree(const QList<QStringList> result);
+    void alignmentFailed(int err);
+
     void on_actionNew_triggered();
     void on_actionShow_Viewer_Options_triggered(bool checked);
     void on_actionPreferences_triggered();
@@ -82,8 +86,6 @@ private slots:
     void on_themeCombo_currentIndexChanged(int index);
     void on_colorsEnabled_toggled(bool checked);
     void on_seqTreeView_doubleClicked(const QModelIndex &index);
-    void addAlignmentToTree(const QList<QStringList> result);
-    void alignmentFailed(int err);
     void on_actionCopy_triggered();
     //void on_seqTreeView_clicked(const QModelIndex &index);
     void modifySeqActions(const QItemSelection &sel, const QItemSelection &desel);
@@ -103,6 +105,7 @@ private slots:
     void on_actionInfo_Mode_triggered(bool checked);
     void on_actionPaste_triggered();
     void on_conservedEnabled_toggled(bool checked);
+    void on_conservedCombo_currentIndexChanged(int index);
 };
 
 //Q_DECLARE_METATYPE(Linnaeo::ItemType);

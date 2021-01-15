@@ -20,6 +20,7 @@ public:
     void setWrapSeqs(bool wrap);
     void fontChanged();
     void setInfoMode(bool);
+    void setReferenceSeq(int);
     //void startDisplayThread();
     QList<QString> getSeqList();
 
@@ -44,6 +45,7 @@ private:
     bool colorOn = true;
     bool rulerOn = false;
     bool consvOn = false;
+    int refSeq =-1;
     double scrollPos;
     double hozScrollPos;
 
@@ -67,12 +69,14 @@ private:
     void setSequenceMetrics();
     void updateHilighting(QTextCursor);
 
+
 private slots:
     void noWrapUpdateRuler();
     void callUpdateHilighting();
 
 signals:
     void updatedNamesAndRuler(const QString names, const QString ruler);
+    void updateSeqComboPlease(const QStringList names);
 };
 
 

@@ -14,6 +14,7 @@ namespace Sequence
     QList<QStringList> splitFastaAlignmentString(QString input);
     QString prettyPrintFastaSequence(QString name, QString seq, int lineLength=60);
     QList<QChar> calculateConservation(QList<QChar> resList);
+    QList<QChar> calculateIdentityToReference(QList<QChar> resList, int ref);
 }
 
 #endif // SEQUENCE_H

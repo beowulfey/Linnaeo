@@ -10,6 +10,7 @@ public:
     static QHash<QChar, QString> defaultTheme();
     static QHash<QChar, QString> clustalXTheme();
     static QHash<QChar, QString> colorsafeTheme();
+    static QHash<QChar, QString> hydrophobicityTheme();
     /*
     static QHash<QChar, QString> conservationTheme();
     static QHash<QChar, QString> neonTheme();

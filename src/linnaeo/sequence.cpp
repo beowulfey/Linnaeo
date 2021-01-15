@@ -67,6 +67,16 @@ namespace Sequence
 
     }
 
+    QList<QChar> calculateIdentityToReference(QList<QChar> resList, int ref)
+    {
+        QList<QChar> consList;
+        for(auto&& res: resList)
+        {
+            res == resList.at(ref) ? consList.append(res) : consList.append(res.toLower());
+        }
+        return consList;
+    }
+
     QList<QChar> calculateConservation(QList<QChar> resList)
     /// Returns an integer value that equates to the ClustalX conservation category.
     /// See here: http://www.jalview.org/help/html/colourSchemes/clustal.html
@@ -74,34 +84,35 @@ namespace Sequence
     /// where >60% of the residues are WLVIMAFCHP; 2 is if the residue is K,R and the total is either
     {
         QList<QChar> consv;
-        qreal phb = (resList.count('A')+resList.count('C')+resList.count('F')+resList.count('H')+resList.count('I')+
-                resList.count('L')+resList.count('M')+resList.count('P')+resList.count('V')+resList.count('W'))/resList.length();
-        qreal renq = (resList.count('E')+resList.count('N')+resList.count('Q')+resList.count('R'))/resList.length(); // histidine
-        qreal pol = (resList.count('S')+resList.count('T')+resList.count('H')+resList.count('Q'))/resList.length();
-        qreal kr = (resList.count('K')+resList.count('R'))/resList.length();
-        qreal qe = (resList.count('Q')+resList.count('E'))/resList.length();
-        qreal ed =(resList.count('E')+resList.count('D'))/resList.length();
-        qreal ts = (resList.count('T')+resList.count('S'))/resList.length();
-        qreal a = resList.count('A')/resList.length();
-        qreal c = resList.count('C')/resList.length();
-        qreal d = resList.count('D')/resList.length();
-        qreal e = resList.count('E')/resList.length();
-        qreal f = resList.count('F')/resList.length();
-        qreal g = resList.count('G')/resList.length();
-        qreal h = resList.count('H')/resList.length();
-        qreal i = resList.count('I')/resList.length();
-        qreal k = resList.count('K')/resList.length();
-        qreal l = resList.count('L')/resList.length();
-        qreal m = resList.count('M')/resList.length();
-        qreal n = resList.count('N')/resList.length();
-        qreal p = resList.count('P')/resList.length();
-        qreal q = resList.count('Q')/resList.length();
-        qreal r = resList.count('R')/resList.length();
-        qreal s = resList.count('S')/resList.length();
-        qreal t = resList.count('T')/resList.length();
-        qreal v = resList.count('V')/resList.length();
-        qreal w = resList.count('W')/resList.length();
-        qreal y = resList.count('Y')/resList.length();
+        qreal len = static_cast<qreal>(resList.length());
+        qreal phb = static_cast<qreal>(resList.count('F')+resList.count('H')+resList.count('I')+
+                resList.count('L')+resList.count('M')+resList.count('P')+resList.count('V')+resList.count('W'))/len;
+        qreal renq = static_cast<qreal>(resList.count('E')+resList.count('N')+resList.count('Q')+resList.count('R'))/len; // histidine
+        qreal pol = static_cast<qreal>(resList.count('S')+resList.count('T')+resList.count('H')+resList.count('Q'))/len;
+        qreal kr = static_cast<qreal>(resList.count('K')+resList.count('R'))/len;
+        qreal qe = static_cast<qreal>(resList.count('Q')+resList.count('E'))/len;
+        qreal ed =static_cast<qreal>(resList.count('E')+resList.count('D'))/len;
+        qreal ts = static_cast<qreal>(resList.count('T')+resList.count('S'))/len;
+        qreal a = static_cast<qreal>(resList.count('A'))/len;
+        qreal c = static_cast<qreal>(resList.count('C'))/len;
+        qreal d = static_cast<qreal>(resList.count('D'))/len;
+        qreal e = static_cast<qreal>(resList.count('E'))/len;
+        qreal f = static_cast<qreal>(resList.count('F'))/len;
+        qreal g = static_cast<qreal>(resList.count('G'))/len;
+        qreal h = static_cast<qreal>(resList.count('H'))/len;
+        qreal i = static_cast<qreal>(resList.count('I'))/len;
+        qreal k = static_cast<qreal>(resList.count('K'))/len;
+        qreal l = static_cast<qreal>(resList.count('L'))/len;
+        qreal m = static_cast<qreal>(resList.count('M'))/len;
+        qreal n = static_cast<qreal>(resList.count('N'))/len;
+        qreal p = static_cast<qreal>(resList.count('P'))/len;
+        qreal q = static_cast<qreal>(resList.count('Q'))/len;
+        qreal r = static_cast<qreal>(resList.count('R'))/len;
+        qreal s = static_cast<qreal>(resList.count('S'))/len;
+        qreal t = static_cast<qreal>(resList.count('T'))/len;
+        qreal v = static_cast<qreal>(resList.count('V'))/len;
+        qreal w = static_cast<qreal>(resList.count('W'))/len;
+        qreal y = static_cast<qreal>(resList.count('Y'))/len;
 
         for(auto&& resi: resList)
             /// Based on Blosum62
@@ -110,46 +121,48 @@ namespace Sequence
             if(resi == '-') consv.append(resi);
             else if(resi == 'A') {
                 if(a>0.60) consv.append(resi);
-                else if(phb > 0.6) consv.append('B'); // color it like a hydrophobe
+                else if(phb > 0.8) consv.append('B'); // color it like a hydrophobe
                 else consv.append(resi.toLower()); }
             else if(resi == 'C'){
-                if(c>0.85) consv.append(resi);
+                if(c>0.6) consv.append(resi);
                 else consv.append(resi.toLower()); }
-            else if(resi == 'D') (kr>0.6 || ed > 0.60 || k>0.6||r>0.6||q>0.6) ? consv.append(resi): consv.append(resi.toLower()); // fix this to be more BLOSUM62-like
-            else if(resi == 'E') (kr>0.6 || qe>0.6 || q>0.6||e>0.6||d>0.6 || ed>0.6) ? consv.append(resi): consv.append(resi.toLower()); // fix this
+            else if(resi == 'D') (kr>0.8||ed>0.60||k>0.8||r>0.8||q>0.8) ? consv.append(resi): consv.append(resi.toLower()); // fix this to be more BLOSUM62-like
+            else if(resi == 'E') (kr>0.8||qe>0.8||q>0.8||e>0.6||d>0.6||ed>0.6) ? consv.append(resi): consv.append(resi.toLower()); // fix this
             else if(resi == 'F') {
                 if(f>0.60) consv.append(resi);
-                else if(phb>0.6) consv.append('b'); // hydrophobe color
+                else if(phb>0.8) consv.append('b'); // hydrophobe color
                 else consv.append(resi.toLower()); }
             else if(resi == 'G') (g>0.60) ? consv.append(resi): consv.append(resi.toLower());
             else if(resi == 'H') {
                 if(h>0.60) consv.append(resi);
-                else if(y>0.60) consv.append(resi);   // aromatic still
-                else if (renq >0.6) consv.append('J'); // color like it's polar
-                else if (pol > 0.6) consv.append('J');
+                else if(y>0.80) consv.append(resi);   // aromatic still
+                else if (renq >0.8) consv.append('J'); // color like it's polar
+                else if (pol > 0.8) consv.append('J');
                 else consv.append(resi.toLower()); }
             else if(QList<QChar>({'I','L','M','V'}).contains(resi)) (phb > 0.6)? consv.append(resi): consv.append(resi.toLower());
-            else if(QList<QChar>({'K','R'}).contains(resi)) (kr > 0.6 || (q>0.60||h>0.60)) ? consv.append(resi): consv.append(resi.toLower());
-            else if(resi == 'N') (n>0.60 || pol>0.6) ? consv.append(resi): consv.append(resi.toLower());
-            else if(resi == 'Q') (kr>0.6 || qe>0.60 || q>0.60||e>0.60||pol>0.6) ? consv.append(resi): consv.append(resi.toLower());    // fix this to be more BLOSUM62-like?
-            else if(resi == 'S') (s>0.6 || pol>0.6) ? consv.append(resi): consv.append(resi.toLower());
+            else if(QList<QChar>({'K','R'}).contains(resi)) (kr > 0.6 || (q>0.80||h>0.80)) ? consv.append(resi): consv.append(resi.toLower());
+            else if(resi == 'N') (n>0.60 || pol>0.8) ? consv.append(resi): consv.append(resi.toLower());
+            else if(resi == 'Q') (kr>0.8 || qe>0.80 || q>0.60||e>0.80||pol>0.8) ? consv.append(resi): consv.append(resi.toLower());    // fix this to be more BLOSUM62-like?
+            else if(resi == 'S') (s>0.6 || pol>0.8) ? consv.append(resi): consv.append(resi.toLower());
             else if(resi == 'T') {
-                if(ts>0.6||(s>0.6||t>0.6)) consv.append(resi);
-                else if(phb>0.6) consv.append('O'); // color like phobe
+                if(ts>0.8||(s>0.8||t>0.6)) consv.append(resi);
+                else if(phb>0.8) consv.append('O'); // color like phobe
                 else consv.append(resi.toLower()); }
             else if(resi == 'P') (p>0.6) ? consv.append(resi): consv.append(resi.toLower());
             else if(resi == 'Y') {
                 if(y>0.6) consv.append(resi);
-                else if(f>0.6) consv.append('o'); // color like hydrophobe
+                else if(f>0.8) consv.append(resi);
+                else if(phb>0.8) consv.append('o'); // color like hydrophobe
                 else consv.append(resi.toLower()); }
             else if(resi == 'W') {
                 if(w>0.6) consv.append(resi);
-                else if(f>0.6) consv.append('Z'); // color like hydrophobe
+                else if(f>0.6) consv.append(resi);
+                else if(phb>0.8) consv.append('Z'); // color like hydrophobe
                 else consv.append(resi.toLower()); }
             else consv.append(resi.toLower());
 
         }
-        qDebug(lnoProc) << consv;
+        //qDebug(lnoProc) << consv;
         return consv;
     }
 }

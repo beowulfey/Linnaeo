@@ -29,6 +29,7 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     ui->seqViewer->setFont(defaultFont);
     ui->rulerEdit->setFont(defaultFont);
     connect(ui->seqViewer, &SeqViewer::updatedNamesAndRuler, this, &Linnaeo::updateNamesAndRuler);
+    connect(ui->seqViewer, &SeqViewer::updateSeqComboPlease, this, &Linnaeo::updateSequenceCombo);
     connect(ui->seqViewer->verticalScrollBar(), &QScrollBar::valueChanged, ui->namesEdit->verticalScrollBar(), &QScrollBar::setValue);
     connect(ui->namesEdit->verticalScrollBar(), &QScrollBar::valueChanged, ui->seqViewer->verticalScrollBar(), &QScrollBar::setValue);
     connect(ui->seqViewer->verticalScrollBar(), &QScrollBar::valueChanged, ui->rulerEdit->verticalScrollBar(), &QScrollBar::setValue);
@@ -43,7 +44,7 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     // Options Panel setup
     ui->optionsPanel->hide();
     ui->optLine->hide();
-    ui->themeCombo->addItems(QStringList()= {"Linnaeo","Clustal X","Debug", "Colorsafe"});
+    ui->themeCombo->addItems(QStringList()= {"Linnaeo","Clustal X","Debug", "Colorsafe", "Hydrophobicity"});
 
     // Sequence TreeView setup
     this->seqModel = new QStandardItemModel(this);
@@ -855,14 +856,7 @@ void Linnaeo::on_actionClose_triggered()
     ui->namesEdit->document()->clear();
     ui->rulerEdit->document()->clear();
 }
-void Linnaeo::on_themeCombo_currentIndexChanged(int index)
-{
-    ui->seqViewer->setTheme(index);
-}
-void Linnaeo::on_colorsEnabled_toggled(bool checked)
-{
-    ui->seqViewer->setColors(checked);
-}
+
 void Linnaeo::on_seqTreeView_doubleClicked(const QModelIndex &index)
 {
     if(!index.data(FolderRole).toBool()){
@@ -875,6 +869,24 @@ void Linnaeo::on_seqTreeView_doubleClicked(const QModelIndex &index)
         ui->seqViewer->setDisplaySequence(seq, name);
     }
 }
+void Linnaeo::on_alignTreeView_doubleClicked(const QModelIndex &index)
+{
+    if(!index.data(FolderRole).toBool()){
+        this->setWindowTitle(QString("Linnaeo [%1]").arg(index.data(Qt::DisplayRole).toString()));
+        ui->seqViewer->setDisplayAlignment(index.data(AlignmentRole).toStringList(), index.data(NamesRole).toStringList());
+    }
+
+}
+
+void Linnaeo::on_themeCombo_currentIndexChanged(int index)
+{
+    ui->seqViewer->setTheme(index);
+}
+void Linnaeo::on_colorsEnabled_toggled(bool checked)
+{
+    ui->seqViewer->setColors(checked);
+}
+
 
 void Linnaeo::modifySeqActions(const QItemSelection &sele, const QItemSelection &desel)
 /// This code is here to specifically turn on the different SeqTreeView buttons on and off depending on selection.
@@ -999,19 +1011,9 @@ void Linnaeo::updateNamesAndRuler(QString names, QString ruler)
 }
 
 
-
 void Linnaeo::on_wrapEnabled_toggled(bool checked)
 {
     ui->seqViewer->setWrapSeqs(checked);
-}
-
-void Linnaeo::on_alignTreeView_doubleClicked(const QModelIndex &index)
-{
-    if(!index.data(FolderRole).toBool()){
-        this->setWindowTitle(QString("Linnaeo [%1]").arg(index.data(Qt::DisplayRole).toString()));
-        ui->seqViewer->setDisplayAlignment(index.data(AlignmentRole).toStringList(), index.data(NamesRole).toStringList());
-    }
-
 }
 
 
@@ -1092,8 +1094,6 @@ void Linnaeo::dataStreamThroughTree(QStandardItem *root, QDataStream &stream, bo
 
 }
 
-
-
 void Linnaeo::openFromFile(QString fileName)
 {
     if(fileName.right(3)!="lno") qInfo(lnoMain) << "File not opened successfully:" << fileName;
@@ -1141,10 +1141,6 @@ void Linnaeo::openFromFile(QString fileName)
     }
 }
 
-
-
-
-
 void Linnaeo::on_actionCapture_Image_triggered()
 {
     QSize out(ui->frame_2->size());
@@ -1155,7 +1151,6 @@ void Linnaeo::on_actionCapture_Image_triggered()
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image"),QStandardPaths::writableLocation(QStandardPaths::HomeLocation),tr("PNG (*.png);; BMP (*.bmp);;TIFF (*.tiff *.tif);; JPEG (*.jpg *.jpeg)"));
     img.save(fileName, nullptr, -1);
 }
-
 
 
 void Linnaeo::on_actionIncrease_Font_triggered()
@@ -1189,4 +1184,27 @@ void Linnaeo::on_actionPaste_triggered()
 void Linnaeo::on_conservedEnabled_toggled(bool checked)
 {
     ui->seqViewer->setConsv(checked);
+}
+
+void Linnaeo::updateSequenceCombo(QStringList names)
+{
+    const QSignalBlocker blocker(ui->conservedCombo);
+    ui->conservedCombo->clear();
+    ui->conservedCombo->addItem("Consensus");
+    for(auto&& name : names)
+    {
+        ui->conservedCombo->addItem(name);
+    }
+    if(names.length()<=1) {
+        ui->conservedEnabled->setEnabled(false);
+        ui->conservedCombo->setEnabled(false);
+    }else {
+        ui->conservedEnabled->setEnabled(true);
+        ui->conservedCombo->setEnabled(true);
+    }
+
+}
+void Linnaeo::on_conservedCombo_currentIndexChanged(int index)
+{
+    ui->seqViewer->setReferenceSeq(index);
 }
