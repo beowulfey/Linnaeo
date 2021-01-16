@@ -30,11 +30,11 @@ public:
     qint32 fvers = 100;
     enum ItemType
     {
-        FolderRole=Qt::UserRole,        // bool
-        SequenceRole=Qt::UserRole+1,    // QString
-        InfoRole=Qt::UserRole+2,        // QString
-        AlignmentRole=Qt::UserRole+3,   // QList<QString>
-        NamesRole=Qt::UserRole+4        // QList<QString>
+        FolderRole=Qt::UserRole,        // bool           // Is this a folder
+        SequenceRole=Qt::UserRole+1,    // QString        // (SEQUENCE) contains a single sequence
+        InfoRole=Qt::UserRole+2,        // QString        // (SEQUENCE) contains additional information from uniprot
+        AlignmentRole=Qt::UserRole+3,   // QList<QString> // contains the alignment
+        NamesRole=Qt::UserRole+4        // QList<QString> // used for saving
     };
     Q_ENUM(Linnaeo::ItemType);
 
@@ -106,6 +106,7 @@ private slots:
     void on_actionPaste_triggered();
     void on_conservedEnabled_toggled(bool checked);
     void on_conservedCombo_currentIndexChanged(int index);
+    void on_actionEdit_Alignment_triggered();
 };
 
 //Q_DECLARE_METATYPE(Linnaeo::ItemType);

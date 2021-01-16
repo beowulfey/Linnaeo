@@ -1208,3 +1208,9 @@ void Linnaeo::on_conservedCombo_currentIndexChanged(int index)
 {
     ui->seqViewer->setReferenceSeq(index);
 }
+
+void Linnaeo::on_actionEdit_Alignment_triggered()
+{
+    QList<QModelIndex> selected = ui->alignTreeView->selectionModel()->selectedIndexes();
+
+}

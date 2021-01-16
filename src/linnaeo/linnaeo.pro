@@ -24,6 +24,7 @@ VERSION = $${VERSION_MAJOR}.$${VERSION_MINOR}.$${VERSION_BUILD}
 
 
 SOURCES += \
+    alignmenteditor.cpp \
     alignworker.cpp \
     logging.cpp \
     main.cpp \
@@ -38,6 +39,7 @@ SOURCES += \
     themes.cpp\
 
 HEADERS += \
+    alignmenteditor.h \
     alignworker.h \
     linnaeo.h \
     logging.h \
@@ -52,6 +54,7 @@ HEADERS += \
 
 
 FORMS += \
+    alignmenteditor.ui \
     linnaeo.ui \
     preferences.ui \
     searchuniprot.ui \
