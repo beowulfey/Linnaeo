@@ -35,6 +35,11 @@ SeqEditor::~SeqEditor()
     delete ui;
 }
 
+void SeqEditor::setDocFont(QFont font)
+{
+    ui->seqEntryEditor->setFont(font);
+}
+
 QString SeqEditor::submittedSequence()
 {
     // TODO: VALIDATE THE SEQUENCE!!

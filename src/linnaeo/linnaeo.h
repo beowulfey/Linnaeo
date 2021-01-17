@@ -3,6 +3,7 @@
 
 #include "logging.h"
 #include "alignworker.h"
+#include "alignmenteditor.h"
 #include <QMainWindow>
 #include <QStandardItemModel>
 #include <QItemSelection>

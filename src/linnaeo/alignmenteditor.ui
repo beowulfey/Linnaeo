@@ -42,6 +42,9 @@
        <property name="dragDropMode">
         <enum>QAbstractItemView::InternalMove</enum>
        </property>
+       <property name="defaultDropAction">
+        <enum>Qt::MoveAction</enum>
+       </property>
       </widget>
      </item>
      <item>
@@ -55,11 +58,14 @@
        <property name="undoRedoEnabled">
         <bool>false</bool>
        </property>
+       <property name="lineWrapMode">
+        <enum>QPlainTextEdit::WidgetWidth</enum>
+       </property>
        <property name="readOnly">
         <bool>true</bool>
        </property>
        <property name="placeholderText">
-        <string>Sequence preview</string>
+        <string/>
        </property>
       </widget>
      </item>

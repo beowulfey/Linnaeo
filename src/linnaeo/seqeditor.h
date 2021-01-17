@@ -18,6 +18,7 @@ public:
     ~SeqEditor();
     QString submittedSequence();
     QString submittedName();
+    void setDocFont(QFont);
 
 private:
     Ui::SeqEditor *ui;

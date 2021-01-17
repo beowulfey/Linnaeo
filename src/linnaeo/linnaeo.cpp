@@ -510,6 +510,7 @@ void Linnaeo::on_actionAdd_Sequence_triggered()
     /// Otherwise, it will add to whatever folder is selected.
 {
     SeqEditor *seqEdit = new SeqEditor(this);
+    seqEdit->setDocFont(defaultFont);
 
     if (seqEdit->exec() == QDialog::Accepted) {
         QString name, seq;
@@ -737,6 +738,7 @@ void Linnaeo::on_actionEdit_Sequence_triggered()
 {
     QModelIndex index = ui->seqTreeView->selectionModel()->selectedIndexes()[0];
     SeqEditor *seqEdit = new SeqEditor(this, index.data(Qt::DisplayRole).toString(), index.data(SequenceRole).toString(),index.data(InfoRole).toString());
+    seqEdit->setDocFont(defaultFont);
 
     if (seqEdit->exec() == QDialog::Accepted)
     {
@@ -752,6 +754,7 @@ void Linnaeo::on_actionEdit_Sequence_triggered()
             item->setDropEnabled(false);
         }
         changed = true;
+        ui->seqViewer->setDisplaySequence(index.data(SequenceRole).toString(), index.data(Qt::DisplayRole).toString());
     }
 
 }
@@ -1211,6 +1214,22 @@ void Linnaeo::on_conservedCombo_currentIndexChanged(int index)
 
 void Linnaeo::on_actionEdit_Alignment_triggered()
 {
-    QList<QModelIndex> selected = ui->alignTreeView->selectionModel()->selectedIndexes();
+    QModelIndex index = ui->alignTreeView->selectionModel()->selectedIndexes().at(0);
+    QStandardItem *item = alignModel->itemFromIndex(index);
+    AlignmentEditor *edit = new AlignmentEditor(this);
+    edit->setDocFont(defaultFont);
+    edit->setData(item->data(NamesRole).toStringList(),item->data(AlignmentRole).toStringList());
+    if (edit->exec() == QDialog::Accepted) {
+        QList<QStringList> data = edit->chosenArrangement();
+        QStringList names = data.at(0);
+        QStringList seqs  = data.at(1);
+        if(!names.isEmpty() && !seqs.isEmpty())
+        {
+            item->setData(names,NamesRole);
+            item->setData(seqs,AlignmentRole);
+        }
+        ui->seqViewer->setDisplayAlignment(item->data(AlignmentRole).toStringList(), item->data(NamesRole).toStringList());
+        changed = true;
+    }
 
 }
