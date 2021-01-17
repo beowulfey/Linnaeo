@@ -27,5 +27,6 @@
         <file>icons/ui/camera-retro.svg</file>
         <file>icons/ui/decrease_font.svg</file>
         <file>icons/ui/increase_font.svg</file>
+        <file>icons/ui/info-mode.svg</file>
     </qresource>
 </RCC>

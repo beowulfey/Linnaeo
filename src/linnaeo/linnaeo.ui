@@ -749,13 +749,6 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="rulerEnabled">
-         <property name="text">
-          <string>Show Ruler</string>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QCheckBox" name="wrapEnabled">
          <property name="text">
           <string>Wrap sequences</string>
@@ -1233,6 +1226,9 @@ p, li { white-space: pre-wrap; }
    <property name="text">
     <string>Increase Font</string>
    </property>
+   <property name="toolTip">
+    <string>Increase font size</string>
+   </property>
   </action>
   <action name="actionDecrease_Font">
    <property name="icon">
@@ -1241,6 +1237,9 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Decrease Font</string>
+   </property>
+   <property name="toolTip">
+    <string>Decrease font size</string>
    </property>
   </action>
   <action name="actionCapture_Image">
@@ -1251,13 +1250,28 @@ p, li { white-space: pre-wrap; }
    <property name="text">
     <string>Capture Image</string>
    </property>
+   <property name="toolTip">
+    <string>Export a high resolution image of the current display</string>
+   </property>
   </action>
   <action name="actionInfo_Mode">
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="resources/linnaeo.qrc">
+     <normaloff>:/icons/ui/info-mode.svg</normaloff>:/icons/ui/info-mode.svg</iconset>
+   </property>
    <property name="text">
     <string>Info Mode</string>
+   </property>
+   <property name="toolTip">
+    <string>Enable draggable ruler</string>
+   </property>
+  </action>
+  <action name="actionWhat_s_This">
+   <property name="text">
+    <string>What's This?</string>
    </property>
   </action>
  </widget>
