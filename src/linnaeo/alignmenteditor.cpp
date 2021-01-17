@@ -9,6 +9,7 @@ AlignmentEditor::AlignmentEditor(QWidget *parent) :
     ui->seqPreview->setWordWrapMode(QTextOption::WrapAnywhere);
 
 
+
 }
 
 AlignmentEditor::~AlignmentEditor()

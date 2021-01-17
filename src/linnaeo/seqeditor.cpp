@@ -15,6 +15,7 @@ SeqEditor::SeqEditor(QWidget *parent) :
     ui->setupUi(this);
     connect(ui->seqEntryEditor, &SeqEntryTextEdit::pastedSequence, this, &SeqEditor::receivedSequence);
     connect(ui->seqEntryEditor, &SeqEntryTextEdit::extractedSeqName, this, &SeqEditor::receivedSeqInfo);
+    setWindowTitle("Sequence Editor");
 }
 
 SeqEditor::SeqEditor(QWidget *parent, QString seqName, QString seq, QString seqInfo) :

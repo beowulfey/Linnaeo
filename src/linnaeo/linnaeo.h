@@ -108,6 +108,7 @@ private slots:
     void on_conservedEnabled_toggled(bool checked);
     void on_conservedCombo_currentIndexChanged(int index);
     void on_actionEdit_Alignment_triggered();
+    void on_actionAbout_triggered();
 };
 
 //Q_DECLARE_METATYPE(Linnaeo::ItemType);

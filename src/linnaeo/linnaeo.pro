@@ -24,6 +24,7 @@ VERSION = $${VERSION_MAJOR}.$${VERSION_MINOR}.$${VERSION_BUILD}
 
 
 SOURCES += \
+    aboutdialog.cpp \
     alignmenteditor.cpp \
     alignworker.cpp \
     logging.cpp \
@@ -39,6 +40,7 @@ SOURCES += \
     themes.cpp\
 
 HEADERS += \
+    aboutdialog.h \
     alignmenteditor.h \
     alignworker.h \
     linnaeo.h \
@@ -54,6 +56,7 @@ HEADERS += \
 
 
 FORMS += \
+    aboutdialog.ui \
     alignmenteditor.ui \
     linnaeo.ui \
     preferences.ui \

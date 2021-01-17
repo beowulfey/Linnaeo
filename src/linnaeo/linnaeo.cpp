@@ -5,6 +5,7 @@
 #include "searchuniprot.h"
 #include "alignworker.h"
 #include "sequence.h"
+#include "aboutdialog.h"
 #include <QDir>
 #include <QStandardPaths>
 #include <QMessageBox>
@@ -13,6 +14,7 @@
 #include <QScrollBar>
 #include <QFontDatabase>
 #include <QClipboard>
+#include <QDesktopServices>
 
 
 Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
@@ -511,6 +513,7 @@ void Linnaeo::on_actionAdd_Sequence_triggered()
 {
     SeqEditor *seqEdit = new SeqEditor(this);
     seqEdit->setDocFont(defaultFont);
+    seqEdit->setWindowTitle("Add new sequence");
 
     if (seqEdit->exec() == QDialog::Accepted) {
         QString name, seq;
@@ -739,6 +742,7 @@ void Linnaeo::on_actionEdit_Sequence_triggered()
     QModelIndex index = ui->seqTreeView->selectionModel()->selectedIndexes()[0];
     SeqEditor *seqEdit = new SeqEditor(this, index.data(Qt::DisplayRole).toString(), index.data(SequenceRole).toString(),index.data(InfoRole).toString());
     seqEdit->setDocFont(defaultFont);
+    seqEdit->setWindowTitle("Edit sequence");
 
     if (seqEdit->exec() == QDialog::Accepted)
     {
@@ -1217,6 +1221,7 @@ void Linnaeo::on_actionEdit_Alignment_triggered()
     QModelIndex index = ui->alignTreeView->selectionModel()->selectedIndexes().at(0);
     QStandardItem *item = alignModel->itemFromIndex(index);
     AlignmentEditor *edit = new AlignmentEditor(this);
+    edit->setWindowTitle("Edit alignment");
     edit->setDocFont(defaultFont);
     edit->setData(item->data(NamesRole).toStringList(),item->data(AlignmentRole).toStringList());
     if (edit->exec() == QDialog::Accepted) {
@@ -1232,4 +1237,20 @@ void Linnaeo::on_actionEdit_Alignment_triggered()
         changed = true;
     }
 
+}
+
+void Linnaeo::on_actionAbout_triggered()
+{
+    AboutDialog *about = new AboutDialog();
+    about->exec();
+}
+
+void Linnaeo::on_actionOnline_Manual_triggered()
+{
+    QDesktopServices::openUrl(QUrl("https://beowulfey.github.io/linnaeo/manual.md"));
+}
+
+void Linnaeo::on_actionOn_Themes_triggered()
+{
+    QDesktopServices::openUrl(QUrl("https://beowulfey.github.io/linnaeo/on-themes.md"));
 }
