@@ -55,6 +55,7 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     seqStartFolderItem = new QStandardItem(QIcon(":/icons/ui/folder.svg"),QString("Uncategorized"));
     seqStartFolderItem->setData(QVariant(true), FolderRole);
     seqRoot->appendRow(seqStartFolderItem);
+    seqStartFolder = seqStartFolderItem->index();
     connect(ui->seqTreeView, &QTreeView::expanded, this, &Linnaeo::expand_seqTreeView_item);
     connect(ui->seqTreeView, &QTreeView::collapsed, this, &Linnaeo::collapse_seqTreeView_item);
     //connect(ui->seqTreeView, &QTreeView::doubleClicked, this, &Linnaeo::on_seqTreeView_doubleClicked);
@@ -114,7 +115,7 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
 
 
     // DEBUGGING!
-    QStandardItem *debugItem = new QStandardItem("DEBUG");
+    /*QStandardItem *debugItem = new QStandardItem("DEBUG");
     debugItem->setData(QVariant("MDADASTITPEELDFIRQRALRRFDSIVPTAGREGTEIASDIFKGRTLAIYTSGGDSQGM"
                         "NSAVRSITRMAIYCGCKVYLIYEGYEGMIEGGDFIKEATWNTVSDIIQQGGTIIGSARSS"
                         "EFRTREGRLKAATNLINRGIGRLVCIGGDGSLTGANTFRLEWTDLVQELVKNQRVTAAAA"
@@ -131,6 +132,7 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
                         "LRPLLRVLARHRSTVESSAILESVEEESADSHMF"), SequenceRole);
     seqStartFolderItem->appendRow(debugItem);
     ui->seqTreeView->setExpanded(seqModel->indexFromItem(seqStartFolderItem),true);
+    */
 
     //ui->colorsEnabled->setChecked(false);
 
@@ -226,7 +228,7 @@ void Linnaeo::on_actionOpen_triggered()
                     if(seqModel->invisibleRootItem()->child(r)->hasChildren()) ui->seqTreeView->setExpanded((seqModel->invisibleRootItem()->child(r)->index()),true);
                     if(seqModel->invisibleRootItem()->child(r)->data(Qt::DisplayRole).toString() == "Uncategorized")
                     {
-                        this->seqStartFolderItem = seqModel->invisibleRootItem()->child(r);
+                        this->seqStartFolder = seqModel->invisibleRootItem()->child(r)->index();
                     }
                 }
                 for(int r = 0; r < alignModel->invisibleRootItem()->rowCount(); ++r)
@@ -234,7 +236,7 @@ void Linnaeo::on_actionOpen_triggered()
                     if(alignModel->invisibleRootItem()->child(r)->hasChildren()) ui->alignTreeView->setExpanded((alignModel->invisibleRootItem()->child(r)->index()),true);
                     if(alignModel->invisibleRootItem()->child(r)->data(Qt::DisplayRole).toString() == "Uncategorized")
                     {
-                        this->alignStartFolderItem = alignModel->invisibleRootItem()->child(r);
+                        this->alignStartFolder = alignModel->invisibleRootItem()->child(r)->index();
                     }
                 }
 
@@ -307,8 +309,8 @@ void Linnaeo::on_actionSequence_from_file_triggered()
             const QString seq = parsed.at(1).at(0);
             QStandardItem *item = new QStandardItem(name);
             item->setData(seq, SequenceRole);
-            seqStartFolderItem->appendRow(item);
-            ui->seqTreeView->expand(seqStartFolderItem->index());
+            seqModel->itemFromIndex(seqStartFolder)->appendRow(item);
+            ui->seqTreeView->expand(seqStartFolder);
 
             ui->seqViewer->setDisplaySequence(seq, name);
             this->setWindowTitle(QString("Linnaeo [%1]").arg(item->data(Qt::DisplayRole).toString()));
@@ -543,8 +545,10 @@ void Linnaeo::on_actionAdd_Sequence_triggered()
             }
             if (!found)
             {
-                this->seqStartFolderItem->appendRow(newSeq);
-                ui->seqTreeView->expand(this->seqStartFolderItem->index());
+                seqModel->itemFromIndex(seqStartFolder)->appendRow(newSeq);
+                ui->seqTreeView->expand(seqStartFolder);
+                //this->seqStartFolderItem->appendRow(newSeq);
+                //ui->seqTreeView->expand(this->seqStartFolderItem->index());
             }
             this->setWindowTitle(QString("Linnaeo [%1]").arg(newSeq->data(Qt::DisplayRole).toString()));
             ui->seqViewer->setDisplaySequence(newSeq->data(SequenceRole).toString(),newSeq->data(Qt::DisplayRole).toString());
@@ -566,7 +570,7 @@ void Linnaeo::on_actionDelete_Selected_Sequences_triggered()
     {
         foreach (const QModelIndex &index, indexes)
         {
-            if(index != this->seqStartFolderItem->index())
+            if(index != this->seqStartFolder)
             {
                 pindexes << QPersistentModelIndex(index);
             }
@@ -828,28 +832,8 @@ void Linnaeo::on_actionGet_Online_Sequence_triggered()
                 else if(nameSource == 2) {item->setText(genes.at(i));}
                 else {item->setText("New Sequence");}
                 item->setDropEnabled(false);
-
-                QList<QModelIndex>indexes = ui->seqTreeView->selectionModel()->selectedIndexes();
-                QStandardItem *sourceItem;
-                bool found = false;
-                for(const QModelIndex& index : indexes)
-                {
-                    // Check each selected item (if any) to see if it is a folder. Add it to the first
-                    // folder it finds, otherwise add it to the "uncategorized" folder.
-                    sourceItem = seqModel->itemFromIndex(index);
-                    if (sourceItem->data(FolderRole).toBool())
-                    {
-                        sourceItem->appendRow(item);
-                        ui->seqTreeView->expand(index);
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found)
-                {
-                    seqStartFolderItem->appendRow(item);
-                    ui->seqTreeView->expand(seqStartFolderItem->index());
-                }
+                seqModel->itemFromIndex(seqStartFolder)->appendRow(item);
+                ui->seqTreeView->expand(seqStartFolder);
             }
         }
     }
@@ -912,9 +896,9 @@ void Linnaeo::modifySeqActions(const QItemSelection &sele, const QItemSelection 
                 ui->actionQuick_Align->setDisabled(true);
                 //ui->actionDelete_Selected_Sequences->setDisabled(true);
 
-                (ui->seqTreeView->selectionModel()->selectedIndexes().first() == seqStartFolderItem->index()) ? ui->deleteSequenceButton->setDisabled(true) :
+                (ui->seqTreeView->selectionModel()->selectedIndexes().first() == seqStartFolder) ? ui->deleteSequenceButton->setDisabled(true) :
                     ui->deleteSequenceButton->setDisabled(false);
-                (ui->seqTreeView->selectionModel()->selectedIndexes().first() == seqStartFolderItem->index()) ? ui->actionDelete_Selected_Sequences->setDisabled(true) :
+                (ui->seqTreeView->selectionModel()->selectedIndexes().first() == seqStartFolder) ? ui->actionDelete_Selected_Sequences->setDisabled(true) :
                     ui->actionDelete_Selected_Sequences->setDisabled(false);
             }
             else
@@ -1129,7 +1113,7 @@ void Linnaeo::openFromFile(QString fileName)
                 if(seqModel->invisibleRootItem()->child(r)->hasChildren()) ui->seqTreeView->setExpanded((seqModel->invisibleRootItem()->child(r)->index()),true);
                 if(seqModel->invisibleRootItem()->child(r)->data(Qt::DisplayRole).toString() == "Uncategorized")
                 {
-                    this->seqStartFolderItem = seqModel->invisibleRootItem()->child(r);
+                    this->seqStartFolder = seqModel->indexFromItem(seqModel->invisibleRootItem()->child(r));
                 }
             }
             for(int r = 0; r < alignModel->invisibleRootItem()->rowCount(); ++r)
