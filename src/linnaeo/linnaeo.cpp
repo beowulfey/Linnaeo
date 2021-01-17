@@ -1247,10 +1247,10 @@ void Linnaeo::on_actionAbout_triggered()
 
 void Linnaeo::on_actionOnline_Manual_triggered()
 {
-    QDesktopServices::openUrl(QUrl("https://beowulfey.github.io/linnaeo/manual.md"));
+    QDesktopServices::openUrl(QUrl("https://beowulfey.github.io/linnaeo/manual"));
 }
 
 void Linnaeo::on_actionOn_Themes_triggered()
 {
-    QDesktopServices::openUrl(QUrl("https://beowulfey.github.io/linnaeo/on-themes.md"));
+    QDesktopServices::openUrl(QUrl("https://beowulfey.github.io/linnaeo/on-themes"));
 }

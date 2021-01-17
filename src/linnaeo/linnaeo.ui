@@ -899,14 +899,6 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionAdd_Alignment_Folder"/>
     <addaction name="actionDelete_Selected_Alignments"/>
     <addaction name="separator"/>
-   </widget>
-   <widget class="QMenu" name="menuWindow">
-    <property name="title">
-     <string>Window</string>
-    </property>
-    <addaction name="actionMinimize"/>
-    <addaction name="actionMaximize"/>
-    <addaction name="separator"/>
     <addaction name="actionClose"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -920,7 +912,6 @@ p, li { white-space: pre-wrap; }
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menuManage"/>
-   <addaction name="menuWindow"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>

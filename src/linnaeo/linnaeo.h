@@ -109,6 +109,8 @@ private slots:
     void on_conservedCombo_currentIndexChanged(int index);
     void on_actionEdit_Alignment_triggered();
     void on_actionAbout_triggered();
+    void on_actionOnline_Manual_triggered();
+    void on_actionOn_Themes_triggered();
 };
 
 //Q_DECLARE_METATYPE(Linnaeo::ItemType);
