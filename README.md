@@ -16,3 +16,7 @@ Linnaeo is a program designed to help draw conclusions about the structure-funct
   * A few different themes to choose from, including color by residue category or hydrophobicity
   * Differential highlighting by sequence conservation or identity with a reference sequence
   * Cross-platform (compiles on all, but only Windows binaries at the moment -- more to come)!
+
+#### Requirements to compile yourself
+
+Qt 6.0
