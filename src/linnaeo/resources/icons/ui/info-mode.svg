@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="500.0px"
+   height="500.0px"
+   viewBox="0 0 500.0 500.0"
+   version="1.1"
+   id="SVGRoot"
+   sodipodi:docname="info-mode.svg"
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)">
+  <defs
+     id="defs72">
+    <linearGradient
+       id="linearGradient963"
+       osb:paint="solid">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop961" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient963"
+       id="linearGradient965"
+       x1="220"
+       y1="250"
+       x2="480"
+       y2="250"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="300.20958"
+     inkscape:cy="345.48419"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     inkscape:document-rotation="0"
+     showgrid="true"
+     inkscape:window-width="1826"
+     inkscape:window-height="1040"
+     inkscape:window-x="26"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:snap-text-baseline="true">
+    <inkscape:grid
+       type="xygrid"
+       id="grid81" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata75">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Layer 2">
+    <rect
+       style="fill:#ffe680;stroke:url(#linearGradient965)"
+       id="rect134"
+       width="260"
+       height="460"
+       x="220"
+       y="20" />
+  </g>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       aria-label="A"
+       id="text90"
+       style="font-size:334.823px;line-height:1.25;font-family:'Noto Custom';-inkscape-font-specification:'Noto Custom';stroke-width:1.0045">
+      <path
+         d="M 161.26054,247.92754 137.7183,173.86757 H 57.44579 L 33.576573,247.92754 H 2.5138923 L 81.478496,7.9274573 H 113.35862 L 192.65019,247.92754 Z M 129.05344,146.89208 107.30957,77.573257 Q 100.93354,57.300771 97.173324,40.625016 93.903568,56.810307 89.652885,70.543282 L 66.110643,146.89208 Z"
+         style="font-size:334.823px;stroke-width:1.0045"
+         id="path967" />
+    </g>
+    <g
+       aria-label="S"
+       id="text90-5"
+       style="font-size:327.026px;line-height:1.25;font-family:'Noto Custom';-inkscape-font-specification:'Noto Custom';stroke-width:0.981071">
+      <path
+         d="m 22.053089,477.49575 v -28.42316 q 33.69262,13.73254 66.107795,13.73254 55.888236,0 55.888236,-38.32336 0,-16.60679 -11.33733,-25.54891 -11.17765,-8.94212 -45.50899,-21.23753 -33.213578,-11.65669 -47.744518,-27.78443 -14.37126,-16.28743 -14.37126,-42.1557 0,-27.78444 20.439125,-43.43314 20.598806,-15.80839 56.367273,-15.80839 36.56687,0 66.42716,12.4551 l -10.21956,26.18762 q -30.81837,-12.45509 -57.48504,-12.45509 -46.786439,0 -46.786439,33.37326 0,16.28743 10.379244,26.18763 10.538923,9.9002 43.273455,21.23753 39.28145,14.0519 52.37526,29.06188 13.2535,14.8503 13.2535,38.32336 0,30.65869 -22.19561,48.22356 -22.03594,17.40519 -62.754506,17.40519 -42.315376,0 -66.107795,-11.01796 z"
+         style="font-size:327.026px;stroke-width:0.981071"
+         id="path970" />
+    </g>
+    <g
+       aria-label="10"
+       id="text114"
+       style="font-size:266.667px;line-height:1.25;font-family:'Noto Custom';-inkscape-font-specification:'Noto Custom';letter-spacing:-40px">
+      <path
+         d="m 300.69804,220 h -22.9167 V 101.11965 q 0,-15.88544 1.04167,-47.005269 -5.07813,5.598965 -15.75523,14.713559 L 243.92713,84.583168 231.29691,68.567523 281.16676,29.635184 h 19.53128 z"
+         style="font-size:266.667px"
+         id="path973" />
+      <path
+         d="m 401.71383,222.60417 q -29.81775,0 -45.18235,-25.13024 -15.3646,-25.26045 -15.3646,-72.91675 0,-97.916791 60.54695,-97.916791 30.20837,0 45.57297,25.260447 15.49481,25.130239 15.49481,72.656344 0,98.04699 -61.06778,98.04699 z m 0,-20.18232 q 19.14065,0 28.12503,-18.22919 8.98439,-18.35939 8.98439,-59.63548 0,-41.01568 -8.98439,-59.244869 -8.98438,-18.359397 -28.12503,-18.359397 -18.88023,0 -27.73441,18.229189 -8.72397,18.09898 -8.72397,59.375077 0,41.4063 8.72397,59.63548 8.85418,18.22919 27.73441,18.22919 z"
+         style="font-size:266.667px"
+         id="path975" />
+    </g>
+    <g
+       aria-label="14"
+       id="text114-8"
+       style="font-size:266.667px;line-height:1.25;font-family:'Noto Custom';-inkscape-font-specification:'Noto Custom';letter-spacing:-40px">
+      <path
+         d="m 300.69804,460 h -22.9167 V 341.11965 q 0,-15.88544 1.04167,-47.00527 -5.07813,5.59897 -15.75523,14.71356 l -19.14065,15.75523 -12.63022,-16.01565 49.86985,-38.93234 h 19.53128 z"
+         style="font-size:266.667px"
+         id="path978" />
+      <path
+         d="M 468.64099,417.29161 H 440.90658 V 460 h -22.91669 v -42.70839 h -88.02094 v -20.70315 l 86.45844,-127.99494 h 24.47919 V 395.677 h 27.73441 z M 417.98989,395.677 v -46.35422 q 0,-22.91669 1.69271,-56.25007 h -1.17188 q -4.6875,13.28127 -11.71876,23.43753 L 353.27627,395.677 Z"
+         style="font-size:266.667px"
+         id="path980" />
+    </g>
+  </g>
+</svg>

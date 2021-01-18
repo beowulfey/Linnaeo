@@ -123,10 +123,10 @@ void SeqViewer::calculateColor()
             {
                 resList.append(displayedSeqs.at(j).at(i));
             }
-            qDebug(lnoProc) << "refSeq is" <<refSeq;
+            //qDebug(lnoProc) << "refSeq is" <<refSeq;
             if(refSeq==-1)
             {
-                qDebug(lnoProc) << "using consensus";
+                //qDebug(lnoProc) << "using consensus";
                 consvWrongOrientation.append(Sequence::calculateConservation(resList)); // Build consensus conservation
             }
             else consvWrongOrientation.append(Sequence::calculateIdentityToReference(resList, refSeq));
