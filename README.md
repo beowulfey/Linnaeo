@@ -8,8 +8,11 @@ Linnaeo is a program designed to help draw conclusions about the structure-funct
  * Color by residue type, conservation, or identity to a reference sequence
  * Export these alignments for use in other favorite alignment viewers
  
- 
- 
- TODO (long term): 
-  * Add a QTableView with a list of important residues (will probably need a database). Show below sequence browser
-  * Use latter for "Translator" between two proteins. 
+ Some of the features currently available:
+  * Import sequences or alignments as FASTA files
+  * Search and download sequences directly from UNIPROT into your workspace. 
+  * Switch between horizontally-scrolled sequence view or dynamically-resized wrapped view.
+  * A toggleable ruler mode to see a single column's residue IDs for all sequences at once
+  * A few different themes to choose from, including color by residue category or hydrophobicity
+  * Differential highlighting by sequence conservation or identity with a reference sequence
+  * Cross-platform (compiles on all, but only Windows binaries at the moment -- more to come)!
