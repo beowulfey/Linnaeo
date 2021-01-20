@@ -10,6 +10,12 @@
     <height>380</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>Arial</family>
+    <stylestrategy>PreferAntialias</stylestrategy>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
@@ -18,7 +24,9 @@
     <widget class="QLabel" name="label">
      <property name="font">
       <font>
+       <family>Arial</family>
        <pointsize>10</pointsize>
+       <stylestrategy>PreferAntialias</stylestrategy>
       </font>
      </property>
      <property name="text">

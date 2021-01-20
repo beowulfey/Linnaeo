@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>300</height>
+    <width>750</width>
+    <height>350</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -15,6 +15,13 @@
     <width>600</width>
     <height>0</height>
    </size>
+  </property>
+  <property name="font">
+   <font>
+    <family>Arial</family>
+    <pointsize>9</pointsize>
+    <stylestrategy>PreferAntialias</stylestrategy>
+   </font>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
@@ -24,9 +31,11 @@
     <widget class="QLabel" name="label">
      <property name="font">
       <font>
+       <family>Arial</family>
        <pointsize>10</pointsize>
        <weight>75</weight>
        <bold>true</bold>
+       <stylestrategy>PreferAntialias</stylestrategy>
       </font>
      </property>
      <property name="text">

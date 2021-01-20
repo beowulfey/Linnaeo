@@ -10,6 +10,11 @@
     <height>387</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>Arial</family>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>About Linnaeo</string>
   </property>
@@ -30,7 +35,10 @@
    <item>
     <widget class="QLabel" name="label_6">
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/icons/linnaeo.ico&quot; style=&quot;width:50%&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="resources/linnaeo.qrc">:/icons/linnaeo.ico</pixmap>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -41,6 +49,7 @@
     <widget class="QLabel" name="label">
      <property name="font">
       <font>
+       <family>Arial</family>
        <pointsize>13</pointsize>
       </font>
      </property>
@@ -56,6 +65,7 @@
     <widget class="QLabel" name="label_3">
      <property name="font">
       <font>
+       <family>Arial</family>
        <pointsize>10</pointsize>
       </font>
      </property>
@@ -74,7 +84,9 @@
     <widget class="QLabel" name="label_4">
      <property name="font">
       <font>
+       <family>Arial</family>
        <pointsize>10</pointsize>
+       <stylestrategy>PreferAntialias</stylestrategy>
       </font>
      </property>
      <property name="text">
@@ -119,7 +131,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources/linnaeo.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>
