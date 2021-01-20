@@ -91,4 +91,5 @@ else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../muscle/libmuscle.a
 
 DISTFILES += \
-    ../../../../../../fusion_default.xml
+    ../../../../../../fusion_default.xml \
+    resources/images/screenshot_main.png
