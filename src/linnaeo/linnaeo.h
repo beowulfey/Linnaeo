@@ -7,6 +7,7 @@
 #include <QMainWindow>
 #include <QStandardItemModel>
 #include <QItemSelection>
+#include <QtSvg>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Linnaeo; }

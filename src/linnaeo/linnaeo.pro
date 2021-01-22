@@ -1,4 +1,4 @@
-QT       += core gui network #imageformats
+QT       += core gui network svg #imageformats
 
 CONFIG += console
 
@@ -22,6 +22,7 @@ DEFINES += \
 #Target version
 VERSION = $${VERSION_MAJOR}.$${VERSION_MINOR}.$${VERSION_BUILD}
 
+ICON = resources/icons/linnaeo.icns
 
 SOURCES += \
     aboutdialog.cpp \

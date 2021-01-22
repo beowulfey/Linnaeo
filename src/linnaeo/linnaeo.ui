@@ -10,13 +10,6 @@
     <height>563</height>
    </rect>
   </property>
-  <property name="font">
-   <font>
-    <family>Arial</family>
-    <pointsize>9</pointsize>
-    <stylestrategy>PreferAntialias</stylestrategy>
-   </font>
-  </property>
   <property name="windowTitle">
    <string>Linnaeo</string>
   </property>
@@ -43,13 +36,6 @@ QTextEdit#numbersEdit {
 }</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>8</pointsize>
-     <stylestrategy>PreferDefault</stylestrategy>
-    </font>
-   </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="QSplitter" name="splitter_2">
@@ -139,13 +125,6 @@ QTextEdit#numbersEdit {
             </property>
             <item>
              <widget class="QLabel" name="sequenceLabel">
-              <property name="font">
-               <font>
-                <family>Arial</family>
-                <pointsize>9</pointsize>
-                <stylestrategy>PreferAntialias</stylestrategy>
-               </font>
-              </property>
               <property name="text">
                <string>Sequences</string>
               </property>
@@ -158,13 +137,6 @@ QTextEdit#numbersEdit {
               </property>
               <item>
                <widget class="QToolButton" name="addSequenceButton">
-                <property name="font">
-                 <font>
-                  <family>Arial</family>
-                  <pointsize>8</pointsize>
-                  <stylestrategy>PreferDefault</stylestrategy>
-                 </font>
-                </property>
                 <property name="toolTip">
                  <string>Add new sequence (opens window)</string>
                 </property>
@@ -179,13 +151,6 @@ QTextEdit#numbersEdit {
               </item>
               <item>
                <widget class="QToolButton" name="downloadSeqButton">
-                <property name="font">
-                 <font>
-                  <family>Arial</family>
-                  <pointsize>8</pointsize>
-                  <stylestrategy>PreferDefault</stylestrategy>
-                 </font>
-                </property>
                 <property name="text">
                  <string>...</string>
                 </property>
@@ -197,13 +162,6 @@ QTextEdit#numbersEdit {
               </item>
               <item>
                <widget class="QToolButton" name="importSequenceButton">
-                <property name="font">
-                 <font>
-                  <family>Arial</family>
-                  <pointsize>8</pointsize>
-                  <stylestrategy>PreferDefault</stylestrategy>
-                 </font>
-                </property>
                 <property name="text">
                  <string>...</string>
                 </property>
@@ -215,13 +173,6 @@ QTextEdit#numbersEdit {
               </item>
               <item>
                <widget class="QToolButton" name="addSequenceFolderButton">
-                <property name="font">
-                 <font>
-                  <family>Arial</family>
-                  <pointsize>8</pointsize>
-                  <stylestrategy>PreferDefault</stylestrategy>
-                 </font>
-                </property>
                 <property name="toolTip">
                  <string>Add folder to sequence viewer</string>
                 </property>
@@ -236,13 +187,6 @@ QTextEdit#numbersEdit {
               </item>
               <item>
                <widget class="Line" name="line_7">
-                <property name="font">
-                 <font>
-                  <family>Arial</family>
-                  <pointsize>8</pointsize>
-                  <stylestrategy>PreferDefault</stylestrategy>
-                 </font>
-                </property>
                 <property name="lineWidth">
                  <number>0</number>
                 </property>
@@ -259,13 +203,6 @@ QTextEdit#numbersEdit {
                 <property name="enabled">
                  <bool>false</bool>
                 </property>
-                <property name="font">
-                 <font>
-                  <family>Arial</family>
-                  <pointsize>8</pointsize>
-                  <stylestrategy>PreferDefault</stylestrategy>
-                 </font>
-                </property>
                 <property name="text">
                  <string>...</string>
                 </property>
@@ -280,13 +217,6 @@ QTextEdit#numbersEdit {
                 <property name="enabled">
                  <bool>false</bool>
                 </property>
-                <property name="font">
-                 <font>
-                  <family>Arial</family>
-                  <pointsize>8</pointsize>
-                  <stylestrategy>PreferDefault</stylestrategy>
-                 </font>
-                </property>
                 <property name="text">
                  <string>...</string>
                 </property>
@@ -298,13 +228,6 @@ QTextEdit#numbersEdit {
               </item>
               <item>
                <widget class="Line" name="line_5">
-                <property name="font">
-                 <font>
-                  <family>Arial</family>
-                  <pointsize>8</pointsize>
-                  <stylestrategy>PreferDefault</stylestrategy>
-                 </font>
-                </property>
                 <property name="lineWidth">
                  <number>0</number>
                 </property>
@@ -321,13 +244,6 @@ QTextEdit#numbersEdit {
                 <property name="enabled">
                  <bool>false</bool>
                 </property>
-                <property name="font">
-                 <font>
-                  <family>Arial</family>
-                  <pointsize>8</pointsize>
-                  <stylestrategy>PreferDefault</stylestrategy>
-                 </font>
-                </property>
                 <property name="text">
                  <string>...</string>
                 </property>
@@ -339,13 +255,6 @@ QTextEdit#numbersEdit {
               </item>
               <item>
                <spacer name="horizontalSpacer_4">
-                <property name="font">
-                 <font>
-                  <family>Arial</family>
-                  <pointsize>8</pointsize>
-                  <stylestrategy>PreferDefault</stylestrategy>
-                 </font>
-                </property>
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -367,15 +276,6 @@ QTextEdit#numbersEdit {
                   <width>60</width>
                   <height>0</height>
                  </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <family>Arial</family>
-                  <pointsize>8</pointsize>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                  <stylestrategy>PreferDefault</stylestrategy>
-                 </font>
                 </property>
                 <property name="toolTip">
                  <string>Generate alignment from selected sequences</string>
@@ -404,13 +304,6 @@ QTextEdit#numbersEdit {
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="font">
-               <font>
-                <family>Arial</family>
-                <pointsize>9</pointsize>
-                <stylestrategy>PreferDefault</stylestrategy>
-               </font>
               </property>
               <property name="toolTip">
                <string/>
@@ -459,13 +352,6 @@ QTextEdit#numbersEdit {
             </property>
             <item>
              <widget class="QLabel" name="alignLabel">
-              <property name="font">
-               <font>
-                <family>Arial</family>
-                <pointsize>9</pointsize>
-                <stylestrategy>PreferAntialias</stylestrategy>
-               </font>
-              </property>
               <property name="text">
                <string>Alignments</string>
               </property>
@@ -478,13 +364,6 @@ QTextEdit#numbersEdit {
               </property>
               <item>
                <widget class="QToolButton" name="importAlignmentButton">
-                <property name="font">
-                 <font>
-                  <family>Arial</family>
-                  <pointsize>8</pointsize>
-                  <stylestrategy>PreferDefault</stylestrategy>
-                 </font>
-                </property>
                 <property name="text">
                  <string>...</string>
                 </property>
@@ -496,13 +375,6 @@ QTextEdit#numbersEdit {
               </item>
               <item>
                <widget class="QToolButton" name="addAlignmentFolderButton">
-                <property name="font">
-                 <font>
-                  <family>Arial</family>
-                  <pointsize>8</pointsize>
-                  <stylestrategy>PreferDefault</stylestrategy>
-                 </font>
-                </property>
                 <property name="text">
                  <string>...</string>
                 </property>
@@ -514,13 +386,6 @@ QTextEdit#numbersEdit {
               </item>
               <item>
                <widget class="Line" name="line_8">
-                <property name="font">
-                 <font>
-                  <family>Arial</family>
-                  <pointsize>8</pointsize>
-                  <stylestrategy>PreferDefault</stylestrategy>
-                 </font>
-                </property>
                 <property name="lineWidth">
                  <number>0</number>
                 </property>
@@ -537,13 +402,6 @@ QTextEdit#numbersEdit {
                 <property name="enabled">
                  <bool>false</bool>
                 </property>
-                <property name="font">
-                 <font>
-                  <family>Arial</family>
-                  <pointsize>8</pointsize>
-                  <stylestrategy>PreferDefault</stylestrategy>
-                 </font>
-                </property>
                 <property name="text">
                  <string>...</string>
                 </property>
@@ -558,13 +416,6 @@ QTextEdit#numbersEdit {
                 <property name="enabled">
                  <bool>false</bool>
                 </property>
-                <property name="font">
-                 <font>
-                  <family>Arial</family>
-                  <pointsize>8</pointsize>
-                  <stylestrategy>PreferDefault</stylestrategy>
-                 </font>
-                </property>
                 <property name="text">
                  <string>...</string>
                 </property>
@@ -576,13 +427,6 @@ QTextEdit#numbersEdit {
               </item>
               <item>
                <widget class="Line" name="line_6">
-                <property name="font">
-                 <font>
-                  <family>Arial</family>
-                  <pointsize>8</pointsize>
-                  <stylestrategy>PreferDefault</stylestrategy>
-                 </font>
-                </property>
                 <property name="lineWidth">
                  <number>0</number>
                 </property>
@@ -599,13 +443,6 @@ QTextEdit#numbersEdit {
                 <property name="enabled">
                  <bool>false</bool>
                 </property>
-                <property name="font">
-                 <font>
-                  <family>Arial</family>
-                  <pointsize>8</pointsize>
-                  <stylestrategy>PreferDefault</stylestrategy>
-                 </font>
-                </property>
                 <property name="text">
                  <string>...</string>
                 </property>
@@ -617,13 +454,6 @@ QTextEdit#numbersEdit {
               </item>
               <item>
                <spacer name="horizontalSpacer_3">
-                <property name="font">
-                 <font>
-                  <family>Arial</family>
-                  <pointsize>8</pointsize>
-                  <stylestrategy>PreferDefault</stylestrategy>
-                 </font>
-                </property>
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -644,13 +474,6 @@ QTextEdit#numbersEdit {
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="font">
-               <font>
-                <family>Arial</family>
-                <pointsize>9</pointsize>
-                <stylestrategy>PreferDefault</stylestrategy>
-               </font>
               </property>
               <property name="editTriggers">
                <set>QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
@@ -772,13 +595,6 @@ QTextEdit#numbersEdit {
           </item>
           <item>
            <widget class="SeqViewer" name="seqViewer">
-            <property name="font">
-             <font>
-              <family>Arial</family>
-              <pointsize>8</pointsize>
-              <stylestrategy>PreferDefault</stylestrategy>
-             </font>
-            </property>
             <property name="cursor" stdset="0">
              <cursorShape>IBeamCursor</cursorShape>
             </property>
@@ -801,8 +617,8 @@ QTextEdit#numbersEdit {
              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Arial'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2';&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'.SF NS Text'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="cursorWidth">
              <number>0</number>
@@ -923,15 +739,6 @@ p, li { white-space: pre-wrap; }
        </property>
        <item>
         <widget class="QLabel" name="optionsLabel">
-         <property name="font">
-          <font>
-           <family>Arial</family>
-           <pointsize>11</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-           <stylestrategy>PreferAntialias</stylestrategy>
-          </font>
-         </property>
          <property name="styleSheet">
           <string notr="true"/>
          </property>
@@ -945,13 +752,6 @@ p, li { white-space: pre-wrap; }
        </item>
        <item>
         <widget class="QCheckBox" name="colorsEnabled">
-         <property name="font">
-          <font>
-           <family>Arial</family>
-           <pointsize>9</pointsize>
-           <stylestrategy>PreferDefault</stylestrategy>
-          </font>
-         </property>
          <property name="text">
           <string>Show Colors</string>
          </property>
@@ -962,13 +762,6 @@ p, li { white-space: pre-wrap; }
        </item>
        <item>
         <widget class="QCheckBox" name="wrapEnabled">
-         <property name="font">
-          <font>
-           <family>Arial</family>
-           <pointsize>9</pointsize>
-           <stylestrategy>PreferDefault</stylestrategy>
-          </font>
-         </property>
          <property name="text">
           <string>Wrap sequences</string>
          </property>
@@ -979,13 +772,6 @@ p, li { white-space: pre-wrap; }
        </item>
        <item>
         <widget class="Line" name="line_3">
-         <property name="font">
-          <font>
-           <family>Arial</family>
-           <pointsize>8</pointsize>
-           <stylestrategy>PreferDefault</stylestrategy>
-          </font>
-         </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -993,15 +779,6 @@ p, li { white-space: pre-wrap; }
        </item>
        <item>
         <widget class="QLabel" name="themeLabel">
-         <property name="font">
-          <font>
-           <family>Arial</family>
-           <pointsize>11</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-           <stylestrategy>PreferAntialias</stylestrategy>
-          </font>
-         </property>
          <property name="styleSheet">
           <string notr="true"/>
          </property>
@@ -1014,25 +791,10 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="themeCombo">
-         <property name="font">
-          <font>
-           <family>Arial</family>
-           <pointsize>9</pointsize>
-           <stylestrategy>PreferDefault</stylestrategy>
-          </font>
-         </property>
-        </widget>
+        <widget class="QComboBox" name="themeCombo"/>
        </item>
        <item>
         <widget class="QCheckBox" name="conservedEnabled">
-         <property name="font">
-          <font>
-           <family>Arial</family>
-           <pointsize>9</pointsize>
-           <stylestrategy>PreferDefault</stylestrategy>
-          </font>
-         </property>
          <property name="text">
           <string>Show conservation</string>
          </property>
@@ -1042,13 +804,6 @@ p, li { white-space: pre-wrap; }
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
           <widget class="QLabel" name="label">
-           <property name="font">
-            <font>
-             <family>Arial</family>
-             <pointsize>9</pointsize>
-             <stylestrategy>PreferDefault</stylestrategy>
-            </font>
-           </property>
            <property name="layoutDirection">
             <enum>Qt::LeftToRight</enum>
            </property>
@@ -1062,13 +817,6 @@ p, li { white-space: pre-wrap; }
          </item>
          <item>
           <widget class="QComboBox" name="conservedCombo">
-           <property name="font">
-            <font>
-             <family>Arial</family>
-             <pointsize>9</pointsize>
-             <stylestrategy>PreferDefault</stylestrategy>
-            </font>
-           </property>
            <item>
             <property name="text">
              <string>Consensus</string>
@@ -1080,13 +828,6 @@ p, li { white-space: pre-wrap; }
        </item>
        <item>
         <spacer name="verticalSpacer">
-         <property name="font">
-          <font>
-           <family>Arial</family>
-           <pointsize>8</pointsize>
-           <stylestrategy>PreferDefault</stylestrategy>
-          </font>
-         </property>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -1109,15 +850,8 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>996</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>9</pointsize>
-     <stylestrategy>PreferDefault</stylestrategy>
-    </font>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
@@ -1254,11 +988,6 @@ p, li { white-space: pre-wrap; }
    <property name="toolTip">
     <string>Opens a window to paste in a new sequence</string>
    </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-    </font>
-   </property>
   </action>
   <action name="actionSave_Workspace">
    <property name="icon">
@@ -1268,11 +997,6 @@ p, li { white-space: pre-wrap; }
    <property name="text">
     <string>Save</string>
    </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-    </font>
-   </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
    </property>
@@ -1280,11 +1004,6 @@ p, li { white-space: pre-wrap; }
   <action name="actionQuit">
    <property name="text">
     <string>Quit</string>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-    </font>
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
@@ -1300,11 +1019,6 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="toolTip">
     <string>Copy current selection as FASTA</string>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-    </font>
    </property>
    <property name="shortcut">
     <string>Ctrl+C</string>
@@ -1333,11 +1047,6 @@ p, li { white-space: pre-wrap; }
    <property name="toolTip">
     <string>Open a new workspace</string>
    </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-    </font>
-   </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
    </property>
@@ -1350,11 +1059,6 @@ p, li { white-space: pre-wrap; }
    <property name="text">
     <string>Sequence from file</string>
    </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-    </font>
-   </property>
   </action>
   <action name="actionAlignment_from_file">
    <property name="icon">
@@ -1363,11 +1067,6 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Alignment from file</string>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-    </font>
    </property>
   </action>
   <action name="actionExportSequence">
@@ -1378,11 +1077,6 @@ p, li { white-space: pre-wrap; }
    <property name="text">
     <string>Sequence</string>
    </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-    </font>
-   </property>
   </action>
   <action name="actionExportAlignment">
    <property name="icon">
@@ -1392,11 +1086,6 @@ p, li { white-space: pre-wrap; }
    <property name="text">
     <string>Alignment</string>
    </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-    </font>
-   </property>
   </action>
   <action name="actionOpen">
    <property name="icon">
@@ -1405,11 +1094,6 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Open</string>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-    </font>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -1439,11 +1123,6 @@ p, li { white-space: pre-wrap; }
    <property name="toolTip">
     <string>Makes a new alignment from the selected sequences</string>
    </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-    </font>
-   </property>
   </action>
   <action name="actionGet_Online_Sequence">
    <property name="icon">
@@ -1452,11 +1131,6 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Search for Sequence Online</string>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-    </font>
    </property>
   </action>
   <action name="actionShow_Viewer_Options">
@@ -1482,11 +1156,6 @@ p, li { white-space: pre-wrap; }
    <property name="text">
     <string>Delete Selected Sequences</string>
    </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-    </font>
-   </property>
   </action>
   <action name="actionDelete_Selected_Alignments">
    <property name="icon">
@@ -1495,11 +1164,6 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Delete Selected Alignments</string>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-    </font>
    </property>
   </action>
   <action name="actionAdd_Folder_to_Sequence_Panel">
@@ -1510,11 +1174,6 @@ p, li { white-space: pre-wrap; }
    <property name="text">
     <string>Add Sequence Folder</string>
    </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-    </font>
-   </property>
   </action>
   <action name="actionAdd_Alignment_Folder">
    <property name="icon">
@@ -1523,11 +1182,6 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Add Alignment Folder</string>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-    </font>
    </property>
   </action>
   <action name="actionQuick_Align">
@@ -1541,11 +1195,6 @@ p, li { white-space: pre-wrap; }
    <property name="toolTip">
     <string>Align the currently highlighted sequences</string>
    </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-    </font>
-   </property>
   </action>
   <action name="actionEdit_Sequence">
    <property name="icon">
@@ -1555,40 +1204,20 @@ p, li { white-space: pre-wrap; }
    <property name="text">
     <string>Modify Sequence</string>
    </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-    </font>
-   </property>
   </action>
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-    </font>
    </property>
   </action>
   <action name="actionOnline_Manual">
    <property name="text">
     <string>Online Manual</string>
    </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-    </font>
-   </property>
   </action>
   <action name="actionOn_Themes">
    <property name="text">
     <string>On Themes...</string>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-    </font>
    </property>
   </action>
   <action name="actionMinimize">
@@ -1605,11 +1234,6 @@ p, li { white-space: pre-wrap; }
    <property name="text">
     <string>Close</string>
    </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-    </font>
-   </property>
   </action>
   <action name="actionEdit_Alignment">
    <property name="icon">
@@ -1621,11 +1245,6 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="toolTip">
     <string>Edit selected alignment</string>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-    </font>
    </property>
   </action>
   <action name="actionIncrease_Font">
