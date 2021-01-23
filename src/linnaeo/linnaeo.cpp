@@ -577,7 +577,16 @@ void Linnaeo::on_actionDelete_Selected_Sequences_triggered()
             //}
         }
         foreach (const QPersistentModelIndex &i, pindexes)
-            this->seqModel->removeRow(i.row(), i.parent());
+        {
+            if(i.parent().data(FolderRole).toBool()) {
+                if(seqModel->itemFromIndex(i.parent())->rowCount() == 1) {
+                    qDebug(lnoMain)<<"DELETING ALL IN FOLDER";
+                    seqModel->itemFromIndex(i.parent())->setData(QVariant(QIcon(":/icons/ui/folder.svg")),Qt::DecorationRole);
+                } else qDebug(lnoMain) << "WASn'T LAST ONE!";
+            }
+            else qDebug(lnoMain) << "wASN'T IN FOLDER!" << i.parent().data(Qt::DisplayRole).toString();
+            seqModel->removeRow(i.row(), i.parent());
+        }
         changed = true;
     }
 }
@@ -737,7 +746,16 @@ void Linnaeo::on_actionDelete_Selected_Alignments_triggered()
             //}
         }
         foreach (const QPersistentModelIndex &i, pindexes)
-            this->alignModel->removeRow(i.row(), i.parent());
+        {
+            if(i.parent().data(FolderRole).toBool()) {
+                if(alignModel->itemFromIndex(i.parent())->rowCount() == 1) {
+                    qDebug(lnoMain)<<"DELETING ALL IN FOLDER";
+                    alignModel->itemFromIndex(i.parent())->setData(QVariant(QIcon(":/icons/ui/folder.svg")),Qt::DecorationRole);
+                } else qDebug(lnoMain) << "WASn'T LAST ONE!";
+            }
+            else qDebug(lnoMain) << "wASN'T IN FOLDER!" << i.parent().data(Qt::DisplayRole).toString();
+            alignModel->removeRow(i.row(), i.parent());
+        }
         changed = true;
     }
 
@@ -890,6 +908,8 @@ void Linnaeo::modifySeqActions(const QItemSelection &sele, const QItemSelection 
 {
     if(ui->seqTreeView->selectionModel()->selectedIndexes().size() > 0)
     {
+        ui->actionDelete_Selected_Sequences->setDisabled(false);
+        ui->deleteSequenceButton->setDisabled(false);
         if(ui->seqTreeView->selectionModel()->selectedIndexes().size() == 1) // if one item selected...
         {
             if(ui->seqTreeView->selectionModel()->selectedIndexes().first().data(FolderRole).toBool()) // if it's a folder...
@@ -967,6 +987,8 @@ void Linnaeo::modifyAlignActions(const QItemSelection &sel, const QItemSelection
 {
     if(ui->alignTreeView->selectionModel()->selectedIndexes().size() > 0)
     {
+        ui->actionDelete_Selected_Alignments->setDisabled(false);
+        ui->deleteAlignmentButton->setDisabled(false);
         if(ui->alignTreeView->selectionModel()->selectedIndexes().first().data(FolderRole).toBool()) // if it's a folder...
         {
             ui->editAlignmentButton->setDisabled(true);
