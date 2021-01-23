@@ -48,11 +48,11 @@ private:
 
     //QVector<qint64> procIds;
     QStandardItemModel *seqModel = nullptr;
-    QStandardItem *seqStartFolderItem = nullptr;
-    QModelIndex seqStartFolder;
+    //QStandardItem *seqStartFolderItem = nullptr;
+    //QPersistentModelIndex seqStartFolder;
     QStandardItemModel *alignModel = nullptr;
-    QStandardItem *alignStartFolderItem = nullptr;
-    QModelIndex alignStartFolder;
+    //QStandardItem *alignStartFolderItem = nullptr;
+    //QPersistentModelIndex alignStartFolder;
     QFont defaultFont;
     bool changed = false;
     QString lastDirWorkspace;
