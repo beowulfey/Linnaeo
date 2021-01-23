@@ -1,7 +1,7 @@
 TEMPLATE = subdirs
 SUBDIRS = \
 	linnaeo \
-        muscle
+        muscle \
 
 linnaeo.subdir = src/linnaeo
 muscle.subdir = src/muscle

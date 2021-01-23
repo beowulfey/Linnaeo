@@ -1139,7 +1139,7 @@ void Linnaeo::on_actionCapture_Image_triggered()
     QPixmap img(out);
     img.setDevicePixelRatio(3);
     ui->frame_2->render(&img);
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image"),QStandardPaths::writableLocation(QStandardPaths::HomeLocation),tr("PNG (*.png);; BMP (*.bmp);;TIFF (*.tiff *.tif);; JPEG (*.jpg *.jpeg)"));
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image"),QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"//screenshot",tr("PNG (*.png);; BMP (*.bmp);;TIFF (*.tiff);; JPEG (*.jpg)"));
     img.save(fileName, nullptr, -1);
 }
 
