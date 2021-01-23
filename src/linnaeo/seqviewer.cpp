@@ -42,16 +42,16 @@ void SeqViewer::setTheme(int index)
         lookup = Themes::defaultTheme();
         break;
     case 1:
-        lookup = Themes::clustalXTheme();
-        break;
-    case 2:
-        lookup = Themes::debugTheme();
-        break;
-    case 3:
         lookup = Themes::colorsafeTheme();
         break;
-    case 4:
+    case 2:
+        lookup = Themes::clustalXTheme();
+        break;
+    case 3:
         lookup = Themes::hydrophobicityTheme();
+        break;
+    case -1:
+        lookup = Themes::debugTheme();
         break;
     }
     if(!displayedSeqs.isEmpty()){
