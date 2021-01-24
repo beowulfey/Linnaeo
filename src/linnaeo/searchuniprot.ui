@@ -16,28 +16,12 @@
     <height>0</height>
    </size>
   </property>
-  <property name="font">
-   <font>
-    <family>Arial</family>
-    <pointsize>9</pointsize>
-    <stylestrategy>PreferAntialias</stylestrategy>
-   </font>
-  </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QLabel" name="label">
-     <property name="font">
-      <font>
-       <family>Arial</family>
-       <pointsize>10</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-       <stylestrategy>PreferAntialias</stylestrategy>
-      </font>
-     </property>
      <property name="text">
       <string>UniPROT Search</string>
      </property>

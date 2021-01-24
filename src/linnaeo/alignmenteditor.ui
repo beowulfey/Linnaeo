@@ -10,25 +10,12 @@
     <height>380</height>
    </rect>
   </property>
-  <property name="font">
-   <font>
-    <family>Arial</family>
-    <stylestrategy>PreferAntialias</stylestrategy>
-   </font>
-  </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QLabel" name="label">
-     <property name="font">
-      <font>
-       <family>Arial</family>
-       <pointsize>10</pointsize>
-       <stylestrategy>PreferAntialias</stylestrategy>
-      </font>
-     </property>
      <property name="text">
       <string>Rename sequences or rearrange the alignment below</string>
      </property>

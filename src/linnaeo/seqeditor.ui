@@ -15,8 +15,6 @@
   </property>
   <property name="font">
    <font>
-    <family>Arial</family>
-    <pointsize>9</pointsize>
     <stylestrategy>PreferAntialias</stylestrategy>
    </font>
   </property>
@@ -29,6 +27,11 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QLabel" name="label">
+     <property name="font">
+      <font>
+       <stylestrategy>PreferAntialias</stylestrategy>
+      </font>
+     </property>
      <property name="text">
       <string>Name</string>
      </property>
@@ -36,6 +39,11 @@
    </item>
    <item>
     <widget class="QLineEdit" name="seqNameEdit">
+     <property name="font">
+      <font>
+       <stylestrategy>PreferAntialias</stylestrategy>
+      </font>
+     </property>
      <property name="placeholderText">
       <string>Provide a name for your sequence</string>
      </property>
@@ -43,6 +51,11 @@
    </item>
    <item>
     <widget class="QLabel" name="label_2">
+     <property name="font">
+      <font>
+       <stylestrategy>PreferAntialias</stylestrategy>
+      </font>
+     </property>
      <property name="text">
       <string>Sequence</string>
      </property>
@@ -50,6 +63,11 @@
    </item>
    <item>
     <widget class="SeqEntryTextEdit" name="seqEntryEditor">
+     <property name="font">
+      <font>
+       <stylestrategy>PreferAntialias</stylestrategy>
+      </font>
+     </property>
      <property name="placeholderText">
       <string>Paste sequence as FASTA or plain text here</string>
      </property>
@@ -57,6 +75,11 @@
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="font">
+      <font>
+       <stylestrategy>PreferAntialias</stylestrategy>
+      </font>
+     </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>

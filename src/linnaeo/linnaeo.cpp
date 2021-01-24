@@ -27,6 +27,9 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     // Set up Viewer panel
     QFontDatabase::addApplicationFont(":/fonts/Noto-Custom.ttf");
     defaultFont = QFont("Noto Custom", 10.0, 1);
+#ifdef Q_OS_MACOS
+    defaultFont.setPointSizeF(12.0);
+#endif
     ui->namesEdit->setFont(defaultFont);
     ui->seqViewer->setFont(defaultFont);
     ui->rulerEdit->setFont(defaultFont);
