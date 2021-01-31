@@ -2,8 +2,9 @@
 #define LINNAEO_H
 
 #include "logging.h"
-#include "alignworker.h"
-#include "alignmenteditor.h"
+#include "alignments/alignworker.h"
+#include "views/alignmenteditor.h"
+#include "views/molviewer.h"
 #include <QMainWindow>
 #include <QStandardItemModel>
 #include <QItemSelection>
@@ -44,6 +45,7 @@ public:
 private:
     Ui::Linnaeo *ui;
     AlignWorker *worker;
+    MolViewer *viewer;
 
 
     //QVector<qint64> procIds;
@@ -114,6 +116,7 @@ private slots:
     void on_actionAbout_triggered();
     void on_actionOnline_Manual_triggered();
     void on_actionOn_Themes_triggered();
+    void on_actionMolecular_Viewer_toggled(bool arg1);
 };
 
 //Q_DECLARE_METATYPE(Linnaeo::ItemType);

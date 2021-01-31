@@ -1,11 +1,11 @@
 #include "linnaeo.h"
 #include "./ui_linnaeo.h"
-#include "seqeditor.h"
-#include "preferences.h"
-#include "searchuniprot.h"
-#include "alignworker.h"
+#include "views/seqeditor.h"
+#include "views/preferences.h"
+#include "views/searchuniprot.h"
+#include "alignments/alignworker.h"
 #include "sequence.h"
-#include "aboutdialog.h"
+#include "views/aboutdialog.h"
 #include <QDir>
 #include <QStandardPaths>
 #include <QMessageBox>
@@ -21,8 +21,8 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     /// The main Linnaeo constructor. Setups the UI using default settings. Builds
     /// the initial treeViews. Connects all slots.
 {   ui->setupUi(this);
-    QStandardItem *seqRoot;
-    QStandardItem *alignRoot;
+    //QStandardItem *seqRoot;
+    //QStandardItem *alignRoot;
 
     // Set up Viewer panel
     QFontDatabase::addApplicationFont(":/fonts/Noto-Custom.ttf");
@@ -45,6 +45,8 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     connect(worker, &AlignWorker::resultFailed, this, &Linnaeo::alignmentFailed);
     connect(worker, &AlignWorker::finished, worker, &AlignWorker::deleteLater);
 
+    viewer = new MolViewer(this);
+
 
     // Options Panel setup
     ui->optionsPanel->hide();
@@ -54,7 +56,7 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     // Sequence TreeView setup
     this->seqModel = new QStandardItemModel(this);
     //this->seqModel->setHorizontalHeaderLabels(QStringList("Sequences"));
-    seqRoot = this->seqModel->invisibleRootItem();
+    //seqRoot = this->seqModel->invisibleRootItem();
     //QStandardItem *seqStartFolderItem = new QStandardItem(QIcon(":/icons/ui/folder.svg"),QString("Uncategorized"));
     //seqStartFolderItem->setData(QVariant(true), FolderRole);
     //seqRoot->appendRow(seqStartFolderItem);
@@ -1268,4 +1270,10 @@ void Linnaeo::on_actionOnline_Manual_triggered()
 void Linnaeo::on_actionOn_Themes_triggered()
 {
     QDesktopServices::openUrl(QUrl("https://beowulfey.github.io/linnaeo/on-themes"));
+}
+
+void Linnaeo::on_actionMolecular_Viewer_toggled(bool visible)
+{
+    if(visible) viewer->show();
+    else viewer->hide();
 }

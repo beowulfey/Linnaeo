@@ -976,6 +976,8 @@ p, li { white-space: pre-wrap; }
    <addaction name="actionCapture_Image"/>
    <addaction name="separator"/>
    <addaction name="actionShow_Viewer_Options"/>
+   <addaction name="separator"/>
+   <addaction name="actionMolecular_Viewer"/>
   </widget>
   <action name="actionAdd_Sequence">
    <property name="icon">
@@ -1301,6 +1303,14 @@ p, li { white-space: pre-wrap; }
   <action name="actionWhat_s_This">
    <property name="text">
     <string>What's This?</string>
+   </property>
+  </action>
+  <action name="actionMolecular_Viewer">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Molecular Viewer</string>
    </property>
   </action>
  </widget>

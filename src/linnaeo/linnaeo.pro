@@ -1,4 +1,4 @@
-QT       += core gui network svg
+QT       += core gui network svg quick quick3d
 
 CONFIG += console
 
@@ -11,7 +11,7 @@ DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs depr
 #Application version
 VERSION_MAJOR = 0
 VERSION_MINOR = 9
-VERSION_BUILD = 3
+VERSION_BUILD = 4
 
 DEFINES += \
        "VERSION_MAJOR=$$VERSION_MAJOR"\
@@ -24,33 +24,35 @@ VERSION = $${VERSION_MAJOR}.$${VERSION_MINOR}.$${VERSION_BUILD}
 
 
 SOURCES += \
-    aboutdialog.cpp \
-    alignmenteditor.cpp \
-    alignworker.cpp \
+    views/aboutdialog.cpp \
+    views/alignmenteditor.cpp \
+    alignments/alignworker.cpp \
     logging.cpp \
     main.cpp \
     linnaeo.cpp \
-    muscleadapter.cpp \
+    alignments/muscleadapter.cpp \
     palette.cpp \
-    preferences.cpp \
-    searchuniprot.cpp \
-    seqeditor.cpp \
+    views/molviewer.cpp \
+    views/preferences.cpp \
+    views/searchuniprot.cpp \
+    views/seqeditor.cpp \
     seqentrytextedit.cpp \
     sequence.cpp \
     seqviewer.cpp \
     themes.cpp\
 
 HEADERS += \
-    aboutdialog.h \
-    alignmenteditor.h \
-    alignworker.h \
     linnaeo.h \
     logging.h \
-    muscleadapter.h \
+    views/aboutdialog.h \
+    views/alignmenteditor.h \
+    alignments/alignworker.h \
+    alignments/muscleadapter.h \
     palette.h \
-    preferences.h \
-    searchuniprot.h \
-    seqeditor.h \
+    views/molviewer.h \
+    views/preferences.h \
+    views/searchuniprot.h \
+    views/seqeditor.h \
     seqentrytextedit.h \
     sequence.h \
     seqviewer.h \
@@ -58,12 +60,13 @@ HEADERS += \
 
 
 FORMS += \
-    aboutdialog.ui \
-    alignmenteditor.ui \
     linnaeo.ui \
-    preferences.ui \
-    searchuniprot.ui \
-    seqeditor.ui
+    views/aboutdialog.ui \
+    views/alignmenteditor.ui \
+    views/molviewer.ui \
+    views/preferences.ui \
+    views/searchuniprot.ui \
+    views/seqeditor.ui
 
 
 # Default rules for deployment.
@@ -73,6 +76,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 
 RESOURCES += \
+    qml.qrc \
     resources/linnaeo.qrc
 
 RC_ICONS = resources/icons/linnaeo.ico
@@ -91,5 +95,3 @@ else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PW
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../muscle/debug/muscle.lib
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../muscle/libmuscle.a
 
-
-DISTFILES +=
