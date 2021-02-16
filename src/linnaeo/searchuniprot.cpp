@@ -40,31 +40,22 @@ void SearchUniprot::on_searchButton_clicked()
 {
     if (ui->queryBox->text().isEmpty())
     {
-        bar->showMessage("Please enter a query!",1500);
+        bar->showMessage("Please enter a query!",2000);
     }
     else
     {
         ui->searchButton->setDisabled(true);
         resultsModel->removeRows(0, resultsModel->rowCount());
         bar->showMessage("Searching online, please wait...");
-        QUrl url;
-        if(ui->reviewedCheckBox)
-        {
-            url = QUrl(QString("https://www.uniprot.org/uniprot/?query=reviewed:yes+AND+").append(QString(ui->queryBox->text()))//.replace(" ","+").replace(":","%3A")))
-                             .append("&sort=score&limit=10&format=tab&columns=id,entry%20name,genes(PREFERRED),organism,protein%20names,sequence"));
-        }
-        else
-        {
-            url = QUrl(QString("https://www.uniprot.org/uniprot/?query=").append(QString(ui->queryBox->text()))//.replace(" ","+").replace(":","%3A")))
-                             .append("&sort=score&limit=10&format=tab&columns=id,entry%20name,genes(PREFERRED),organism,protein%20names,sequence"));
-        }
-
-        request.setUrl(url);
+        QString url = QString("https://www.uniprot.org/uniprot/?query=");
+        if(ui->reviewedCheckBox->isChecked()) url.append("reviewed:yes+AND+");
+        url.append(ui->queryBox->text()).append("&sort=score&limit=10&format=tab&columns=id,entry%20name,genes(PREFERRED),organism,protein%20names,sequence");
+        request.setUrl(QUrl(url));
 
         //QSslConfiguration config(QSslConfiguration::defaultConfiguration());
         //config.setProtocol(QSsl::TlsV1_0);
         //request.setSslConfiguration(config);
-        qInfo(lnoIo)<<"Searching with URL\n" << url.toDisplayString();
+        qInfo(lnoIo)<<"Searching with URL\n" << url;
         manager->get(request);
     }
 
@@ -84,24 +75,33 @@ void SearchUniprot::httpFinished(QNetworkReply *reply)
     }
     // If no error, parse the result:
     QString answer = reply->readAll();
-    QList<QString> resultList = answer.split("\n", Qt::SkipEmptyParts);
-    // First row is the header (already known) so just drop it
-    resultList.takeFirst();
-    //spdlog::info("Search returned {} items", resultList.size());
-    QString row;
-    QString column;
-    QStandardItem *item;
-    QList<QStandardItem*> rowItems;
-    foreach(row, resultList)
+    if(answer.isEmpty())
     {
-        rowItems.clear();
-        foreach(column, row.split("\t"))
+        //bar->setStyleSheet("background-color: rgb(0, 255, 0);");
+        bar->showMessage("No results found. Please uncheck \"Reviewed entries only\" or modify query.",6000);
+        //bar->setStyleSheet("background-color: inherit;");
+    }
+    else
+    {
+        QList<QString> resultList = answer.split("\n", Qt::SkipEmptyParts);
+        // First row is the header (already known) so just drop it
+        resultList.takeFirst();
+        //spdlog::info("Search returned {} items", resultList.size());
+        QString row;
+        QString column;
+        QStandardItem *item;
+        QList<QStandardItem*> rowItems;
+        foreach(row, resultList)
         {
-            item = new QStandardItem(column);
-            rowItems.append(item);
+            rowItems.clear();
+            foreach(column, row.split("\t"))
+            {
+                item = new QStandardItem(column);
+                rowItems.append(item);
 
+            }
+            resultsModel->appendRow(rowItems);
         }
-        resultsModel->appendRow(rowItems);
     }
 
 
