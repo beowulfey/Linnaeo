@@ -901,9 +901,7 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionQuick_Align"/>
     <addaction name="actionAdd_Folder_to_Sequence_Panel"/>
     <addaction name="separator"/>
-    <addaction name="actionMake_Alignment"/>
     <addaction name="actionAdd_Alignment_Folder"/>
-    <addaction name="separator"/>
     <addaction name="actionClose"/>
    </widget>
    <widget class="QMenu" name="menuHelp">

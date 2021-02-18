@@ -28,6 +28,7 @@ SearchUniprot::SearchUniprot(QWidget *parent) :
     bar = new QStatusBar(this);
     ui->verticalLayout->addWidget(bar);
     bar->showMessage("Waiting for query!", 2500);
+    ui->queryBox->setFocus();
 }
 
 SearchUniprot::~SearchUniprot()
