@@ -49,7 +49,7 @@ Linnaeo::Linnaeo(QWidget *parent): QMainWindow(parent), ui(new Ui::Linnaeo)
     // Options Panel setup
     ui->optionsPanel->hide();
     ui->optLine->hide();
-    ui->themeCombo->addItems(QStringList()= {"Linnaeo","Colorsafe","Clustal X","Hydrophobicity"});
+    ui->themeCombo->addItems(QStringList({"Linnaeo","Colorsafe","Clustal X","Hydrophobicity"}));
 
     // Sequence TreeView setup
     this->seqModel = new QStandardItemModel(this);
